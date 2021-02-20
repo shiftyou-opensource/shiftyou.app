@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../actions/sign_in.dart';
-import 'home_view.dart'
-;
+import 'home_view.dart';
+
 class LoginView extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _LoginView();
@@ -68,5 +68,4 @@ class _LoginView extends State<LoginView> {
       ),
     );
   }
-
 }

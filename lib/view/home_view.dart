@@ -7,5 +7,4 @@ class HomeView extends StatelessWidget {
       body: Container(color: Colors.blue[100]),
     );
   }
-  
 }
