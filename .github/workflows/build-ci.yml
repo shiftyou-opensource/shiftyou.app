@@ -1,4 +1,4 @@
-name: Flutter CI
+name: Build Action
 
 # This workflow is triggered on pushes to the repository.
 
@@ -36,8 +36,9 @@ jobs:
       # Statically analyze the Dart code for any errors.
       - run: flutter analyze .
 
+      # TODO add test on repository
       # Run widget tests for our flutter project.
-      - run: flutter test
+      #- run: flutter test
 
       # Build apk.
       - run: flutter build apk
