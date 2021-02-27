@@ -1,6 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../actions/sign_in.dart';
+import 'package:nurse_time/view/set_up_view.dart';
+import '../actions/google_sign_in.dart';
+import 'package:get_it/get_it.dart';
 import 'home_view.dart';
 
 class LoginView extends StatefulWidget {
@@ -9,6 +10,9 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginView extends State<LoginView> {
+
+  GoogleManagerUserLogin _googleLogin = GetIt.instance.get<GoogleManagerUserLogin>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,11 +37,11 @@ class _LoginView extends State<LoginView> {
     return OutlineButton(
       splashColor: Colors.grey,
       onPressed: () {
-        signInWithGoogle().whenComplete(() {
+        _googleLogin.signIn().whenComplete(() {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) {
-                return HomeView();
+                return SetUpView();
               },
             ),
           );

@@ -1,5 +1,6 @@
 name: nurse_time
 description: Nurse time is a calendar application to mantains the Nurse turn in hospital|
+uses-material-design: true
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -25,8 +26,10 @@ dependencies:
     sdk: flutter
   firebase_core : ^0.7.0
   firebase_auth: ^0.20.1
+  firebase_analytics: ^7.0.1
   google_sign_in: ^4.5.9
-
+  date_range_form_field: ^0.0.5
+  get_it: ^5.0.6
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
