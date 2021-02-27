@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:date_range_form_field/date_range_form_field.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import '../actions/google_sign_in.dart';
 import 'package:get_it/get_it.dart';
 
@@ -10,7 +9,6 @@ class SetUpView extends StatefulWidget {
 }
 
 class _SetUpView extends State<SetUpView> {
-  DateTimeRange _schedulerSetUp;
   GoogleManagerUserLogin _googleLogin;
 
   _SetUpView() {
@@ -70,9 +68,7 @@ class _SetUpView extends State<SetUpView> {
                   return null;
                 },
                 onSaved: (value) {
-                  setState(() {
-                    _schedulerSetUp = value;
-                  });
+                  setState(() => print("hello"));
                 }),
             ElevatedButton(
                 autofocus: true,

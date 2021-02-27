@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:nurse_time/view/set_up_view.dart';
 import '../actions/google_sign_in.dart';
 import 'package:get_it/get_it.dart';
-import 'home_view.dart';
 
 class LoginView extends StatefulWidget {
   @override
@@ -34,8 +33,12 @@ class _LoginView extends State<LoginView> {
   }
 
   Widget _signInButton() {
-    return OutlineButton(
-      splashColor: Colors.grey,
+    return OutlinedButton(
+      style: OutlinedButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+        elevation: 0,
+        side: BorderSide(color: Colors.grey),
+      ),
       onPressed: () {
         _googleLogin.signIn().whenComplete(() {
           Navigator.of(context).push(
@@ -47,9 +50,6 @@ class _LoginView extends State<LoginView> {
           );
         });
       },
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-      highlightElevation: 0,
-      borderSide: BorderSide(color: Colors.grey),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
         child: Row(

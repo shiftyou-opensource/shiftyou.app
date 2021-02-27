@@ -26,7 +26,6 @@ dependencies:
     sdk: flutter
   firebase_core : ^0.7.0
   firebase_auth: ^0.20.1
-  firebase_analytics: ^7.0.1
   google_sign_in: ^4.5.9
   date_range_form_field: ^0.0.5
   get_it: ^5.0.6
