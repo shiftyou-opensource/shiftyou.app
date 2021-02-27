@@ -12,11 +12,11 @@ Future<void> main() async {
 }
 
 void setUpInjector() {
-  GetIt.instance.registerLazySingleton<GoogleManagerUserLogin>(() => GoogleManagerUserLogin());
+  GetIt.instance.registerLazySingleton<GoogleManagerUserLogin>(
+      () => GoogleManagerUserLogin());
 }
 
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

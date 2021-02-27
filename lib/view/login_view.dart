@@ -10,8 +10,8 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginView extends State<LoginView> {
-
-  GoogleManagerUserLogin _googleLogin = GetIt.instance.get<GoogleManagerUserLogin>();
+  GoogleManagerUserLogin _googleLogin =
+      GetIt.instance.get<GoogleManagerUserLogin>();
 
   @override
   Widget build(BuildContext context) {
