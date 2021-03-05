@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:date_range_form_field/date_range_form_field.dart';
+import 'package:nurse_time/view/home_view.dart';
 import '../actions/google_sign_in.dart';
 import 'package:get_it/get_it.dart';
 
@@ -18,29 +19,37 @@ class _SetUpView extends State<SetUpView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Expanded(
-          child: Column(
-            children: [
-              Container(
-                color: Colors.blue,
-                child: Center(
-                  heightFactor: 1.5,
-                  child: CircleAvatar(
-                    backgroundColor: Colors.white,
-                    radius: 60.0,
+      appBar: AppBar(
+        elevation: 2,
+        title: const Text("Setting Scheduler"),
+        centerTitle: true,
+        leading: Container(),
+      ),
+      body: SafeArea(
+        child: Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  color: Colors.blue,
+                  child: Center(
+                    heightFactor: 1.5,
                     child: CircleAvatar(
-                      radius: 50.0,
-                      backgroundImage: NetworkImage(
-                          _googleLogin.getCurrentUser().photoURL.toString()),
-                      backgroundColor: Colors.transparent,
+                      backgroundColor: Colors.white,
+                      radius: 60.0,
+                      child: CircleAvatar(
+                        radius: 50.0,
+                        backgroundImage: NetworkImage(
+                            _googleLogin.getCurrentUser().photoURL.toString()),
+                        backgroundColor: Colors.transparent,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              _settingProprieties(context)
-            ],
-          ),
+                _settingProprieties(context)
+              ],
+            ),
         ),
       ),
     );
@@ -72,7 +81,10 @@ class _SetUpView extends State<SetUpView> {
                 }),
             ElevatedButton(
                 autofocus: true,
-                onPressed: () => print("hello"),
+                onPressed: () => Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) {
+                      return HomeView();
+                    })),
                 child: Text("Press"))
           ],
         ),

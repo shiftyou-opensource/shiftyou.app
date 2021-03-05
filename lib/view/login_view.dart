@@ -15,20 +15,25 @@ class _LoginView extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Colors.white,
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+      ),
+      body: SafeArea(
+          child: Container(
+            color: Colors.white,
+            child: Center(
+               child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
               FlutterLogo(size: 150),
               SizedBox(height: 50),
               _signInButton()
             ],
           ),
         ),
-      ),
+      )),
     );
   }
 
@@ -43,6 +48,7 @@ class _LoginView extends State<LoginView> {
         _googleLogin.signIn().whenComplete(() {
           Navigator.of(context).push(
             MaterialPageRoute(
+              maintainState: false,
               builder: (context) {
                 return SetUpView();
               },
