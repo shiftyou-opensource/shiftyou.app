@@ -39,9 +39,9 @@ jobs:
       # TODO add test on repository
       # Run widget tests for our flutter project.
       #- run: flutter test
-        - name: Make signature file
-          run: |
-              echo "${{secrets.GOOGLE_SERVICE}}" > ./android/app/google-services.json
+      - name: Make signature file
+        run: |
+            echo "${{secrets.GOOGLE_SERVICE}}" > ./android/app/google-services.json
 
       # Build apk.
       - run: flutter build apk
