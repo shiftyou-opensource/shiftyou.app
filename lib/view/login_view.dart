@@ -21,12 +21,12 @@ class _LoginView extends State<LoginView> {
       ),
       body: SafeArea(
           child: Container(
-            color: Colors.white,
-            child: Center(
-               child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
+        color: Colors.white,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
               FlutterLogo(size: 150),
               SizedBox(height: 50),
               _signInButton()

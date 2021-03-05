@@ -3,19 +3,15 @@ import 'package:get_it/get_it.dart';
 import 'package:nurse_time/actions/google_sign_in.dart';
 
 class HomeView extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() => _HomeView();
 }
 
 class _HomeView extends State<HomeView> {
-
   GoogleManagerUserLogin _googleLogin;
 
-
-  _HomeView(){
-    this._googleLogin =
-        GetIt.instance.get<GoogleManagerUserLogin>();
+  _HomeView() {
+    this._googleLogin = GetIt.instance.get<GoogleManagerUserLogin>();
   }
 
   @override
@@ -29,26 +25,27 @@ class _HomeView extends State<HomeView> {
       ),
       body: SafeArea(
         child: Container(
-            child: Center(
-          child: Column(
+          child: Center(
+            child: Column(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
-                  color: Colors.blue,
-                  child: Center(
-                    child: CircleAvatar(
-                      backgroundColor: Colors.white,
-                      radius: 60.0,
+                    color: Colors.blue,
+                    child: Center(
                       child: CircleAvatar(
-                        radius: 50.0,
-                        backgroundImage: NetworkImage(
-                            _googleLogin.getCurrentUser().photoURL.toString()),
-                        backgroundColor: Colors.transparent,
+                        backgroundColor: Colors.white,
+                        radius: 60.0,
+                        child: CircleAvatar(
+                          radius: 50.0,
+                          backgroundImage: NetworkImage(_googleLogin
+                              .getCurrentUser()
+                              .photoURL
+                              .toString()),
+                          backgroundColor: Colors.transparent,
+                        ),
                       ),
-                  ),
-                  )
-                ),
+                    )),
                 Center(
                   heightFactor: 1.2,
                   child: ListView(
@@ -83,5 +80,4 @@ class _HomeView extends State<HomeView> {
       ),
     );
   }
-
 }

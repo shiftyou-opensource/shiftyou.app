@@ -27,29 +27,29 @@ class _SetUpView extends State<SetUpView> {
       ),
       body: SafeArea(
         child: Container(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  color: Colors.blue,
-                  child: Center(
-                    heightFactor: 1.5,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                color: Colors.blue,
+                child: Center(
+                  heightFactor: 1.5,
+                  child: CircleAvatar(
+                    backgroundColor: Colors.white,
+                    radius: 60.0,
                     child: CircleAvatar(
-                      backgroundColor: Colors.white,
-                      radius: 60.0,
-                      child: CircleAvatar(
-                        radius: 50.0,
-                        backgroundImage: NetworkImage(
-                            _googleLogin.getCurrentUser().photoURL.toString()),
-                        backgroundColor: Colors.transparent,
-                      ),
+                      radius: 50.0,
+                      backgroundImage: NetworkImage(
+                          _googleLogin.getCurrentUser().photoURL.toString()),
+                      backgroundColor: Colors.transparent,
                     ),
                   ),
                 ),
-                _settingProprieties(context)
-              ],
-            ),
+              ),
+              _settingProprieties(context)
+            ],
+          ),
         ),
       ),
     );
