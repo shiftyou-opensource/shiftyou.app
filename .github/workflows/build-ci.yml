@@ -24,7 +24,7 @@ jobs:
       # Setup the flutter environment.
       - uses: subosito/flutter-action@v1
         with:
-          channel: 'beta' # 'dev', 'alpha', default to: 'stable'
+          channel: 'stable' # 'dev', 'alpha', default to: 'stable'
           # flutter-version: '1.12.x' # you can also specify exact version of flutters
 
       # Get flutter dependencies.
@@ -40,8 +40,10 @@ jobs:
       # Run widget tests for our flutter project.
       #- run: flutter test
       - name: Make signature file
+        env:
+          GOOGLE_SERVICE: ${{ secrets.GOOGLE_SERVICE }}
         run: |
-            echo "${{secrets.GOOGLE_SERVICE}}" > ./android/app/google-services.json
+            echo $GOOGLE_SERVICE > ./android/app/google-services.json
 
       # Build apk.
       - run: flutter build apk
