@@ -17,11 +17,11 @@ class _LoginView extends State<LoginView> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).backgroundColor,
       ),
       body: SafeArea(
           child: Container(
-        color: Colors.white,
+        color: Theme.of(context).backgroundColor,
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.max,
@@ -62,7 +62,7 @@ class _LoginView extends State<LoginView> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image(image: AssetImage("assets/google-logo.png"), height: 35.0),
+            Image(image: AssetImage("assets/google-logo.png"), height: 55.0),
             Padding(
               padding: const EdgeInsets.only(left: 10),
               child: Text(

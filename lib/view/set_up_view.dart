@@ -32,11 +32,11 @@ class _SetUpView extends State<SetUpView> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
-                color: Colors.blue,
+                color: Theme.of(context).backgroundColor,
                 child: Center(
                   heightFactor: 1.5,
                   child: CircleAvatar(
-                    backgroundColor: Colors.white,
+                    backgroundColor: Theme.of(context).buttonColor,
                     radius: 60.0,
                     child: CircleAvatar(
                       radius: 50.0,

@@ -23,7 +23,10 @@ class MyApp extends StatelessWidget {
       title: 'Nurse Time',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: Color.fromARGB(255, 242, 246, 255),
+        backgroundColor: Color.fromARGB(255, 242, 246, 255),
+        cardColor: Color.fromARGB(255, 242, 246, 255),
+        buttonColor: Colors.deepPurpleAccent,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: LoginView(),

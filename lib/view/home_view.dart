@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nurse_time/actions/google_sign_in.dart';
+import 'package:nurse_time/utils/user_icon.dart';
 
 class HomeView extends StatefulWidget {
   @override
@@ -23,49 +25,7 @@ class _HomeView extends State<HomeView> {
         elevation: 2,
         leading: Container(),
       ),
-      body: SafeArea(
-        child: Container(
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                    color: Colors.blue,
-                    child: Center(
-                      child: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        radius: 60.0,
-                        child: CircleAvatar(
-                          radius: 50.0,
-                          backgroundImage: NetworkImage(_googleLogin
-                              .getCurrentUser()
-                              .photoURL
-                              .toString()),
-                          backgroundColor: Colors.transparent,
-                        ),
-                      ),
-                    )),
-                Center(
-                  heightFactor: 1.2,
-                  child: ListView(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    children: [
-                      Card(
-                        elevation: 3,
-                        child: Center(
-                          child: Text("Time One"),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
+      body: SafeArea(child: _buildHomeView(context)),
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
@@ -79,5 +39,84 @@ class _HomeView extends State<HomeView> {
         ],
       ),
     );
+  }
+
+  Widget _buildHomeView(BuildContext context) {
+    return Column(children: [
+      Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+                color: Theme.of(context).backgroundColor,
+                child: Center(
+                    child: buildUserIcon(context,
+                        _googleLogin.getCurrentUser().photoURL.toString()))),
+          ]),
+      Expanded(
+        child: ListView(
+          shrinkWrap: true,
+          physics: AlwaysScrollableScrollPhysics(),
+          scrollDirection: Axis.vertical,
+          children: [
+            _buildShiftCardView(context, "morning.png"),
+            _buildShiftCardView(context, "coffee.png"),
+            _buildShiftCardView(context, "night.png"),
+            _buildShiftCardView(context, "for-you.png")
+          ],
+        ),
+      ),
+    ]);
+  }
+
+  Widget _buildShiftCardView(BuildContext context, String nameImage) {
+    return Card(
+        elevation: 3,
+        child: Center(
+          child: Container(
+            padding: EdgeInsets.all(15),
+            margin: EdgeInsets.all(20),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                        child: Image(
+                            image: AssetImage("assets/images/$nameImage"),
+                            height: 80.0)),
+                  ],
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.all(18),
+                      padding: EdgeInsets.all(15),
+                      alignment: Alignment.topCenter,
+                      child: Text("Right Now"),
+                    )
+                  ],
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.all(18),
+                      padding: EdgeInsets.all(15),
+                      color: Colors.black38,
+                      child: Text("right"),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+        ));
   }
 }
