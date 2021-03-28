@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nurse_time/actions/google_sign_in.dart';
-import 'package:nurse_time/utils/user_icon.dart';
+import 'package:nurse_time/utils/generic_components.dart';
 
 class HomeView extends StatefulWidget {
   @override

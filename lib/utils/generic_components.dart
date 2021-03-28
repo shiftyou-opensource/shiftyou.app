@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 Widget buildUserIcon(BuildContext context, String imageUrl) {
@@ -10,4 +11,8 @@ Widget buildUserIcon(BuildContext context, String imageUrl) {
       backgroundColor: Colors.transparent,
     ),
   );
+}
+
+Widget buildAppLogo(BuildContext context, double dimesntion) {
+  return Image.asset("ic_launcher");
 }

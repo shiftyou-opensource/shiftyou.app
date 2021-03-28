@@ -27,7 +27,7 @@ class _LoginView extends State<LoginView> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              FlutterLogo(size: 150),
+              Image.asset("assets/ic_launcher.png"),
               SizedBox(height: 50),
               _signInButton()
             ],
