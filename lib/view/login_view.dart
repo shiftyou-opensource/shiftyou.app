@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nurse_time/persistence/dao_database.dart';
 import 'package:nurse_time/view/set_up_view.dart';
 import '../actions/google_sign_in.dart';
 import 'package:get_it/get_it.dart';
@@ -9,8 +10,13 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginView extends State<LoginView> {
-  GoogleManagerUserLogin _googleLogin =
-      GetIt.instance.get<GoogleManagerUserLogin>();
+  GoogleManagerUserLogin _googleLogin;
+  DAODatabase _dao;
+
+  _LoginView(){
+    this._googleLogin = GetIt.instance.get<GoogleManagerUserLogin>();
+    this._dao = GetIt.instance.get<DAODatabase>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +51,8 @@ class _LoginView extends State<LoginView> {
         side: BorderSide(color: Colors.grey),
       ),
       onPressed: () {
-        _googleLogin.signIn().whenComplete(() {
+        _googleLogin.signIn().then((userModel) {
+          _dao.insertUser(userModel);
           Navigator.of(context).push(
             MaterialPageRoute(
               maintainState: false,

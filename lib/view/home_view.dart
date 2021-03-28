@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
-import 'package:nurse_time/actions/google_sign_in.dart';
-import 'package:nurse_time/utils/generic_components.dart';
+import 'package:nurse_time/model/user_model.dart';
 
 class HomeView extends StatefulWidget {
   @override
@@ -10,10 +9,10 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeView extends State<HomeView> {
-  GoogleManagerUserLogin _googleLogin;
+  UserModel userModel;
 
   _HomeView() {
-    this._googleLogin = GetIt.instance.get<GoogleManagerUserLogin>();
+    this.userModel = GetIt.instance.get<UserModel>();
   }
 
   @override
@@ -50,8 +49,8 @@ class _HomeView extends State<HomeView> {
             Container(
                 color: Theme.of(context).backgroundColor,
                 child: Center(
-                    child: buildUserIcon(context,
-                        _googleLogin.getCurrentUser().photoURL.toString()))),
+                    child: Text("TODO some here")
+                )),
           ]),
       Expanded(
         child: ListView(

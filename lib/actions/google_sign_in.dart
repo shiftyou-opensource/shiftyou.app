@@ -1,5 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:logger/logger.dart';
+import 'package:nurse_time/model/user_model.dart';
 import 'sign_in_interface.dart';
 
 class GoogleManagerUserLogin extends AbstractManagerUserLogin {
@@ -18,8 +21,9 @@ class GoogleManagerUserLogin extends AbstractManagerUserLogin {
   }
 
   @override
-  Future<void> signIn() async {
+  Future<UserModel> signIn() async {
     // Trigger the authentication flow
+    var logger = GetIt.instance.get<Logger>();
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
 
     // Obtain the auth details from the request
@@ -37,15 +41,14 @@ class GoogleManagerUserLogin extends AbstractManagerUserLogin {
         await _auth.signInWithCredential(credential);
     this._currentUser = authResult.user;
 
-    // FIXME(vincenzopalazzo): Remove the code from this assert
-    assert(!this._currentUser.isAnonymous);
-    assert(await this._currentUser.getIdToken() != null);
-
+    logger.d("User is anonymus ${this._currentUser.isAnonymous}");
+    logger.d("User with google token ${this._currentUser.getIdToken()}");
     final User currentUser = _auth.currentUser;
-    // FIXME(vincenzopalazzo): Remove the code from this assert
-    assert(this._currentUser.uid == currentUser.uid);
-
-    // return 'signInWithGoogle succeeded: $user';
+    return UserModel(
+        id: 1,
+        name: currentUser.displayName,
+        logged: true,
+        initialized: true);
   }
 
   @override
