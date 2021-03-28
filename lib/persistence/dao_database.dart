@@ -10,7 +10,6 @@ class DAODatabase extends AbstractDAO<Database> {
   Database _database;
   DAOUser _daoUser;
 
-
   DAODatabase() {
     init();
   }
@@ -25,8 +24,8 @@ class DAODatabase extends AbstractDAO<Database> {
         // `path` package is best practice to ensure the path is correctly
         // constructed for each platform.
         join(await getDatabasesPath(), 'database.db'), onCreate: (db, version) {
-      return db.execute(
-          "CREATE TABLE users(id  INTEGER PRIMARY KEY, name TEXT)");
+      return db
+          .execute("CREATE TABLE users(id  INTEGER PRIMARY KEY, name TEXT)");
     }, version: 1);
   }
 

@@ -45,10 +45,7 @@ class GoogleManagerUserLogin extends AbstractManagerUserLogin {
     logger.d("User with google token ${this._currentUser.getIdToken()}");
     final User currentUser = _auth.currentUser;
     return UserModel(
-        id: 1,
-        name: currentUser.displayName,
-        logged: true,
-        initialized: true);
+        id: 1, name: currentUser.displayName, logged: true, initialized: true);
   }
 
   @override

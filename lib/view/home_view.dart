@@ -48,9 +48,7 @@ class _HomeView extends State<HomeView> {
           children: [
             Container(
                 color: Theme.of(context).backgroundColor,
-                child: Center(
-                    child: Text("TODO some here")
-                )),
+                child: Center(child: Text("TODO some here"))),
           ]),
       Expanded(
         child: ListView(

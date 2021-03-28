@@ -60,8 +60,9 @@ class MyApp extends StatelessWidget {
         builder: (context, result) {
           if (result.data == true) {
             return HomeView();
+          } else {
+            return LoginView();
           }
-          return LoginView();
         },
       ),
     );

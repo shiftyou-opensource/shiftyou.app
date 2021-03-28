@@ -13,7 +13,7 @@ class _LoginView extends State<LoginView> {
   GoogleManagerUserLogin _googleLogin;
   DAODatabase _dao;
 
-  _LoginView(){
+  _LoginView() {
     this._googleLogin = GetIt.instance.get<GoogleManagerUserLogin>();
     this._dao = GetIt.instance.get<DAODatabase>();
   }
