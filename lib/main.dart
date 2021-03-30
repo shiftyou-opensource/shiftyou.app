@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:nurse_time/actions/google_sign_in.dart';
+import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/persistence/dao_database.dart';
 import './view/login_view.dart';
 import 'model/user_model.dart';
@@ -22,6 +23,8 @@ void setUpInjector() {
   GetIt.instance.registerLazySingleton<Logger>(() => Logger());
   GetIt.instance.registerLazySingleton<UserModel>(
       () => UserModel(id: -1, name: "", logged: false, initialized: false));
+  GetIt.instance.registerLazySingleton<ShiftScheduler>(
+      () => ShiftScheduler(DateTime.now(), DateTime.now()));
 }
 
 class MyApp extends StatelessWidget {
@@ -58,11 +61,12 @@ class MyApp extends StatelessWidget {
       home: FutureBuilder<bool>(
         future: checkUser(),
         builder: (context, result) {
-          if (result.data == true) {
+          /*if (result.data == true) {
             return HomeView();
           } else {
             return LoginView();
-          }
+          }*/
+          return LoginView();
         },
       ),
     );

@@ -6,6 +6,14 @@ class ShiftScheduler {
   DateTime _end;
   List<Shift> _exceptions;
 
+  set start(DateTime dateTime) {
+    this._start = dateTime;
+  }
+
+  set end(DateTime dateTime) {
+    this._end = dateTime;
+  }
+
   ShiftScheduler(this._start, this._end) {
     this._exceptions = List.empty(growable: true);
   }

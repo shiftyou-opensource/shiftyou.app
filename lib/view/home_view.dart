@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
+import 'package:logger/logger.dart';
+import 'package:nurse_time/model/shift.dart';
+import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/model/user_model.dart';
 
 class HomeView extends StatefulWidget {
@@ -10,9 +13,15 @@ class HomeView extends StatefulWidget {
 
 class _HomeView extends State<HomeView> {
   UserModel userModel;
+  List<Shift> _shifts;
+  Logger _logger;
 
   _HomeView() {
+    ShiftScheduler scheduler = GetIt.instance.get<ShiftScheduler>();
     this.userModel = GetIt.instance.get<UserModel>();
+    this._logger = GetIt.instance.get<Logger>();
+    this._shifts = scheduler.generateScheduler();
+    _logger.d(_shifts.toString());
   }
 
   @override
@@ -24,7 +33,7 @@ class _HomeView extends State<HomeView> {
         elevation: 2,
         leading: Container(),
       ),
-      body: SafeArea(child: _buildHomeView(context)),
+      body: SafeArea(child: _buildHomeView(context, _shifts)),
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
@@ -40,7 +49,7 @@ class _HomeView extends State<HomeView> {
     );
   }
 
-  Widget _buildHomeView(BuildContext context) {
+  Widget _buildHomeView(BuildContext context, List<Shift> shifts) {
     return Column(children: [
       Column(
           mainAxisSize: MainAxisSize.max,
@@ -51,19 +60,30 @@ class _HomeView extends State<HomeView> {
                 child: Center(child: Text("TODO some here"))),
           ]),
       Expanded(
-        child: ListView(
-          shrinkWrap: true,
-          physics: AlwaysScrollableScrollPhysics(),
-          scrollDirection: Axis.vertical,
-          children: [
-            _buildShiftCardView(context, "morning.png"),
-            _buildShiftCardView(context, "coffee.png"),
-            _buildShiftCardView(context, "night.png"),
-            _buildShiftCardView(context, "for-you.png")
-          ],
-        ),
+        child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: shifts.length,
+            physics: AlwaysScrollableScrollPhysics(),
+            scrollDirection: Axis.vertical,
+            itemBuilder: (BuildContext contex, int index) {
+              return _buildShiftCardView(
+                  context, fromShiftToImage(shifts[index]));
+            }),
       ),
     ]);
+  }
+
+  String fromShiftToImage(Shift shift) {
+    switch (shift.time) {
+      case ShiftTime.AFTERNOON:
+        return "coffee.png";
+      case ShiftTime.MORNING:
+        return "morning.png";
+      case ShiftTime.FREE:
+        return "for-you.png";
+      case ShiftTime.NIGHT:
+        return "night.png";
+    }
   }
 
   Widget _buildShiftCardView(BuildContext context, String nameImage) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:date_range_form_field/date_range_form_field.dart';
+import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/view/home_view.dart';
 import '../actions/google_sign_in.dart';
 import 'package:get_it/get_it.dart';
@@ -11,8 +12,9 @@ class SetUpView extends StatefulWidget {
 
 class _SetUpView extends State<SetUpView> {
   GoogleManagerUserLogin _googleLogin;
-
+  ShiftScheduler shiftScheduler;
   _SetUpView() {
+    this.shiftScheduler = GetIt.instance.get<ShiftScheduler>();
     this._googleLogin = GetIt.instance.get<GoogleManagerUserLogin>();
   }
 
@@ -77,7 +79,10 @@ class _SetUpView extends State<SetUpView> {
                   return null;
                 },
                 onSaved: (value) {
-                  setState(() => print("hello"));
+                  setState(() => shiftScheduler.start = value.start);
+                  setState(() {
+                    shiftScheduler.end = value.end;
+                  });
                 }),
             ElevatedButton(
                 autofocus: true,
