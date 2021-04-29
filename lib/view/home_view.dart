@@ -83,6 +83,8 @@ class _HomeView extends State<HomeView> {
         return "for-you.png";
       case ShiftTime.NIGHT:
         return "night.png";
+      default:
+        throw Exception("No image found with name ${shift.time}");
     }
   }
 

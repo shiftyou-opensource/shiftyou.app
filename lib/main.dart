@@ -7,7 +7,6 @@ import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/persistence/dao_database.dart';
 import './view/login_view.dart';
 import 'model/user_model.dart';
-import 'view/home_view.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
