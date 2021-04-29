@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:nurse_time/actions/google_sign_in.dart';
@@ -51,11 +52,24 @@ class MyApp extends StatelessWidget {
       title: 'Nurse Time',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: Color.fromARGB(255, 242, 246, 255),
-        backgroundColor: Color.fromARGB(255, 242, 246, 255),
-        cardColor: Color.fromARGB(255, 242, 246, 255),
-        buttonColor: Colors.deepPurpleAccent,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        primaryColor: Color.fromARGB(255, 68, 71, 90),
+        backgroundColor: Color.fromARGB(255, 40, 42, 54),
+        cardColor: Color.fromARGB(255, 40, 42, 54),
+        accentColor: Color.fromARGB(255, 255, 121, 197),
+        buttonColor: Color.fromARGB(255, 57, 60, 75),
+        dialogBackgroundColor: Color.fromARGB(255, 40, 42, 54),
+        disabledColor: Color.fromARGB(255, 98, 114, 164),
+        canvasColor: Color.fromARGB(255, 40, 42, 54),
+        textTheme: TextTheme(
+          bodyText1: TextStyle(),
+          bodyText2: TextStyle(),
+        ).apply(
+          bodyColor: Color.fromARGB(255, 98, 114, 164),
+        ),
+        appBarTheme: AppBarTheme(
+          color: Color.fromARGB(255, 40, 42, 54),
+        ),
+        //visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: FutureBuilder<bool>(
         future: checkUser(),

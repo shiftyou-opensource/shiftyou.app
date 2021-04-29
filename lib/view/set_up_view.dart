@@ -22,7 +22,7 @@ class _SetUpView extends State<SetUpView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 2,
+        elevation: 0,
         title: const Text("Setting Scheduler"),
         centerTitle: true,
         leading: Container(),

@@ -28,9 +28,9 @@ class _HomeView extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Some Title here"),
+        title: const Text("Your Shift"),
         primary: true,
-        elevation: 2,
+        elevation: 0,
         leading: Container(),
       ),
       body: SafeArea(child: _buildHomeView(context, _shifts)),
