@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Nurse Time',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
+      darkTheme: ThemeData(
         primaryColor: Color.fromARGB(255, 68, 71, 90),
         backgroundColor: Color.fromARGB(255, 40, 42, 54),
         cardColor: Color.fromARGB(255, 40, 42, 54),

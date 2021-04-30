@@ -156,17 +156,18 @@ class _HomeView extends State<HomeView> {
 
   Widget _buildShiftCardView(BuildContext context, Shift shift) {
     return Card(
-        elevation: 3,
+        elevation: 10.0,
+        margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
         child: Center(
           child: Container(
             padding: EdgeInsets.all(15),
-            margin: EdgeInsets.all(20),
+            margin: EdgeInsets.all(10),
             child: Row(
               mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Column(
-                  mainAxisSize: MainAxisSize.max,
+                  mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container(
@@ -178,27 +179,43 @@ class _HomeView extends State<HomeView> {
                 ),
                 Column(
                   mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                      margin: EdgeInsets.all(18),
-                      padding: EdgeInsets.all(15),
-                      alignment: Alignment.topCenter,
+                      margin: EdgeInsets.all(15),
+                      padding: EdgeInsets.all(10),
+                      alignment: Alignment.center,
                       child: Text(
                           "${shift.date.day}/${shift.date.month}/${shift.date.year}",
                           style:
-                              TextStyle(fontFamily: 'DsDigit', fontSize: 29)),
+                              TextStyle(fontFamily: 'DsDigit', fontSize: 30)),
                     )
                   ],
                 ),
                 Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Container(
-                      padding: EdgeInsets.all(15),
-                      color: Colors.black38,
-                      child: Text("right"),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        child: Icon(
+                          Icons.edit,
+                          color: Theme.of(context).textTheme.bodyText1.color,
+                          size: 25.0,
+                        ),
+                        style: ElevatedButton.styleFrom(
+                            side: BorderSide(
+                              width: 0,
+                              color:
+                                  Theme.of(context).textTheme.bodyText1.color,
+                            ),
+                            padding: EdgeInsets.all(15),
+                            shape: CircleBorder(),
+                            primary: Theme.of(context).backgroundColor),
+                      ),
                     )
                   ],
                 )
