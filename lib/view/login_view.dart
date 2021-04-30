@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:nurse_time/persistence/dao_database.dart';
-import 'package:nurse_time/view/set_up_view.dart';
 import '../actions/google_sign_in.dart';
 import 'package:get_it/get_it.dart';
 
@@ -53,14 +52,7 @@ class _LoginView extends State<LoginView> {
       onPressed: () {
         _googleLogin.signIn().then((userModel) {
           _dao.insertUser(userModel);
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              maintainState: false,
-              builder: (context) {
-                return SetUpView();
-              },
-            ),
-          );
+          Navigator.pushNamed(context, "/setting");
         });
       },
       child: Padding(

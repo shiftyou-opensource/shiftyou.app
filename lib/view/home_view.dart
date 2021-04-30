@@ -1,3 +1,5 @@
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
@@ -5,6 +7,7 @@ import 'package:logger/logger.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/model/user_model.dart';
+import 'package:nurse_time/utils/map_reduce_shifts.dart';
 
 class HomeView extends StatefulWidget {
   @override
@@ -15,6 +18,7 @@ class _HomeView extends State<HomeView> {
   UserModel userModel;
   List<Shift> _shifts;
   Logger _logger;
+  int touchedIndex;
 
   _HomeView() {
     ShiftScheduler scheduler = GetIt.instance.get<ShiftScheduler>();
@@ -27,26 +31,46 @@ class _HomeView extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Your Shift"),
-        primary: true,
-        elevation: 0,
-        leading: Container(),
-      ),
-      body: SafeArea(child: _buildHomeView(context, _shifts)),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+        appBar: AppBar(
+          title: const Text("Your Shift"),
+          primary: true,
+          elevation: 0,
+          leading: Container(),
+        ),
+        body: SafeArea(child: _buildHomeView(context, _shifts)),
+        bottomNavigationBar: BottomAppBar(
+          color: Theme.of(context).colorScheme.background,
+          child: IconTheme(
+            data: IconThemeData(
+                color: Theme.of(context).textTheme.bodyText1.color),
+            child: Row(
+              children: <Widget>[
+                IconButton(
+                  tooltip: 'Open navigation menu',
+                  icon: const Icon(Icons.menu),
+                  onPressed: () {},
+                ),
+                const Spacer(),
+                IconButton(
+                  tooltip: 'Search',
+                  icon: const Icon(Icons.search),
+                  onPressed: () {},
+                ),
+                IconButton(
+                  tooltip: 'Favorite',
+                  icon: const Icon(Icons.favorite),
+                  onPressed: () {},
+                ),
+              ],
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            label: 'Profile',
-          )
-        ],
-      ),
-    );
+        ),
+        floatingActionButton: FloatingActionButton(
+            onPressed: () => Navigator.pushNamed(context, "/setting"),
+            backgroundColor: Theme.of(context).backgroundColor,
+            child: Icon(Icons.settings, color: Theme.of(context).accentColor)),
+        floatingActionButtonLocation:
+            FloatingActionButtonLocation.centerDocked);
   }
 
   Widget _buildHomeView(BuildContext context, List<Shift> shifts) {
@@ -56,8 +80,36 @@ class _HomeView extends State<HomeView> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-                color: Theme.of(context).backgroundColor,
-                child: Center(child: Text("TODO some here"))),
+              width: 150,
+              height: 240,
+              color: Theme.of(context).backgroundColor,
+              child: Center(
+                child: PieChart(
+                  PieChartData(
+                      pieTouchData:
+                          PieTouchData(touchCallback: (pieTouchResponse) {
+                        setState(() {
+                          final desiredTouch = pieTouchResponse.touchInput
+                                  is! PointerExitEvent &&
+                              pieTouchResponse.touchInput is! PointerUpEvent;
+                          if (desiredTouch &&
+                              pieTouchResponse.touchedSection != null) {
+                            touchedIndex = pieTouchResponse
+                                .touchedSection.touchedSectionIndex;
+                          } else {
+                            touchedIndex = -1;
+                          }
+                        });
+                      }),
+                      borderData: FlBorderData(
+                        show: false,
+                      ),
+                      sectionsSpace: 0,
+                      centerSpaceRadius: 0,
+                      sections: showingSections()),
+                ),
+              ),
+            )
           ]),
       Expanded(
         child: ListView.builder(
@@ -66,8 +118,7 @@ class _HomeView extends State<HomeView> {
             physics: AlwaysScrollableScrollPhysics(),
             scrollDirection: Axis.vertical,
             itemBuilder: (BuildContext contex, int index) {
-              return _buildShiftCardView(
-                  context, fromShiftToImage(shifts[index]));
+              return _buildShiftCardView(context, shifts[index]);
             }),
       ),
     ]);
@@ -88,7 +139,22 @@ class _HomeView extends State<HomeView> {
     }
   }
 
-  Widget _buildShiftCardView(BuildContext context, String nameImage) {
+  String fromShiftTimeToImage(ShiftTime shift) {
+    switch (shift) {
+      case ShiftTime.AFTERNOON:
+        return "coffee.png";
+      case ShiftTime.MORNING:
+        return "morning.png";
+      case ShiftTime.FREE:
+        return "for-you.png";
+      case ShiftTime.NIGHT:
+        return "night.png";
+      default:
+        throw Exception("No image found with name $shift");
+    }
+  }
+
+  Widget _buildShiftCardView(BuildContext context, Shift shift) {
     return Card(
         elevation: 3,
         child: Center(
@@ -105,7 +171,8 @@ class _HomeView extends State<HomeView> {
                   children: [
                     Container(
                         child: Image(
-                            image: AssetImage("assets/images/$nameImage"),
+                            image: AssetImage(
+                                "assets/images/${fromShiftToImage(shift)}"),
                             height: 80.0)),
                   ],
                 ),
@@ -117,7 +184,10 @@ class _HomeView extends State<HomeView> {
                       margin: EdgeInsets.all(18),
                       padding: EdgeInsets.all(15),
                       alignment: Alignment.topCenter,
-                      child: Text("Right Now"),
+                      child: Text(
+                          "${shift.date.day}/${shift.date.month}/${shift.date.year}",
+                          style:
+                              TextStyle(fontFamily: 'DsDigit', fontSize: 29)),
                     )
                   ],
                 ),
@@ -126,7 +196,6 @@ class _HomeView extends State<HomeView> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.all(18),
                       padding: EdgeInsets.all(15),
                       color: Colors.black38,
                       child: Text("right"),
@@ -137,5 +206,125 @@ class _HomeView extends State<HomeView> {
             ),
           ),
         ));
+  }
+
+  List<PieChartSectionData> showingSections() {
+    List<PieChartSectionData> pieChartData = List.empty(growable: true);
+    // We need to make the sum to runtime to paint the chart
+    var shiftCalculation = MapReduceShift.reduce(_shifts);
+    var indexElem = 0;
+    shiftCalculation.forEach((shift, count) {
+      final isTouched = indexElem++ == touchedIndex;
+      final double radius = isTouched ? 110 : 100;
+      final double widgetSize = isTouched ? 70 : 55;
+
+      switch (shift) {
+        case ShiftTime.AFTERNOON:
+          pieChartData.add(PieChartSectionData(
+            color: const Color(0xff89ddff),
+            value: (count * 100) / _shifts.length,
+            title: '${(count * 100) ~/ _shifts.length}%',
+            radius: radius,
+            titleStyle: Theme.of(context).textTheme.subtitle1,
+            badgeWidget: _Badge(
+              fromShiftTimeToImage(shift),
+              size: widgetSize,
+              borderColor: const Color(0xff0293ee),
+            ),
+            badgePositionPercentageOffset: .98,
+          ));
+          break;
+        case ShiftTime.FREE:
+          pieChartData.add(PieChartSectionData(
+            color: const Color(0xfff07178),
+            value: (count * 100) / _shifts.length,
+            title: '${(count * 100) ~/ _shifts.length}%',
+            radius: radius,
+            titleStyle: Theme.of(context).textTheme.subtitle1,
+            badgeWidget: _Badge(
+              fromShiftTimeToImage(shift),
+              size: widgetSize,
+              borderColor: const Color.fromARGB(190, 255, 0, 57),
+            ),
+            badgePositionPercentageOffset: .98,
+          ));
+          break;
+        case ShiftTime.NIGHT:
+          pieChartData.add(PieChartSectionData(
+            color: const Color(0xffc792ea),
+            value: (count * 100) / _shifts.length,
+            title: '${(count * 100) ~/ _shifts.length}%',
+            radius: radius,
+            titleStyle: Theme.of(context).textTheme.subtitle1,
+            badgeWidget: _Badge(
+              fromShiftTimeToImage(shift),
+              size: widgetSize,
+              borderColor: const Color(0xff845bef),
+            ),
+            badgePositionPercentageOffset: .98,
+          ));
+          break;
+        case ShiftTime.MORNING:
+          pieChartData.add(PieChartSectionData(
+            color: const Color(0xffffcb6b),
+            value: (count * 100) / _shifts.length,
+            title: '${(count * 100) ~/ _shifts.length}%',
+            radius: radius,
+            titleStyle: Theme.of(context).textTheme.subtitle1,
+            badgeWidget: _Badge(
+              fromShiftTimeToImage(shift),
+              size: widgetSize,
+              borderColor: const Color.fromARGB(190, 249, 168, 37),
+            ),
+            badgePositionPercentageOffset: .98,
+          ));
+          break;
+        default:
+          return null;
+      }
+    });
+    return pieChartData;
+  }
+}
+
+class _Badge extends StatelessWidget {
+  final String svgAsset;
+  final double size;
+  final Color borderColor;
+
+  const _Badge(
+    this.svgAsset, {
+    Key key,
+    @required this.size,
+    @required this.borderColor,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: PieChart.defaultDuration,
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: Theme.of(context).backgroundColor,
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: borderColor,
+          width: 2,
+        ),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Colors.black.withOpacity(.5),
+            offset: const Offset(3, 3),
+            blurRadius: 3,
+          ),
+        ],
+      ),
+      //padding: EdgeInsets.all(size * .15),
+      child: Center(
+        child:
+            Image(image: AssetImage("assets/images/$svgAsset"), height: 35.0),
+      ),
+    );
   }
 }

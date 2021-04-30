@@ -1,7 +1,5 @@
 import 'package:intl/intl.dart';
 
-/// @author https://github.com/vincenzopalazzo
-
 enum ShiftTime {
   MORNING,
   AFTERNOON,
@@ -9,6 +7,7 @@ enum ShiftTime {
   FREE,
 }
 
+/// @author https://github.com/vincenzopalazzo
 class Shift {
   DateTime _date;
   ShiftTime _time;
