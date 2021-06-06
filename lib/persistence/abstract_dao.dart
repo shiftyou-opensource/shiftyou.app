@@ -7,5 +7,5 @@ abstract class AbstractDAO<T> {
 
   Future<void> insertUser(UserModel user);
 
-  Future<UserModel> getUser();
+  Future<UserModel?> getUser();
 }

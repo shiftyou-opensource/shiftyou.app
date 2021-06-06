@@ -6,7 +6,7 @@ class MapReduceShift {
     var reduceMap = Map<ShiftTime, double>();
     shifts.forEach((shift) => {
           if (reduceMap.containsKey(shift.time))
-            {reduceMap[shift.time]++}
+            {reduceMap[shift.time] = reduceMap[shift.time]! + 1}
           else
             {reduceMap[shift.time] = 1}
         });

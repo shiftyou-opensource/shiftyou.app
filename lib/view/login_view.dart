@@ -9,8 +9,8 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginView extends State<LoginView> {
-  GoogleManagerUserLogin _googleLogin;
-  DAODatabase _dao;
+  late GoogleManagerUserLogin _googleLogin;
+  late DAODatabase _dao;
 
   _LoginView() {
     this._googleLogin = GetIt.instance.get<GoogleManagerUserLogin>();

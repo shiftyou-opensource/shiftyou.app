@@ -6,9 +6,9 @@ import 'package:nurse_time/model/user_model.dart';
 import 'sign_in_interface.dart';
 
 class GoogleManagerUserLogin extends AbstractManagerUserLogin {
-  FirebaseAuth _auth;
-  GoogleSignIn _googleSignIn;
-  User _currentUser;
+  late FirebaseAuth _auth;
+  late GoogleSignIn _googleSignIn;
+  late User _currentUser;
 
   GoogleManagerUserLogin() {
     this._auth = FirebaseAuth.instance;
@@ -24,14 +24,14 @@ class GoogleManagerUserLogin extends AbstractManagerUserLogin {
   Future<UserModel> signIn() async {
     // Trigger the authentication flow
     var logger = GetIt.instance.get<Logger>();
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
     // Obtain the auth details from the request
     final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
+        await googleUser!.authentication;
 
     // Create a new credential
-    final GoogleAuthCredential credential = GoogleAuthProvider.credential(
+    final OAuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
@@ -39,13 +39,13 @@ class GoogleManagerUserLogin extends AbstractManagerUserLogin {
     // Once signed in, return the UserCredential
     final UserCredential authResult =
         await _auth.signInWithCredential(credential);
-    this._currentUser = authResult.user;
+    this._currentUser = authResult.user!;
 
     logger.d("User is anonymus ${this._currentUser.isAnonymous}");
     logger.d("User with google token ${this._currentUser.getIdToken()}");
-    final User currentUser = _auth.currentUser;
+    final User? currentUser = _auth.currentUser;
     return UserModel(
-        id: 1, name: currentUser.displayName, logged: true, initialized: true);
+        id: 1, name: currentUser!.displayName!, logged: true, initialized: true);
   }
 
   @override

@@ -7,8 +7,8 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DAODatabase extends AbstractDAO<Database> {
-  Database _database;
-  DAOUser _daoUser;
+  Database? _database;
+  late DAOUser _daoUser;
 
   DAODatabase() {
     init();
@@ -31,11 +31,11 @@ class DAODatabase extends AbstractDAO<Database> {
 
   @override
   Database get getInstance {
-    return this._database;
+    return this._database!;
   }
 
   @override
-  Future<UserModel> getUser() async {
+  Future<UserModel?> getUser() async {
     return await this._daoUser.get(this);
   }
 

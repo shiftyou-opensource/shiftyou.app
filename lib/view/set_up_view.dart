@@ -12,9 +12,9 @@ class SetUpView extends StatefulWidget {
 }
 
 class _SetUpView extends State<SetUpView> {
-  ShiftScheduler _shiftScheduler;
-  UserModel _userModel;
-  ShiftTime _startWith;
+  late ShiftScheduler _shiftScheduler;
+  late UserModel _userModel;
+  ShiftTime? _startWith;
 
   _SetUpView() {
     this._startWith = ShiftTime.MORNING;
@@ -80,24 +80,23 @@ class _SetUpView extends State<SetUpView> {
           children: [
             DateRangeField(
                 confirmText: "Select",
-                context: context,
                 decoration: InputDecoration(
                   labelText: 'Period',
                   prefixIcon: Icon(Icons.date_range,
-                      color: Theme.of(context).textTheme.bodyText1.color),
+                      color: Theme.of(context).textTheme.bodyText1!.color),
                   hintText: 'Please select a period of your shift',
                   border: OutlineInputBorder(),
                 ),
                 initialValue:
                     DateTimeRange(start: DateTime.now(), end: DateTime.now()),
                 validator: (value) {
-                  if (value.start.isBefore(DateTime.now())) {
+                  if (value!.start.isBefore(DateTime.now())) {
                     return 'Please enter a valid date';
                   }
                   return null;
                 },
                 onSaved: (value) {
-                  this._modalBottomSheetMenu(context, value);
+                  this._modalBottomSheetMenu(context, value!);
                 }),
           ],
         ),
@@ -106,7 +105,7 @@ class _SetUpView extends State<SetUpView> {
   }
 
   void _modalBottomSheetMenu(BuildContext context, DateTimeRange range) {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
         context: context,
         builder: (builder) {
           return Column(
@@ -116,7 +115,7 @@ class _SetUpView extends State<SetUpView> {
                 leading: Radio<ShiftTime>(
                   value: ShiftTime.MORNING,
                   groupValue: this._startWith,
-                  onChanged: (ShiftTime value) {
+                  onChanged: (ShiftTime? value) {
                     setState(() {
                       this._startWith = value;
                     });
@@ -128,7 +127,7 @@ class _SetUpView extends State<SetUpView> {
                 leading: Radio<ShiftTime>(
                   value: ShiftTime.AFTERNOON,
                   groupValue: this._startWith,
-                  onChanged: (ShiftTime value) {
+                  onChanged: (ShiftTime? value) {
                     setState(() {
                       this._startWith = value;
                     });

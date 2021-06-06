@@ -11,7 +11,7 @@ class DAOUser extends AbstractDAOModel<UserModel> {
   }
 
   @override
-  Future<UserModel> get(AbstractDAO<dynamic> dao) async {
+  Future<UserModel?> get(AbstractDAO<dynamic> dao) async {
     final List<Map<String, dynamic>> maps =
         await dao.getInstance.query('users');
     if (maps.isEmpty) {
@@ -30,7 +30,7 @@ class DAOUser extends AbstractDAOModel<UserModel> {
     final List<Map<String, dynamic>> maps =
         await dao.getInstance.query('users');
     if (maps.isEmpty) {
-      return null;
+      return List.empty();
     }
     return List.generate(maps.length, (i) {
       return UserModel(

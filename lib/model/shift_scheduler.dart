@@ -2,9 +2,9 @@ import 'package:nurse_time/model/shift.dart';
 
 /// @author https://github.com/vincenzopalazzo
 class ShiftScheduler {
-  DateTime _start;
-  DateTime _end;
-  List<Shift> _exceptions;
+  late DateTime _start;
+  late DateTime _end;
+  late List<Shift> _exceptions;
 
   set start(DateTime dateTime) {
     this._start = dateTime;

@@ -15,10 +15,10 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeView extends State<HomeView> {
-  UserModel userModel;
-  List<Shift> _shifts;
-  Logger _logger;
-  int touchedIndex;
+  late UserModel userModel;
+  late List<Shift> _shifts;
+  late Logger _logger;
+  late int touchedIndex;
 
   _HomeView() {
     ShiftScheduler scheduler = GetIt.instance.get<ShiftScheduler>();
@@ -26,6 +26,7 @@ class _HomeView extends State<HomeView> {
     this._logger = GetIt.instance.get<Logger>();
     this._shifts = scheduler.generateScheduler();
     _logger.d(_shifts.toString());
+    touchedIndex = 0;
   }
 
   @override
@@ -45,7 +46,7 @@ class _HomeView extends State<HomeView> {
             color: Theme.of(context).colorScheme.background,
             child: IconTheme(
               data: IconThemeData(
-                  color: Theme.of(context).textTheme.bodyText1.color),
+                  color: Theme.of(context).textTheme.bodyText1!.color),
               child: Row(
                 children: <Widget>[
                   IconButton(
@@ -100,7 +101,7 @@ class _HomeView extends State<HomeView> {
                           if (desiredTouch &&
                               pieTouchResponse.touchedSection != null) {
                             touchedIndex = pieTouchResponse
-                                .touchedSection.touchedSectionIndex;
+                                .touchedSection!.touchedSectionIndex;
                           } else {
                             touchedIndex = -1;
                           }
@@ -208,14 +209,13 @@ class _HomeView extends State<HomeView> {
                         onPressed: () {},
                         child: Icon(
                           Icons.edit,
-                          color: Theme.of(context).textTheme.bodyText1.color,
+                          color: Theme.of(context).textTheme.bodyText1!.color,
                           size: 25.0,
                         ),
                         style: ElevatedButton.styleFrom(
                             side: BorderSide(
                               width: 0,
-                              color:
-                                  Theme.of(context).textTheme.bodyText1.color,
+                              color: Theme.of(context).textTheme.bodyText1!.color!,
                             ),
                             padding: EdgeInsets.all(15),
                             shape: CircleBorder(),
@@ -316,10 +316,9 @@ class _Badge extends StatelessWidget {
 
   const _Badge(
     this.svgAsset, {
-    Key key,
-    @required this.size,
-    @required this.borderColor,
-  }) : super(key: key);
+    required this.size,
+    required this.borderColor,
+  }) : super();
 
   @override
   Widget build(BuildContext context) {
