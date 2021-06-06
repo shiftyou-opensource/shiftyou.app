@@ -38,37 +38,42 @@ class _HomeView extends State<HomeView> {
           leading: Container(),
         ),
         body: SafeArea(child: _buildHomeView(context, _shifts)),
-        bottomNavigationBar: BottomAppBar(
-          color: Theme.of(context).colorScheme.background,
-          child: IconTheme(
-            data: IconThemeData(
-                color: Theme.of(context).textTheme.bodyText1.color),
-            child: Row(
-              children: <Widget>[
-                IconButton(
-                  tooltip: 'Open navigation menu',
-                  icon: const Icon(Icons.menu),
-                  onPressed: () {},
-                ),
-                const Spacer(),
-                IconButton(
-                  tooltip: 'Search',
-                  icon: const Icon(Icons.search),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  tooltip: 'Favorite',
-                  icon: const Icon(Icons.favorite),
-                  onPressed: () {},
-                ),
-              ],
+        bottomNavigationBar: SizedBox(
+          height: 58,
+          child: BottomAppBar(
+            notchMargin: 12,
+            color: Theme.of(context).colorScheme.background,
+            child: IconTheme(
+              data: IconThemeData(
+                  color: Theme.of(context).textTheme.bodyText1.color),
+              child: Row(
+                children: <Widget>[
+                  IconButton(
+                    tooltip: 'Open navigation menu',
+                    icon: const Icon(Icons.menu, size: 28),
+                    onPressed: () {},
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    tooltip: 'Search',
+                    icon: const Icon(Icons.search, size: 28),
+                    onPressed: () {},
+                  ),
+                  IconButton(
+                    tooltip: 'Favorite',
+                    icon: const Icon(Icons.favorite, size: 28),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
             ),
           ),
         ),
         floatingActionButton: FloatingActionButton(
             onPressed: () => Navigator.pushNamed(context, "/setting"),
             backgroundColor: Theme.of(context).backgroundColor,
-            child: Icon(Icons.settings, color: Theme.of(context).accentColor)),
+            child: Icon(Icons.settings,
+                size: 32, color: Theme.of(context).accentColor)),
         floatingActionButtonLocation:
             FloatingActionButtonLocation.centerDocked);
   }
@@ -81,7 +86,7 @@ class _HomeView extends State<HomeView> {
           children: [
             Container(
               width: 150,
-              height: 240,
+              height: 280,
               color: Theme.of(context).backgroundColor,
               child: Center(
                 child: PieChart(

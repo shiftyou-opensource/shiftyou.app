@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Nurse Time',
+      title: 'Your Shift',
       debugShowCheckedModeBanner: false,
       darkTheme: ThemeData(
         primaryColor: Color.fromARGB(255, 68, 71, 90),
@@ -80,12 +80,12 @@ class MyApp extends StatelessWidget {
       home: FutureBuilder<bool>(
         future: checkUser(),
         builder: (context, result) {
-          /*if (result.data == true) {
+          if (result.data == true) {
             return HomeView();
           } else {
             return LoginView();
-          }*/
-          return LoginView();
+          }
+          //return LoginView();
         },
       ),
     );

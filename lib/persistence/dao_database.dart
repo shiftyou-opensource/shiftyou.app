@@ -25,7 +25,7 @@ class DAODatabase extends AbstractDAO<Database> {
         // constructed for each platform.
         join(await getDatabasesPath(), 'database.db'), onCreate: (db, version) {
       return db
-          .execute("CREATE TABLE users(id  INTEGER PRIMARY KEY, name TEXT)");
+          .execute("CREATE TABLE users(id INTEGER PRIMARY KEY, name TEXT)");
     }, version: 1);
   }
 
