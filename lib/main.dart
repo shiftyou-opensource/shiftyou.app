@@ -65,6 +65,7 @@ class MyApp extends StatelessWidget {
         disabledColor: Color.fromARGB(255, 98, 114, 164),
         canvasColor: Color.fromARGB(255, 40, 42, 54),
         colorScheme: ColorScheme.dark(
+          background: Color.fromARGB(255, 40, 42, 54),
           onPrimary: Color.fromARGB(255, 40, 42, 54),
           primary: Color.fromARGB(255, 255, 121, 197),
         ),

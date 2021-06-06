@@ -31,7 +31,7 @@ class ShiftScheduler {
   List<Shift> generateScheduler() {
     List<Shift> generation = List.empty(growable: true);
     var iterate = _start;
-    var next = ShiftTime.AFTERNOON;
+    var next = this._startWith;
     while (_end.difference(iterate).inDays >= 0) {
       generation.add(Shift(iterate, next));
       iterate = iterate.add(Duration(days: 1));

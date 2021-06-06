@@ -121,6 +121,7 @@ class _SetUpView extends State<SetUpView> {
                   builder: (BuildContext context, setState) => Column(
                     children: [
                       RadioListTile<ShiftTime>(
+                        activeColor: Theme.of(context).accentColor,
                         title: const Text("Morning"),
                         value: ShiftTime.MORNING,
                         groupValue: this._startWith,
@@ -129,6 +130,7 @@ class _SetUpView extends State<SetUpView> {
                         },
                       ),
                       RadioListTile<ShiftTime>(
+                        activeColor: Theme.of(context).accentColor,
                         title: const Text("Afternoon"),
                         value: ShiftTime.AFTERNOON,
                         groupValue: this._startWith,

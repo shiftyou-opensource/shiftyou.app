@@ -41,7 +41,7 @@ class _HomeView extends State<HomeView> {
         bottomNavigationBar: SizedBox(
           height: 58,
           child: BottomAppBar(
-            notchMargin: 12,
+            elevation: 6,
             color: Theme.of(context).colorScheme.background,
             child: IconTheme(
               data: IconThemeData(
