@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:date_range_form_field/date_range_form_field.dart';
+import 'package:logger/logger.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/model/user_model.dart';
@@ -14,12 +15,14 @@ class SetUpView extends StatefulWidget {
 class _SetUpView extends State<SetUpView> {
   late ShiftScheduler _shiftScheduler;
   late UserModel _userModel;
+  late Logger _logger;
   ShiftTime? _startWith;
 
   _SetUpView() {
     this._startWith = ShiftTime.MORNING;
     this._shiftScheduler = GetIt.instance.get<ShiftScheduler>();
     this._userModel = GetIt.instance.get<UserModel>();
+    this._logger = GetIt.instance.get<Logger>();
   }
 
   @override
@@ -57,13 +60,6 @@ class _SetUpView extends State<SetUpView> {
                   Text("Hey ${this._userModel.name.split(" ")[0]}",
                       style: TextStyle(fontSize: 25)),
                   _settingProprieties(context),
-                  ElevatedButton(
-                      autofocus: true,
-                      onPressed: () => Navigator.of(context)
-                              .push(MaterialPageRoute(builder: (context) {
-                            return HomeView();
-                          })),
-                      child: Text("Confirm"))
                 ],
               )
             ],
@@ -79,6 +75,7 @@ class _SetUpView extends State<SetUpView> {
         child: Column(
           children: [
             DateRangeField(
+                enabled: true,
                 confirmText: "Select",
                 decoration: InputDecoration(
                   labelText: 'Period',
@@ -95,8 +92,15 @@ class _SetUpView extends State<SetUpView> {
                   }
                   return null;
                 },
-                onSaved: (value) {
+                onChanged: (value) {
+                  this._logger.d("On Change called");
+                  this._logger.d("Value received from Data picker");
                   this._modalBottomSheetMenu(context, value!);
+                },
+                onSaved: (value) async {
+                  //TODO: It is a library bug? it is not called
+                  this._logger.d("onSaved: Value received from Data picker");
+                  await this._modalBottomSheetMenu(context, value!);
                 }),
           ],
         ),
@@ -104,50 +108,53 @@ class _SetUpView extends State<SetUpView> {
     );
   }
 
-  void _modalBottomSheetMenu(BuildContext context, DateTimeRange range) {
-    showModalBottomSheet(
+  Future<void> _modalBottomSheetMenu(
+      BuildContext context, DateTimeRange range) {
+    return showModalBottomSheet(
+        isDismissible: true,
         context: context,
         builder: (builder) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: const Text("Morning"),
-                leading: Radio<ShiftTime>(
-                  value: ShiftTime.MORNING,
-                  groupValue: this._startWith,
-                  onChanged: (ShiftTime? value) {
-                    setState(() {
-                      this._startWith = value;
-                    });
-                  },
-                ),
-              ),
-              ListTile(
-                title: const Text("Afternoon"),
-                leading: Radio<ShiftTime>(
-                  value: ShiftTime.AFTERNOON,
-                  groupValue: this._startWith,
-                  onChanged: (ShiftTime? value) {
-                    setState(() {
-                      this._startWith = value;
-                    });
-                  },
-                ),
-              ),
-              OutlinedButton(
-                onPressed: () {
-                  setState(() {
-                    _shiftScheduler.start = range.start;
-                    _shiftScheduler.end = range.end;
-                  });
-                  Navigator.pop(context);
-                },
-                child: Text("Done"),
-              )
-            ],
-          );
+          return BottomSheet(
+              onClosing: () {},
+              builder: (BuildContext context) {
+                return StatefulBuilder(
+                  builder: (BuildContext context, setState) => Column(
+                    children: [
+                      RadioListTile<ShiftTime>(
+                        title: const Text("Morning"),
+                        value: ShiftTime.MORNING,
+                        groupValue: this._startWith,
+                        onChanged: (ShiftTime? value) {
+                          setState(() => this._startWith = value);
+                        },
+                      ),
+                      RadioListTile<ShiftTime>(
+                        title: const Text("Afternoon"),
+                        value: ShiftTime.AFTERNOON,
+                        groupValue: this._startWith,
+                        onChanged: (ShiftTime? value) {
+                          setState(() => this._startWith = value);
+                        },
+                      ),
+                      OutlinedButton(
+                        onPressed: () {
+                          setState(() {
+                            _shiftScheduler.start = range.start;
+                            _shiftScheduler.end = range.end;
+                            _shiftScheduler.startWith = this._startWith!;
+                          });
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(builder: (context) {
+                            return HomeView();
+                          }));
+                          //Navigator.pop(context);
+                        },
+                        child: Text("Done"),
+                      )
+                    ],
+                  ),
+                );
+              });
         });
   }
 }

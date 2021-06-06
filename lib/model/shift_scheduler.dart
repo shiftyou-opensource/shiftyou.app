@@ -4,6 +4,7 @@ import 'package:nurse_time/model/shift.dart';
 class ShiftScheduler {
   late DateTime _start;
   late DateTime _end;
+  late ShiftTime _startWith;
   late List<Shift> _exceptions;
 
   set start(DateTime dateTime) {
@@ -14,8 +15,13 @@ class ShiftScheduler {
     this._end = dateTime;
   }
 
+  set startWith(ShiftTime startWith) {
+    this._startWith = startWith;
+  }
+
   ShiftScheduler(this._start, this._end) {
     this._exceptions = List.empty(growable: true);
+    this._startWith = ShiftTime.MORNING;
   }
 
   void addException(Shift shift) {
