@@ -105,10 +105,12 @@ class _SetUpView extends State<SetUpView> {
   }
 
   void _modalBottomSheetMenu(BuildContext context, DateTimeRange range) {
-    showModalBottomSheet<void>(
+    showModalBottomSheet(
         context: context,
         builder: (builder) {
           return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
                 title: const Text("Morning"),
@@ -136,8 +138,10 @@ class _SetUpView extends State<SetUpView> {
               ),
               OutlinedButton(
                 onPressed: () {
-                  setState(() => _shiftScheduler.start = range.start);
-                  setState(() => _shiftScheduler.end = range.end);
+                  setState(() {
+                    _shiftScheduler.start = range.start;
+                    _shiftScheduler.end = range.end;
+                  });
                   Navigator.pop(context);
                 },
                 child: Text("Done"),

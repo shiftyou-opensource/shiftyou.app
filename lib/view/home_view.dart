@@ -18,7 +18,7 @@ class _HomeView extends State<HomeView> {
   late UserModel userModel;
   late List<Shift> _shifts;
   late Logger _logger;
-  late int touchedIndex;
+  int? touchedIndex;
 
   _HomeView() {
     ShiftScheduler scheduler = GetIt.instance.get<ShiftScheduler>();
@@ -26,7 +26,6 @@ class _HomeView extends State<HomeView> {
     this._logger = GetIt.instance.get<Logger>();
     this._shifts = scheduler.generateScheduler();
     _logger.d(_shifts.toString());
-    touchedIndex = 0;
   }
 
   @override
@@ -215,7 +214,8 @@ class _HomeView extends State<HomeView> {
                         style: ElevatedButton.styleFrom(
                             side: BorderSide(
                               width: 0,
-                              color: Theme.of(context).textTheme.bodyText1!.color!,
+                              color:
+                                  Theme.of(context).textTheme.bodyText1!.color!,
                             ),
                             padding: EdgeInsets.all(15),
                             shape: CircleBorder(),

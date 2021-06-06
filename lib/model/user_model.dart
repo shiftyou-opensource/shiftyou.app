@@ -9,7 +9,11 @@ class UserModel {
   // login one time with google or other meccanism
   bool initialized;
 
-  UserModel({required this.id, required this.name, required this.logged, required this.initialized});
+  UserModel(
+      {required this.id,
+      required this.name,
+      required this.logged,
+      required this.initialized});
 
   Map<String, dynamic> toMap() {
     return {
