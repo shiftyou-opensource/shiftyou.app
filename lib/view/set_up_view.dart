@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:date_range_form_field/date_range_form_field.dart';
+import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
+import 'package:nurse_time/model/user_model.dart';
 import 'package:nurse_time/view/home_view.dart';
 import 'package:get_it/get_it.dart';
 
@@ -10,9 +12,14 @@ class SetUpView extends StatefulWidget {
 }
 
 class _SetUpView extends State<SetUpView> {
-  ShiftScheduler shiftScheduler;
+  ShiftScheduler _shiftScheduler;
+  UserModel _userModel;
+  ShiftTime _startWith;
+
   _SetUpView() {
-    this.shiftScheduler = GetIt.instance.get<ShiftScheduler>();
+    this._startWith = ShiftTime.MORNING;
+    this._shiftScheduler = GetIt.instance.get<ShiftScheduler>();
+    this._userModel = GetIt.instance.get<UserModel>();
   }
 
   @override
@@ -30,22 +37,35 @@ class _SetUpView extends State<SetUpView> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Container(
-                color: Theme.of(context).backgroundColor,
-                child: Center(
-                  heightFactor: 1.5,
-                  child: CircleAvatar(
-                    backgroundColor: Theme.of(context).buttonColor,
-                    radius: 60.0,
-                    child: CircleAvatar(
-                      radius: 50.0,
-                      child: Image.asset("assets/ic_launcher.png"),
-                      backgroundColor: Colors.transparent,
+              Column(
+                children: [
+                  Container(
+                    color: Theme.of(context).backgroundColor,
+                    child: Center(
+                      heightFactor: 1.5,
+                      child: CircleAvatar(
+                        backgroundColor: Theme.of(context).buttonColor,
+                        radius: 60.0,
+                        child: CircleAvatar(
+                          radius: 50.0,
+                          child: Image.asset("assets/ic_launcher.png"),
+                          backgroundColor: Colors.transparent,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              _settingProprieties(context)
+                  Text("Hey ${this._userModel.name.split(" ")[0]}",
+                      style: TextStyle(fontSize: 25)),
+                  _settingProprieties(context),
+                  ElevatedButton(
+                      autofocus: true,
+                      onPressed: () => Navigator.of(context)
+                              .push(MaterialPageRoute(builder: (context) {
+                            return HomeView();
+                          })),
+                      child: Text("Confirm"))
+                ],
+              )
             ],
           ),
         ),
@@ -59,11 +79,13 @@ class _SetUpView extends State<SetUpView> {
         child: Column(
           children: [
             DateRangeField(
+                confirmText: "Select",
                 context: context,
                 decoration: InputDecoration(
-                  labelText: 'Date Range',
-                  prefixIcon: Icon(Icons.date_range),
-                  hintText: 'Please select a start and end date',
+                  labelText: 'Period',
+                  prefixIcon: Icon(Icons.date_range,
+                      color: Theme.of(context).textTheme.bodyText1.color),
+                  hintText: 'Please select a period of your shift',
                   border: OutlineInputBorder(),
                 ),
                 initialValue:
@@ -75,21 +97,54 @@ class _SetUpView extends State<SetUpView> {
                   return null;
                 },
                 onSaved: (value) {
-                  setState(() => shiftScheduler.start = value.start);
-                  setState(() {
-                    shiftScheduler.end = value.end;
-                  });
+                  this._modalBottomSheetMenu(context, value);
                 }),
-            ElevatedButton(
-                autofocus: true,
-                onPressed: () => Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (context) {
-                      return HomeView();
-                    })),
-                child: Text("Press"))
           ],
         ),
       ),
     );
+  }
+
+  void _modalBottomSheetMenu(BuildContext context, DateTimeRange range) {
+    showModalBottomSheet(
+        context: context,
+        builder: (builder) {
+          return Column(
+            children: [
+              ListTile(
+                title: const Text("Morning"),
+                leading: Radio<ShiftTime>(
+                  value: ShiftTime.MORNING,
+                  groupValue: this._startWith,
+                  onChanged: (ShiftTime value) {
+                    setState(() {
+                      this._startWith = value;
+                    });
+                  },
+                ),
+              ),
+              ListTile(
+                title: const Text("Afternoon"),
+                leading: Radio<ShiftTime>(
+                  value: ShiftTime.AFTERNOON,
+                  groupValue: this._startWith,
+                  onChanged: (ShiftTime value) {
+                    setState(() {
+                      this._startWith = value;
+                    });
+                  },
+                ),
+              ),
+              OutlinedButton(
+                onPressed: () {
+                  setState(() => _shiftScheduler.start = range.start);
+                  setState(() => _shiftScheduler.end = range.end);
+                  Navigator.pop(context);
+                },
+                child: Text("Done"),
+              )
+            ],
+          );
+        });
   }
 }

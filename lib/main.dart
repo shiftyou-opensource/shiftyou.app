@@ -54,20 +54,38 @@ class MyApp extends StatelessWidget {
       title: 'Your Shift',
       debugShowCheckedModeBanner: false,
       darkTheme: ThemeData(
+        brightness: Brightness.dark,
         primaryColor: Color.fromARGB(255, 68, 71, 90),
         backgroundColor: Color.fromARGB(255, 40, 42, 54),
         cardColor: Color.fromARGB(255, 40, 42, 54),
         accentColor: Color.fromARGB(255, 255, 121, 197),
         buttonColor: Color.fromARGB(255, 57, 60, 75),
+        selectedRowColor: Color.fromARGB(255, 72, 79, 114),
         dialogBackgroundColor: Color.fromARGB(255, 40, 42, 54),
         disabledColor: Color.fromARGB(255, 98, 114, 164),
         canvasColor: Color.fromARGB(255, 40, 42, 54),
+        colorScheme: ColorScheme.dark(
+          onPrimary: Color.fromARGB(255, 40, 42, 54),
+          primary: Color.fromARGB(255, 255, 121, 197),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Color.fromARGB(255, 98, 114, 164))),
+          focusedBorder: OutlineInputBorder(
+              borderSide:
+                  BorderSide(color: Color.fromARGB(255, 255, 121, 197))),
+          labelStyle: TextStyle(color: Color.fromARGB(255, 98, 114, 164)),
+        ),
         textTheme: TextTheme(
           bodyText1: TextStyle(),
           bodyText2: TextStyle(),
         ).apply(
           bodyColor: Color.fromARGB(255, 98, 114, 164),
+          decorationColor: Color.fromARGB(255, 98, 114, 164),
         ),
+        iconTheme: Theme.of(context).iconTheme.copyWith(
+              color: Color.fromARGB(255, 98, 114, 164),
+            ),
         appBarTheme: AppBarTheme(
           color: Color.fromARGB(255, 40, 42, 54),
         ),
