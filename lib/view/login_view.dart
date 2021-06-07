@@ -56,13 +56,12 @@ class _LoginView extends State<LoginView> {
       onPressed: () {
         _googleLogin.signIn().then((userModel) {
           this._userModel.bing(userModel);
-          _dao.insertUser(userModel)
-              .then((_) {
-                Navigator.pushNamed(context, "/setting");
+          _dao.insertUser(userModel).then((_) {
+            Navigator.pushNamed(context, "/setting");
           })
               // ignore: invalid_return_type_for_catch_error
               .catchError((error) => showSnackBar(context, error));
-        // ignore: invalid_return_type_for_catch_error
+          // ignore: invalid_return_type_for_catch_error
         }).catchError((error) => showSnackBar(context, error));
       },
       child: Padding(
