@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:nurse_time/model/user_model.dart';
 import 'package:nurse_time/persistence/dao_database.dart';
 import '../actions/google_sign_in.dart';
+import '../utils/generic_components.dart';
 import 'package:get_it/get_it.dart';
 
 class LoginView extends StatefulWidget {
@@ -11,10 +13,12 @@ class LoginView extends StatefulWidget {
 class _LoginView extends State<LoginView> {
   late GoogleManagerUserLogin _googleLogin;
   late DAODatabase _dao;
+  late UserModel _userModel;
 
   _LoginView() {
     this._googleLogin = GetIt.instance.get<GoogleManagerUserLogin>();
     this._dao = GetIt.instance.get<DAODatabase>();
+    this._userModel = GetIt.instance.get<UserModel>();
   }
 
   @override
@@ -51,9 +55,15 @@ class _LoginView extends State<LoginView> {
       ),
       onPressed: () {
         _googleLogin.signIn().then((userModel) {
-          _dao.insertUser(userModel);
-          Navigator.pushNamed(context, "/setting");
-        });
+          this._userModel.bing(userModel);
+          _dao.insertUser(userModel)
+              .then((_) {
+                Navigator.pushNamed(context, "/setting");
+          })
+              // ignore: invalid_return_type_for_catch_error
+              .catchError((error) => showSnackBar(context, error));
+        // ignore: invalid_return_type_for_catch_error
+        }).catchError((error) => showSnackBar(context, error));
       },
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),

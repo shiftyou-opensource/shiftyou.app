@@ -15,6 +15,13 @@ class UserModel {
       required this.logged,
       required this.initialized});
 
+  void bing(UserModel userModel) {
+    this.id = userModel.id;
+    this.name = userModel.name;
+    this.initialized = userModel.initialized;
+    this.logged = userModel.logged;
+  }
+
   Map<String, dynamic> toMap() {
     return {
       "id": id,

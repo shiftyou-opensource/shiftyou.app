@@ -41,11 +41,12 @@ class GoogleManagerUserLogin extends AbstractManagerUserLogin {
         await _auth.signInWithCredential(credential);
     this._currentUser = authResult.user!;
 
+    var userId = await this._currentUser.getIdToken();
     logger.d("User is anonymus ${this._currentUser.isAnonymous}");
-    logger.d("User with google token ${this._currentUser.getIdToken()}");
+    logger.d("User with google token ${userId}");
     final User? currentUser = _auth.currentUser;
     return UserModel(
-        id: 1,
+        id: userId.hashCode,
         name: currentUser!.displayName!,
         logged: true,
         initialized: true);
