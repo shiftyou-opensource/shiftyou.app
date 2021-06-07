@@ -13,7 +13,7 @@ void main() {
     print(schedulerGenerate);
 
     var expectedScheduler = List.empty(growable: true);
-    var next = ShiftTime.AFTERNOON;
+    var next = ShiftTime.MORNING;
     var iterate = start;
     print(iterate.difference(end).inDays);
     while (end.difference(iterate).inDays >= 0) {
