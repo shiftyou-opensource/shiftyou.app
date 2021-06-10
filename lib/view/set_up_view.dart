@@ -4,6 +4,7 @@ import 'package:logger/logger.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/model/user_model.dart';
+import 'package:nurse_time/persistence/dao_database.dart';
 import 'package:nurse_time/view/home_view.dart';
 import 'package:get_it/get_it.dart';
 
@@ -15,6 +16,7 @@ class SetUpView extends StatefulWidget {
 class _SetUpView extends State<SetUpView> {
   late ShiftScheduler _shiftScheduler;
   late UserModel _userModel;
+  late DAODatabase _dao;
   late Logger _logger;
   ShiftTime? _startWith;
 
@@ -23,6 +25,7 @@ class _SetUpView extends State<SetUpView> {
     this._shiftScheduler = GetIt.instance.get<ShiftScheduler>();
     this._userModel = GetIt.instance.get<UserModel>();
     this._logger = GetIt.instance.get<Logger>();
+    this._dao = GetIt.instance.get<DAODatabase>();
   }
 
   @override
@@ -138,12 +141,32 @@ class _SetUpView extends State<SetUpView> {
                           setState(() => this._startWith = value);
                         },
                       ),
+                      RadioListTile<ShiftTime>(
+                        activeColor: Theme.of(context).accentColor,
+                        title: const Text("Night"),
+                        value: ShiftTime.NIGHT,
+                        groupValue: this._startWith,
+                        onChanged: (ShiftTime? value) {
+                          setState(() => this._startWith = value);
+                        },
+                      ),
+                      RadioListTile<ShiftTime>(
+                        activeColor: Theme.of(context).accentColor,
+                        title: const Text("Free"),
+                        value: ShiftTime.FREE,
+                        groupValue: this._startWith,
+                        onChanged: (ShiftTime? value) {
+                          setState(() => this._startWith = value);
+                        },
+                      ),
                       OutlinedButton(
                         onPressed: () {
                           setState(() {
                             _shiftScheduler.start = range.start;
                             _shiftScheduler.end = range.end;
                             _shiftScheduler.startWith = this._startWith!;
+                            _shiftScheduler.userId = this._userModel.id;
+                            _dao.insertShift(_shiftScheduler);
                           });
                           Navigator.of(context)
                               .push(MaterialPageRoute(builder: (context) {

@@ -5,15 +5,16 @@ import 'abstract_dao.dart';
 
 class DAOUser extends AbstractDAOModel<UserModel> {
   @override
-  Future<void> insert(AbstractDAO<dynamic> dao, UserModel toInsert) async {
-    dao.getInstance.insert("users", toInsert.toMap(),
+  void insert(AbstractDAO<dynamic> dao, UserModel toInsert) {
+    dao.getInstance.insert("Users", toInsert.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   @override
-  Future<UserModel?> get(AbstractDAO<dynamic> dao) async {
+  Future<UserModel?> get(
+      AbstractDAO<dynamic> dao, Map<String, dynamic> options) async {
     final List<Map<String, dynamic>> maps =
-        await dao.getInstance.query('users');
+        await dao.getInstance.query('Users');
     if (maps.isEmpty) {
       return null;
     }
@@ -28,7 +29,7 @@ class DAOUser extends AbstractDAOModel<UserModel> {
   @override
   Future<List<UserModel>> getAll(AbstractDAO dao) async {
     final List<Map<String, dynamic>> maps =
-        await dao.getInstance.query('users');
+        await dao.getInstance.query('Users');
     if (maps.isEmpty) {
       return List.empty();
     }

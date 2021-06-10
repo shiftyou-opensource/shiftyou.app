@@ -5,5 +5,5 @@ abstract class AbstractDAOModel<T> {
 
   Future<List<T>> getAll(AbstractDAO<dynamic> dao);
 
-  Future<T?> get(AbstractDAO<dynamic> dao);
+  Future<T?> get(AbstractDAO<dynamic> dao, Map<String, dynamic> options);
 }

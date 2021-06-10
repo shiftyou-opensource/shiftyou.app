@@ -8,7 +8,7 @@ void main() {
     var start = DateTime.now();
     var end = start.add(Duration(days: 2));
 
-    var scheduler = ShiftScheduler(start, end);
+    var scheduler = ShiftScheduler(-1, start, end);
     var schedulerGenerate = scheduler.generateScheduler();
     print(schedulerGenerate);
 

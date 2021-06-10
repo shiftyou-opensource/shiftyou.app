@@ -6,6 +6,7 @@ import 'package:logger/logger.dart';
 import 'package:nurse_time/actions/google_sign_in.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/persistence/dao_database.dart';
+import 'package:nurse_time/utils/generic_components.dart';
 import 'package:nurse_time/view/home_view.dart';
 import 'package:nurse_time/view/set_up_view.dart';
 import './view/login_view.dart';
@@ -23,29 +24,45 @@ void setUpInjector() {
       () => GoogleManagerUserLogin());
   GetIt.instance.registerSingleton<DAODatabase>(DAODatabase());
   GetIt.instance.registerLazySingleton<Logger>(() => Logger());
+  //TODO Review the database rules here
   GetIt.instance.registerLazySingleton<UserModel>(
       () => UserModel(id: -1, name: "", logged: false, initialized: false));
   GetIt.instance.registerLazySingleton<ShiftScheduler>(
-      () => ShiftScheduler(DateTime.now(), DateTime.now()));
+      () => ShiftScheduler(-1, DateTime.now(), DateTime.now()));
 }
 
 class MyApp extends StatelessWidget {
-  Future<bool> checkUser() async {
+  Future<bool> checkUser(context) async {
     var dao = GetIt.instance.get<DAODatabase>();
     var logger = GetIt.instance.get<Logger>();
-    await dao.init();
-    var user = await dao.getUser();
-    if (user == null) {
-      logger.d("User not in database");
+    try {
+      await dao.init();
+      var user = await dao.getUser();
+      if (user == null) {
+        logger.d("User not in database");
+        return false;
+      }
+      logger.d("User in database");
+      var userModel = GetIt.instance.get<UserModel>();
+      userModel.initialized = user.initialized;
+      userModel.logged = true;
+      userModel.name = user.name;
+      userModel.id = user.id;
+
+      var shift = await dao.getShift(user.id);
+      logger.d("Shift from database is ", shift);
+      if (shift != null) {
+        var shiftInstance = GetIt.instance.get<ShiftScheduler>();
+        logger.d("The user has a Shift stored in the database");
+        shiftInstance.fromShift(shift);
+      }
+
+      return true;
+    } catch (e, stacktrace) {
+      logger.e(stacktrace);
+      showSnackBar(context, "Error with the Database");
       return false;
     }
-    logger.d("User in database");
-    var userModel = GetIt.instance.get<UserModel>();
-    userModel.initialized = user.initialized;
-    userModel.logged = true;
-    userModel.name = user.name;
-    userModel.id = user.id;
-    return true;
   }
 
   @override
@@ -97,7 +114,7 @@ class MyApp extends StatelessWidget {
         "/setting": (context) => SetUpView()
       },
       home: FutureBuilder<bool>(
-        future: checkUser(),
+        future: checkUser(context),
         builder: (context, result) {
           if (result.data == true) {
             return HomeView();
