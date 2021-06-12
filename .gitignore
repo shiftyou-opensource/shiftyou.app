@@ -42,3 +42,5 @@ app.*.symbols
 app.*.map.json
 
 google-services.json
+
+ios/GoogleService-Info.plist
