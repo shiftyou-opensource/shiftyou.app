@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nurse_time/model/user_model.dart';
 import 'package:nurse_time/persistence/dao_database.dart';
-import '../actions/google_sign_in.dart';
-import '../utils/generic_components.dart';
+import '../../actions/google_sign_in.dart';
+import '../../utils/generic_components.dart';
 import 'package:get_it/get_it.dart';
 
 class LoginView extends StatefulWidget {

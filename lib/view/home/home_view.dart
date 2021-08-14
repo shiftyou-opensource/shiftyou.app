@@ -9,7 +9,7 @@ import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:nurse_time/utils/map_reduce_shifts.dart';
-import 'package:nurse_time/view/set_up_view.dart';
+import 'package:nurse_time/view/settings/set_up_view.dart';
 
 class HomeView extends StatefulWidget {
   @override
@@ -26,7 +26,7 @@ class _HomeView extends State<HomeView> {
   _HomeView() {
     ShiftScheduler scheduler = GetIt.instance.get<ShiftScheduler>();
     this._logger = GetIt.instance.get<Logger>();
-    this._shifts = scheduler.generateScheduler();
+    this._shifts = scheduler.generateScheduler(complete: false);
     this._pageController = PageController(initialPage: _selectedView);
     _logger.d(_shifts.toString());
   }
@@ -200,7 +200,7 @@ class _HomeView extends State<HomeView> {
                         child: Image(
                             image: AssetImage(
                                 "assets/images/${fromShiftToImage(shift)}"),
-                            height: 80.0)),
+                            height: 60.0)),
                   ],
                 ),
                 Column(

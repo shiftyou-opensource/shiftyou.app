@@ -11,6 +11,7 @@ enum ShiftTime {
 class Shift {
   DateTime _date;
   ShiftTime _time;
+  bool _done = false;
 
   DateTime get date {
     return this._date;
@@ -22,6 +23,12 @@ class Shift {
 
   set time(ShiftTime shiftTime) {
     this._time = shiftTime;
+  }
+
+  bool get done => _done;
+
+  set done(bool value) {
+    this._done = value;
   }
 
   Shift(this._date, this._time);
@@ -41,6 +48,6 @@ class Shift {
 
   @override
   String toString() {
-    return '${DateFormat.yMEd().format(_date)}: in $_time}';
+    return '${DateFormat.yMEd().format(_date)}: in $_time is done: $_done}';
   }
 }

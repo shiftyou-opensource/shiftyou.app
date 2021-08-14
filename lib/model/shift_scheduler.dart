@@ -66,14 +66,21 @@ class ShiftScheduler {
     this._startWith = shift._startWith;
   }
 
-  List<Shift> generateScheduler() {
+  List<Shift> generateScheduler({bool complete = true}) {
     List<Shift> generation = List.empty(growable: true);
     var iterate = _start;
     var next = this._startWith;
     var afterNight = false;
+    var now = DateTime.now();
     while (_end.difference(iterate).inDays >= 0) {
-      generation.add(Shift(iterate, next));
+      var shift = Shift(iterate, next);
+      if (iterate.difference(now).inDays < 0)
+        shift.done = true;
       iterate = iterate.add(Duration(days: 1));
+      // Jump the shift already done.
+      if (!complete && shift.done)
+        continue;
+      generation.add(shift);
       if (afterNight) {
         afterNight = false;
         continue;

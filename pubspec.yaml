@@ -1,5 +1,5 @@
 name: nurse_time
-description: Nurse time is a calendar application to mantains the Nurse turn in hospital|
+description: You Shift is am application to mantains shift in the hospital for the nurse
 uses-material-design: true
 
 # The following line prevents the package from being accidentally published to
@@ -17,6 +17,9 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 version: 1.0.0+1
+
+flutter_launcher_name:
+  name: "You Shift"
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
