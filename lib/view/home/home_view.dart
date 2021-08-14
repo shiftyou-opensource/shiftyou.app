@@ -7,7 +7,6 @@ import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
-import 'package:nurse_time/model/user_model.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:nurse_time/utils/map_reduce_shifts.dart';
 import 'package:nurse_time/view/set_up_view.dart';
@@ -18,7 +17,6 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeView extends State<HomeView> {
-  late UserModel _userModel;
   late List<Shift> _shifts;
   late Logger _logger;
   late PageController _pageController;
@@ -27,7 +25,6 @@ class _HomeView extends State<HomeView> {
 
   _HomeView() {
     ShiftScheduler scheduler = GetIt.instance.get<ShiftScheduler>();
-    this._userModel = GetIt.instance.get<UserModel>();
     this._logger = GetIt.instance.get<Logger>();
     this._shifts = scheduler.generateScheduler();
     this._pageController = PageController(initialPage: _selectedView);

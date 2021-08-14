@@ -9,12 +9,12 @@ import 'package:nurse_time/view/home/home_view.dart';
 import 'package:get_it/get_it.dart';
 
 class SetUpView extends StatefulWidget {
-  late bool ownView;
+  final bool ownView;
 
   SetUpView({this.ownView = true});
 
   @override
-  State<StatefulWidget> createState() => _SetUpView(ownView: ownView);
+  State<StatefulWidget> createState() => _SetUpView();
 }
 
 class _SetUpView extends State<SetUpView> {
@@ -23,9 +23,8 @@ class _SetUpView extends State<SetUpView> {
   late DAODatabase _dao;
   late Logger _logger;
   ShiftTime? _startWith;
-  late bool ownView;
 
-  _SetUpView({this.ownView = true}) {
+  _SetUpView() {
     this._startWith = ShiftTime.MORNING;
     this._shiftScheduler = GetIt.instance.get<ShiftScheduler>();
     this._userModel = GetIt.instance.get<UserModel>();
@@ -38,7 +37,7 @@ class _SetUpView extends State<SetUpView> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: Text(this.ownView ? "Setting Scheduler" : ""),
+        title: Text(widget.ownView ? "Setting Scheduler" : ""),
         centerTitle: true,
         leading: Container(),
       ),
