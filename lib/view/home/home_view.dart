@@ -30,14 +30,13 @@ class _HomeView extends State<HomeView> {
     this._userModel = GetIt.instance.get<UserModel>();
     this._logger = GetIt.instance.get<Logger>();
     this._shifts = scheduler.generateScheduler();
-    this._pageController = PageController();
+    this._pageController = PageController(initialPage: _selectedView);
     _logger.d(_shifts.toString());
   }
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
   }
 
   @override

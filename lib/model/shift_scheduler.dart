@@ -70,9 +70,14 @@ class ShiftScheduler {
     List<Shift> generation = List.empty(growable: true);
     var iterate = _start;
     var next = this._startWith;
+    var afterNight = false;
     while (_end.difference(iterate).inDays >= 0) {
       generation.add(Shift(iterate, next));
       iterate = iterate.add(Duration(days: 1));
+      if (afterNight) {
+        afterNight = false;
+        continue;
+      }
       switch (next) {
         case ShiftTime.AFTERNOON:
           next = ShiftTime.MORNING;
@@ -82,6 +87,7 @@ class ShiftScheduler {
           break;
         case ShiftTime.NIGHT:
           next = ShiftTime.FREE;
+          afterNight = true;
           break;
         case ShiftTime.FREE:
           next = ShiftTime.AFTERNOON;
