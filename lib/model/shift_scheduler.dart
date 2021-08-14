@@ -74,12 +74,10 @@ class ShiftScheduler {
     var now = DateTime.now();
     while (_end.difference(iterate).inDays >= 0) {
       var shift = Shift(iterate, next);
-      if (iterate.difference(now).inDays < 0)
-        shift.done = true;
+      if (iterate.difference(now).inDays < 0) shift.done = true;
       iterate = iterate.add(Duration(days: 1));
       // Jump the shift already done.
-      if (!complete && shift.done)
-        continue;
+      if (!complete && shift.done) continue;
       generation.add(shift);
       if (afterNight) {
         afterNight = false;
