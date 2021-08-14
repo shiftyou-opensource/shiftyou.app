@@ -7,7 +7,7 @@ import 'package:nurse_time/actions/google_sign_in.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/persistence/dao_database.dart';
 import 'package:nurse_time/utils/generic_components.dart';
-import 'package:nurse_time/view/home_view.dart';
+import 'package:nurse_time/view/home/home_view.dart';
 import 'package:nurse_time/view/set_up_view.dart';
 import './view/login_view.dart';
 import 'model/user_model.dart';

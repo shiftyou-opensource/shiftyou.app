@@ -1,3 +1,4 @@
+import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,9 @@ import 'package:logger/logger.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/model/user_model.dart';
+import 'package:nurse_time/utils/generic_components.dart';
 import 'package:nurse_time/utils/map_reduce_shifts.dart';
+import 'package:nurse_time/view/set_up_view.dart';
 
 class HomeView extends StatefulWidget {
   @override
@@ -15,67 +18,89 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeView extends State<HomeView> {
-  late UserModel userModel;
+  late UserModel _userModel;
   late List<Shift> _shifts;
   late Logger _logger;
-  int? touchedIndex;
+  late PageController _pageController;
+  int? _touchedIndex;
+  int _selectedView = 1;
 
   _HomeView() {
     ShiftScheduler scheduler = GetIt.instance.get<ShiftScheduler>();
-    this.userModel = GetIt.instance.get<UserModel>();
+    this._userModel = GetIt.instance.get<UserModel>();
     this._logger = GetIt.instance.get<Logger>();
     this._shifts = scheduler.generateScheduler();
+    this._pageController = PageController();
     _logger.d(_shifts.toString());
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Your Shift"),
-          primary: true,
-          elevation: 0,
-          leading: Container(),
-        ),
-        body: SafeArea(child: _buildHomeView(context, _shifts)),
-        bottomNavigationBar: SizedBox(
-          height: 58,
-          child: BottomAppBar(
-            elevation: 6,
-            color: Theme.of(context).colorScheme.background,
-            child: IconTheme(
-              data: IconThemeData(
-                  color: Theme.of(context).textTheme.bodyText1!.color),
-              child: Row(
-                children: <Widget>[
-                  IconButton(
-                    tooltip: 'Open navigation menu',
-                    icon: const Icon(Icons.menu, size: 28),
-                    onPressed: () {},
+      appBar: AppBar(
+        title: const Text("Your Shift"),
+        primary: true,
+        elevation: 0,
+        leading: Container(),
+      ),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) => setState(() => _selectedView = index),
+        children: [
+          SafeArea(
+            child: PieChart(
+              PieChartData(
+                  pieTouchData: PieTouchData(touchCallback: (pieTouchResponse) {
+                    setState(() {
+                      final desiredTouch =
+                          pieTouchResponse.touchInput is! PointerExitEvent &&
+                              pieTouchResponse.touchInput is! PointerUpEvent;
+                      if (desiredTouch &&
+                          pieTouchResponse.touchedSection != null) {
+                        _touchedIndex = pieTouchResponse
+                            .touchedSection!.touchedSectionIndex;
+                      } else {
+                        _touchedIndex = -1;
+                      }
+                    });
+                  }),
+                  borderData: FlBorderData(
+                    show: false,
                   ),
-                  const Spacer(),
-                  IconButton(
-                    tooltip: 'Search',
-                    icon: const Icon(Icons.search, size: 28),
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    tooltip: 'Favorite',
-                    icon: const Icon(Icons.favorite, size: 28),
-                    onPressed: () {},
-                  ),
-                ],
-              ),
+                  sectionsSpace: 0,
+                  centerSpaceRadius: 0,
+                  sections: showingSections()),
             ),
           ),
-        ),
-        floatingActionButton: FloatingActionButton(
-            onPressed: () => Navigator.pushNamed(context, "/setting"),
-            backgroundColor: Theme.of(context).backgroundColor,
-            child: Icon(Icons.settings,
-                size: 32, color: Theme.of(context).accentColor)),
-        floatingActionButtonLocation:
-            FloatingActionButtonLocation.centerDocked);
+          SafeArea(child: _buildHomeView(context, _shifts)),
+          SafeArea(child: SetUpView(ownView: false)),
+        ],
+      ),
+      bottomNavigationBar: BottomNavyBar(
+        backgroundColor: Theme.of(context).backgroundColor,
+        selectedIndex: _selectedView,
+        containerHeight: 70,
+        itemCornerRadius: 24,
+        onItemSelected: (index) => _pageController.jumpToPage(index),
+        items: <BottomNavyBarItem>[
+          makeItem(context, 'Statistics', Icons.timeline, 0, _selectedView),
+          makeItem(context, 'Home', Icons.home, 1, _selectedView),
+          makeItem(context, 'Settings', Icons.settings, 2, _selectedView),
+        ],
+      ),
+    );
   }
 
   Widget _buildHomeView(BuildContext context, List<Shift> shifts) {
@@ -99,10 +124,10 @@ class _HomeView extends State<HomeView> {
                               pieTouchResponse.touchInput is! PointerUpEvent;
                           if (desiredTouch &&
                               pieTouchResponse.touchedSection != null) {
-                            touchedIndex = pieTouchResponse
+                            _touchedIndex = pieTouchResponse
                                 .touchedSection!.touchedSectionIndex;
                           } else {
-                            touchedIndex = -1;
+                            _touchedIndex = -1;
                           }
                         });
                       }),
@@ -236,7 +261,7 @@ class _HomeView extends State<HomeView> {
     var shiftCalculation = MapReduceShift.reduce(_shifts);
     var indexElem = 0;
     shiftCalculation.forEach((shift, count) {
-      final isTouched = indexElem++ == touchedIndex;
+      final isTouched = indexElem++ == _touchedIndex;
       final double radius = isTouched ? 110 : 100;
       final double widgetSize = isTouched ? 70 : 55;
 
