@@ -7,6 +7,7 @@ import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
+import 'package:nurse_time/utils/converter.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:nurse_time/utils/map_reduce_shifts.dart';
 import 'package:nurse_time/view/settings/set_up_view.dart';
@@ -150,36 +151,6 @@ class _HomeView extends State<HomeView> {
     ]);
   }
 
-  String fromShiftToImage(Shift shift) {
-    switch (shift.time) {
-      case ShiftTime.AFTERNOON:
-        return "coffee.png";
-      case ShiftTime.MORNING:
-        return "morning.png";
-      case ShiftTime.FREE:
-        return "for-you.png";
-      case ShiftTime.NIGHT:
-        return "night.png";
-      default:
-        throw Exception("No image found with name ${shift.time}");
-    }
-  }
-
-  String fromShiftTimeToImage(ShiftTime shift) {
-    switch (shift) {
-      case ShiftTime.AFTERNOON:
-        return "coffee.png";
-      case ShiftTime.MORNING:
-        return "morning.png";
-      case ShiftTime.FREE:
-        return "for-you.png";
-      case ShiftTime.NIGHT:
-        return "night.png";
-      default:
-        throw Exception("No image found with name $shift");
-    }
-  }
-
   Widget _buildShiftCardView(BuildContext context, Shift shift) {
     return Card(
         elevation: 10.0,
@@ -199,7 +170,7 @@ class _HomeView extends State<HomeView> {
                     Container(
                         child: Image(
                             image: AssetImage(
-                                "assets/images/${fromShiftToImage(shift)}"),
+                                "assets/images/${Converter.fromShiftTimeToImage(shift.time)}"),
                             height: 60.0)),
                   ],
                 ),
@@ -270,7 +241,7 @@ class _HomeView extends State<HomeView> {
             radius: radius,
             titleStyle: Theme.of(context).textTheme.subtitle1,
             badgeWidget: _Badge(
-              fromShiftTimeToImage(shift),
+              Converter.fromShiftTimeToImage(shift),
               size: widgetSize,
               borderColor: const Color(0xff0293ee),
             ),
@@ -285,7 +256,7 @@ class _HomeView extends State<HomeView> {
             radius: radius,
             titleStyle: Theme.of(context).textTheme.subtitle1,
             badgeWidget: _Badge(
-              fromShiftTimeToImage(shift),
+              Converter.fromShiftTimeToImage(shift),
               size: widgetSize,
               borderColor: const Color.fromARGB(190, 255, 0, 57),
             ),
@@ -300,7 +271,7 @@ class _HomeView extends State<HomeView> {
             radius: radius,
             titleStyle: Theme.of(context).textTheme.subtitle1,
             badgeWidget: _Badge(
-              fromShiftTimeToImage(shift),
+              Converter.fromShiftTimeToImage(shift),
               size: widgetSize,
               borderColor: const Color(0xff845bef),
             ),
@@ -315,7 +286,7 @@ class _HomeView extends State<HomeView> {
             radius: radius,
             titleStyle: Theme.of(context).textTheme.subtitle1,
             badgeWidget: _Badge(
-              fromShiftTimeToImage(shift),
+              Converter.fromShiftTimeToImage(shift),
               size: widgetSize,
               borderColor: const Color.fromARGB(190, 249, 168, 37),
             ),

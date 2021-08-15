@@ -72,7 +72,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        primaryColor: Color.fromARGB(255, 68, 71, 90),
+        primaryColor: Color.fromARGB(255, 40, 42, 54),
         backgroundColor: Color.fromARGB(255, 40, 42, 54),
         cardColor: Color.fromARGB(255, 40, 42, 54),
         accentColor: Color.fromARGB(255, 255, 121, 197),
@@ -81,6 +81,8 @@ class MyApp extends StatelessWidget {
         dialogBackgroundColor: Color.fromARGB(255, 40, 42, 54),
         disabledColor: Color.fromARGB(255, 98, 114, 164),
         canvasColor: Color.fromARGB(255, 40, 42, 54),
+        toggleableActiveColor: Color.fromARGB(255, 255, 121, 197),
+        unselectedWidgetColor: Color.fromARGB(255, 98, 114, 164),
         colorScheme: ColorScheme.dark(
           background: Color.fromARGB(255, 40, 42, 54),
           onPrimary: Color.fromARGB(255, 40, 42, 54),

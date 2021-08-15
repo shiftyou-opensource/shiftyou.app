@@ -31,4 +31,34 @@ class Converter {
         throw Exception("Shift time not recognized");
     }
   }
+
+  static String fromShiftTimeToString(ShiftTime shiftTime) {
+    switch (shiftTime) {
+      case ShiftTime.MORNING:
+        return "Morning";
+      case ShiftTime.AFTERNOON:
+        return "Afternoon";
+      case ShiftTime.NIGHT:
+        return "Night";
+      case ShiftTime.FREE:
+        return "Free";
+      default:
+        throw Exception("Shift time not recognized");
+    }
+  }
+
+  static String fromShiftTimeToImage(ShiftTime shift) {
+    switch (shift) {
+      case ShiftTime.AFTERNOON:
+        return "coffee.png";
+      case ShiftTime.MORNING:
+        return "morning.png";
+      case ShiftTime.FREE:
+        return "for-you.png";
+      case ShiftTime.NIGHT:
+        return "night.png";
+      default:
+        throw Exception("No image found with name $shift");
+    }
+  }
 }
