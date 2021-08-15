@@ -27,6 +27,7 @@ class _SetUpView extends State<SetUpView> {
   late DAODatabase _dao;
   late Logger _logger;
   late List<SchedulerRules> _schedulerRules;
+  late List<ShiftTime> _shiftTimePicker;
   int _selectedRules = 0;
   ShiftTime? _startWith;
 
@@ -49,67 +50,86 @@ class _SetUpView extends State<SetUpView> {
     this._schedulerRules.add(custom);
     var manual = SchedulerRules("Manual", false);
     this._schedulerRules.add(manual);
+    _shiftTimePicker = List.from([
+      ShiftTime.MORNING,
+      ShiftTime.AFTERNOON,
+      ShiftTime.NIGHT,
+      ShiftTime.FREE
+    ]);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        title: Text(widget.ownView ? "Setting Scheduler" : ""),
-        centerTitle: true,
-        leading: Container(),
-      ),
-      body: SafeArea(
-        child: Container(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Column(
-                children: [
-                  Container(
-                    color: Theme.of(context).backgroundColor,
-                    child: Center(
-                      heightFactor: 1.5,
-                      child: CircleAvatar(
-                        backgroundColor: Theme.of(context).buttonColor,
-                        radius: 60.0,
-                        child: CircleAvatar(
-                          radius: 50.0,
-                          child: Image.asset("assets/ic_launcher.png"),
-                          backgroundColor: Colors.transparent,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Text("Hey ${this._userModel.name.split(" ")[0]}",
-                      style: TextStyle(fontSize: 25)),
-                  _settingProprieties(context),
-                  _makeRadioButtonView(context),
-                  _makeChipsAres(context),
-                ],
-              )
-            ],
-          ),
+    if (widget.ownView) {
+      return Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          title: Text(widget.ownView ? "Setting Scheduler" : ""),
+          centerTitle: true,
+          leading: Container(),
         ),
-      ),
+        body: SafeArea(child: makeBody(context)),
+      );
+    } else {
+      return makeBody(context);
+    }
+  }
+
+  Widget makeBody(BuildContext context) {
+    return makeScrollView(
+      context,
+      [
+        Column(
+          children: [
+            Container(
+              color: Theme.of(context).backgroundColor,
+              child: Center(
+                heightFactor: 1,
+                child: CircleAvatar(
+                  backgroundColor: Theme.of(context).buttonColor,
+                  radius: 60.0,
+                  child: CircleAvatar(
+                    radius: 50.0,
+                    child: Image.asset("assets/ic_launcher.png"),
+                    backgroundColor: Colors.transparent,
+                  ),
+                ),
+              ),
+            ),
+            Text("Hey ${this._userModel.name.split(" ")[0]}",
+                style: TextStyle(fontSize: 25)),
+            _settingProprieties(context),
+            makeTitleDivider("Set how generate the week shift"),
+            _makeRadioButtonView(context),
+            makeConcealableComponent(
+                makeTitleDivider("Adding your shift time with one click"),
+                !_schedulerRules[_selectedRules].static,
+                disappear: true),
+            makeConcealableComponent(_makeShiftTimePicker(context),
+                !_schedulerRules[_selectedRules].static,
+                disappear: true),
+            makeConcealableComponent(
+                makeTitleDivider("Shift order: How your shift looks like"),
+                _schedulerRules[_selectedRules].size() != 0,
+                disappear: true),
+            _makeChipsArea(context),
+          ],
+        )
+      ],
     );
   }
 
   Widget _makeRadioButtonView(BuildContext context) {
-    return ListView.builder(
-        shrinkWrap: true,
-        itemCount: _schedulerRules.length,
-        itemBuilder: (BuildContext context, int index) {
-          return RadioListTile(
-            title: Text(_schedulerRules[index].name,
-                style: Theme.of(context).textTheme.bodyText1),
-            value: index,
-            groupValue: _selectedRules,
-            onChanged: (int? value) => setState(() => _selectedRules = value!),
-          );
-        });
+    return Column(
+        children: List<RadioListTile>.generate(
+            _schedulerRules.length,
+            (index) => RadioListTile(
+                  title: makeRadioTitle(context, _schedulerRules[index].name,
+                      index == _selectedRules),
+                  value: index,
+                  groupValue: _selectedRules,
+                  onChanged: (value) => setState(() => _selectedRules = value!),
+                )));
   }
 
   void removeChipAt(BuildContext context, int index) {
@@ -121,37 +141,51 @@ class _SetUpView extends State<SetUpView> {
     }
   }
 
-  Widget _makeChipsAres(BuildContext context) {
-    return Container(
-        decoration: BoxDecoration(
-            color: Theme.of(context).buttonColor,
-            border: Border.all(
-              color: Theme.of(context).buttonColor,
-            ),
-            borderRadius: BorderRadius.all(Radius.circular(20))),
-        padding: EdgeInsets.all(4),
-        child: Wrap(
-          children: List<Chip>.generate(
-              _schedulerRules[_selectedRules].size(),
-              (index) => Chip(
-                  backgroundColor: Theme.of(context).cardColor,
-                  deleteButtonTooltipMessage: "Remove Shift time",
-                  deleteIcon: Icon(Icons.highlight_remove,
-                      color: Theme.of(context).textTheme.bodyText1!.color),
-                  autofocus: true,
-                  onDeleted: () => removeChipAt(context, index),
-                  materialTapTargetSize: MaterialTapTargetSize.padded,
-                  padding: EdgeInsets.all(2),
-                  elevation: 0,
-                  avatar: CircleAvatar(
-                    backgroundColor: Colors.transparent,
-                    child: Image(
-                        image: AssetImage(
-                            "assets/images/${Converter.fromShiftTimeToImage(_schedulerRules[_selectedRules].shiftAt(index))}")),
-                  ),
-                  label:
-                      Text(_schedulerRules[_selectedRules].shiftAtStr(index)))),
-        ));
+  Widget _makeChipsArea(BuildContext context) {
+    return makeConcealableComponent(
+        Container(
+            decoration: BoxDecoration(
+                color: Theme.of(context).buttonColor,
+                border: Border.all(
+                  color: Theme.of(context).buttonColor,
+                ),
+                borderRadius: BorderRadius.all(Radius.circular(20))),
+            padding: EdgeInsets.all(4),
+            child: Wrap(
+              children: List<Chip>.generate(
+                  _schedulerRules[_selectedRules].size(),
+                  (index) => Chip(
+                      backgroundColor: Theme.of(context).cardColor,
+                      deleteButtonTooltipMessage: "Remove Shift time",
+                      deleteIcon: Icon(Icons.highlight_remove,
+                          color: Theme.of(context).textTheme.bodyText1!.color),
+                      autofocus: true,
+                      onDeleted: () => removeChipAt(context, index),
+                      materialTapTargetSize: MaterialTapTargetSize.padded,
+                      padding: EdgeInsets.all(2),
+                      elevation: 0,
+                      avatar: CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        child: Image(
+                            image: AssetImage(
+                                "assets/images/${Converter.fromShiftTimeToImage(_schedulerRules[_selectedRules].shiftAt(index))}")),
+                      ),
+                      label: Text(
+                          _schedulerRules[_selectedRules].shiftAtStr(index)))),
+            )),
+        _schedulerRules[_selectedRules].size() != 0,
+        disappear: true);
+  }
+
+  Widget _makeShiftTimePicker(BuildContext context) {
+    return Column(
+      children: List<ListTile>.generate(
+        _shiftTimePicker.length,
+        (index) => ListTile(
+          title: Text(Converter.fromShiftTimeToString(_shiftTimePicker[index])),
+        ),
+      ),
+    );
   }
 
   Widget _settingProprieties(BuildContext context) {
@@ -207,8 +241,8 @@ class _SetUpView extends State<SetUpView> {
                     children: [
                       RadioListTile<ShiftTime>(
                         activeColor: Theme.of(context).accentColor,
-                        title: Text("Morning",
-                            style: Theme.of(context).textTheme.bodyText1),
+                        title: makeRadioTitle(context, "Morning",
+                            ShiftTime.MORNING == this._startWith),
                         value: ShiftTime.MORNING,
                         groupValue: this._startWith,
                         onChanged: (ShiftTime? value) {
@@ -217,8 +251,8 @@ class _SetUpView extends State<SetUpView> {
                       ),
                       RadioListTile<ShiftTime>(
                         activeColor: Theme.of(context).accentColor,
-                        title: Text("Afternoon",
-                            style: Theme.of(context).textTheme.bodyText1),
+                        title: makeRadioTitle(context, "Afternoon",
+                            ShiftTime.AFTERNOON == this._startWith),
                         value: ShiftTime.AFTERNOON,
                         groupValue: this._startWith,
                         onChanged: (ShiftTime? value) {
@@ -227,8 +261,8 @@ class _SetUpView extends State<SetUpView> {
                       ),
                       RadioListTile<ShiftTime>(
                         activeColor: Theme.of(context).accentColor,
-                        title: Text("Night",
-                            style: Theme.of(context).textTheme.bodyText1),
+                        title: makeRadioTitle(context, "Night",
+                            ShiftTime.NIGHT == this._startWith),
                         value: ShiftTime.NIGHT,
                         groupValue: this._startWith,
                         onChanged: (ShiftTime? value) {
@@ -237,8 +271,8 @@ class _SetUpView extends State<SetUpView> {
                       ),
                       RadioListTile<ShiftTime>(
                         activeColor: Theme.of(context).accentColor,
-                        title: Text("Free",
-                            style: Theme.of(context).textTheme.bodyText1),
+                        title: makeRadioTitle(
+                            context, "Free", ShiftTime.FREE == this._startWith),
                         value: ShiftTime.FREE,
                         groupValue: this._startWith,
                         onChanged: (ShiftTime? value) {
