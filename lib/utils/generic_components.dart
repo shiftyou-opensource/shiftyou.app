@@ -46,7 +46,7 @@ Text makeRadioTitle(BuildContext context, String message, bool active) {
 }
 
 /// Make a component that is able to be hidden when the propriety visible is false
-Visibility makeConcealableComponent(Widget widget, bool visible,
+Visibility makeVisibleComponent(Widget widget, bool visible,
     {bool disappear = false}) {
   return Visibility(
     child: widget,
