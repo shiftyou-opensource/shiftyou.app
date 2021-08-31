@@ -48,6 +48,7 @@ class _SetUpView extends State<SetUpView> {
     this._schedulerRules.add(custom);
     var manual = SchedulerRules("Manual", false);
     this._schedulerRules.add(manual);
+    // TODO: Set up the UI with the actual state of the application.
     _shiftTimePicker = List.from([
       ShiftTime.MORNING,
       ShiftTime.AFTERNOON,
@@ -115,6 +116,7 @@ class _SetUpView extends State<SetUpView> {
           altOffset: Offset(10, 48),
           events: [
             PeriodViewStep(Text("Select the shift period"),
+                    shiftScheduler: _shiftScheduler,
                     onSave: (timeRange) => setState(() => _range = timeRange))
                 .build(context),
             GenerationMethodStep(
@@ -137,7 +139,8 @@ class _SetUpView extends State<SetUpView> {
                     startWith: _startWith,
                     shiftScheduler: _shiftScheduler,
                     userModel: _userModel,
-                    range: _range)
+                    range: _range,
+                    shiftTimePicker: _schedulerRules[_selectedRules].timeOrders)
                 .build(context),
           ],
         ));

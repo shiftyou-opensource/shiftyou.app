@@ -3,15 +3,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
+import 'package:nurse_time/model/shift_scheduler.dart';
 
 import 'abstract_indicator_view.dart';
 
 class PeriodViewStep extends AbstractIndicatorStep {
   final Logger _logger = GetIt.instance.get<Logger>();
+  final ShiftScheduler shiftScheduler;
 
   final Function onSave;
 
-  PeriodViewStep(Widget title, {required this.onSave}) : super(title);
+  PeriodViewStep(Widget title,
+      {required this.onSave, required this.shiftScheduler})
+      : super(title);
 
   @override
   Widget buildView(BuildContext context) {
@@ -29,7 +33,8 @@ class PeriodViewStep extends AbstractIndicatorStep {
           hintText: 'Please select a period of your shift',
           border: OutlineInputBorder(),
         ),
-        initialValue: DateTimeRange(start: DateTime.now(), end: DateTime.now()),
+        initialValue:
+            DateTimeRange(start: shiftScheduler.start, end: shiftScheduler.end),
         validator: (value) {
           if (value!.start.isBefore(DateTime.now())) {
             return 'Please enter a valid date';

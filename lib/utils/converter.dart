@@ -12,6 +12,7 @@ class Converter {
       case 3:
         return ShiftTime.FREE;
       default:
+        print(index);
         throw Exception(
             "Index not recognize to (re)cereate the shift time enumas");
     }

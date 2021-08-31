@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
 
       return true;
     } catch (e, stacktrace) {
-      logger.e(stacktrace);
+      logger.e(e, stacktrace);
       showSnackBar(context, "Error with the Database");
       return false;
     }

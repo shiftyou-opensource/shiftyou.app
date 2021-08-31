@@ -12,11 +12,17 @@ class DAOShift extends AbstractDAOModel<ShiftScheduler> {
     if (maps.isEmpty) {
       return null;
     }
+
+    var schedulerRule = '1;0;2;3;3';
+    if (maps[0].containsKey('scheduler_rules')) {
+      schedulerRule = maps[0]['scheduler_rules'];
+    }
+
     return ShiftScheduler.fromDatabase(
       maps[0]['id'],
       maps[0]['start'],
       maps[0]['end'],
-      maps[0]['start_with'],
+      schedulerRule,
     );
   }
 
@@ -32,7 +38,7 @@ class DAOShift extends AbstractDAOModel<ShiftScheduler> {
         maps[i]['id'],
         maps[i]['start'],
         maps[i]['end'],
-        maps[i]['start_with'],
+        maps[i]['scheduler_rules'],
       );
     });
   }

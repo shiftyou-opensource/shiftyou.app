@@ -12,6 +12,9 @@ class DAODatabase extends AbstractDAO<Database> {
   Database? _database;
   late DAOUser _daoUser;
   late DAOShift _daoShift;
+  Map<int, String> _migrationScripts = {
+    4: "ALTER TABLE Shifts ADD scheduler_rules TEXT; ALTER TABLE Shifts DROP start_with;"
+  };
 
   DAODatabase() {
     init();
@@ -33,9 +36,14 @@ class DAODatabase extends AbstractDAO<Database> {
       // TODO(vincenzopalazzo): Add exception table
       await db.execute("CREATE TABLE "
           "Shifts(id INTEGER PRIMARY KEY autoincrement, start INTEGER, "
-          "end INTEGER, start_with INTEGER, user_id REFERENCES Users(id)"
+          "end INTEGER, start_with INTEGER, scheduler_rules TEXT, user_id REFERENCES Users(id)"
           ")");
-    }, version: 2);
+    }, onUpgrade: (db, oldVersion, newVersion) async {
+      for (int i = oldVersion + 1; i <= newVersion; i++) {
+        if (_migrationScripts.containsKey(i))
+          await db.execute(_migrationScripts[i]!);
+      }
+    }, version: 4);
   }
 
   @override

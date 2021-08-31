@@ -15,12 +15,14 @@ class DoneConfigurationView extends AbstractIndicatorStep {
   late UserModel userModel;
   late AbstractDAO _dao;
   DateTimeRange? range;
+  final List<ShiftTime> shiftTimePicker;
 
   DoneConfigurationView(Widget title,
       {required this.startWith,
       required this.shiftScheduler,
       required this.userModel,
-      required this.range})
+      required this.range,
+      required this.shiftTimePicker})
       : super(title) {
     this._dao = GetIt.instance.get<DAODatabase>();
   }
@@ -30,46 +32,6 @@ class DoneConfigurationView extends AbstractIndicatorStep {
     return StatefulBuilder(
       builder: (BuildContext context, setState) => Column(
         children: [
-          RadioListTile<ShiftTime>(
-            activeColor: Theme.of(context).accentColor,
-            title: makeRadioTitle(
-                context, "Morning", ShiftTime.MORNING == this.startWith),
-            value: ShiftTime.MORNING,
-            groupValue: this.startWith,
-            onChanged: (ShiftTime? value) {
-              setState(() => this.startWith = value!);
-            },
-          ),
-          RadioListTile<ShiftTime>(
-            activeColor: Theme.of(context).accentColor,
-            title: makeRadioTitle(
-                context, "Afternoon", ShiftTime.AFTERNOON == this.startWith),
-            value: ShiftTime.AFTERNOON,
-            groupValue: this.startWith,
-            onChanged: (ShiftTime? value) {
-              setState(() => this.startWith = value!);
-            },
-          ),
-          RadioListTile<ShiftTime>(
-            activeColor: Theme.of(context).accentColor,
-            title: makeRadioTitle(
-                context, "Night", ShiftTime.NIGHT == this.startWith),
-            value: ShiftTime.NIGHT,
-            groupValue: this.startWith,
-            onChanged: (ShiftTime? value) {
-              setState(() => this.startWith = value!);
-            },
-          ),
-          RadioListTile<ShiftTime>(
-            activeColor: Theme.of(context).accentColor,
-            title: makeRadioTitle(
-                context, "Free", ShiftTime.FREE == this.startWith),
-            value: ShiftTime.FREE,
-            groupValue: this.startWith,
-            onChanged: (ShiftTime? value) {
-              setState(() => this.startWith = value!);
-            },
-          ),
           OutlinedButton.icon(
             onPressed: () {
               if (range == null) {
@@ -80,8 +42,8 @@ class DoneConfigurationView extends AbstractIndicatorStep {
               setState(() {
                 shiftScheduler.start = range!.start;
                 shiftScheduler.end = range!.end;
-                shiftScheduler.startWith = this.startWith!;
                 shiftScheduler.userId = this.userModel.id;
+                shiftScheduler.timeOrders = shiftTimePicker;
                 _dao.insertShift(shiftScheduler);
               });
               Navigator.of(context).push(MaterialPageRoute(builder: (context) {

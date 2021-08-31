@@ -1,3 +1,4 @@
+import 'package:logger/logger.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/utils/converter.dart';
 
@@ -7,18 +8,43 @@ class ShiftScheduler {
   late int _userId; // TODO: Use to make dependences in the database
   late DateTime _start;
   late DateTime _end;
-  late ShiftTime _startWith;
+  // Deprecated, with the new system we can autogenerate the scheduler
+  // form the list of recurrences.
   late List<Shift> _exceptions;
+  late Logger logger;
+  late List<ShiftTime> _timeOrders;
+
+  DateTime get end => _end;
+  DateTime get start => _start;
 
   static ShiftScheduler fromDatabase(
-      int id, int timeStart, int timeEnd, int startWithIndex) {
+      int id, int timeStart, int timeEnd, String schedulerRules) {
     var shift = ShiftScheduler(
         -1,
         DateTime.fromMillisecondsSinceEpoch(timeStart),
         DateTime.fromMillisecondsSinceEpoch(timeEnd));
     shift._id = id;
-    shift._startWith = Converter.fromIntToShiftTime(startWithIndex);
+    List<ShiftTime> timeOrder = List.empty(growable: true);
+    var tokens = schedulerRules.split(";");
+    for (var index = 0; index < tokens.length; index++) {
+      var token = tokens[index];
+      timeOrder.add(Converter.fromIntToShiftTime(int.parse(token)));
+    }
+    print(timeOrder);
+    shift.timeOrders = timeOrder;
     return shift;
+  }
+
+  ShiftScheduler(this._userId, this._start, this._end) {
+    this._id = -1;
+    this._exceptions = List.empty(growable: true);
+    // Default period
+    this._timeOrders = List.empty(growable: true);
+    _timeOrders.add(ShiftTime.AFTERNOON);
+    _timeOrders.add(ShiftTime.MORNING);
+    _timeOrders.add(ShiftTime.NIGHT);
+    _timeOrders.add(ShiftTime.FREE);
+    _timeOrders.add(ShiftTime.FREE);
   }
 
   set userId(int userID) {
@@ -33,15 +59,7 @@ class ShiftScheduler {
     this._end = dateTime;
   }
 
-  set startWith(ShiftTime startWith) {
-    this._startWith = startWith;
-  }
-
-  ShiftScheduler(this._userId, this._start, this._end) {
-    this._id = -1;
-    this._exceptions = List.empty(growable: true);
-    this._startWith = ShiftTime.MORNING;
-  }
+  set timeOrders(List<ShiftTime> rules) => this._timeOrders = rules;
 
   void addException(Shift shift) {
     this._exceptions.add(shift);
@@ -49,12 +67,20 @@ class ShiftScheduler {
 
   //TODO(vincenzopalazzo) Adding exception to the serialization
   Map<String, dynamic> toMap() {
+    var stringSchedulerRules = StringBuffer();
+    for (var index = 0; index < _timeOrders.length; index++) {
+      var shiftTime = _timeOrders[index];
+      stringSchedulerRules.write(Converter.fromShiftTimeToIndex(shiftTime));
+      if (index != _timeOrders.length - 1) {
+        stringSchedulerRules.write(";");
+      }
+    }
     return {
       if (_id != -1) "id": _id,
       "user_id": _userId,
       "start": _start.millisecondsSinceEpoch,
       "end": _end.millisecondsSinceEpoch,
-      "start_with": Converter.fromShiftTimeToIndex(_startWith)
+      "scheduler_rules": stringSchedulerRules.toString(),
     };
   }
 
@@ -63,13 +89,15 @@ class ShiftScheduler {
     this._id = shift._id;
     this._start = shift._start;
     this._end = shift._end;
-    this._startWith = shift._startWith;
+    this._timeOrders = shift._timeOrders;
   }
 
   List<Shift> generateScheduler({bool complete = true}) {
     List<Shift> generation = List.empty(growable: true);
+    var indexStart = 0;
+    var indexMax = _timeOrders.length - 1;
     var iterate = _start;
-    var next = this._startWith;
+    var next = _timeOrders[indexStart];
     var afterNight = false;
     var now = DateTime.now();
     while (_end.difference(iterate).inDays >= 0) {
@@ -83,20 +111,12 @@ class ShiftScheduler {
         afterNight = false;
         continue;
       }
-      switch (next) {
-        case ShiftTime.AFTERNOON:
-          next = ShiftTime.MORNING;
-          break;
-        case ShiftTime.MORNING:
-          next = ShiftTime.NIGHT;
-          break;
-        case ShiftTime.NIGHT:
-          next = ShiftTime.FREE;
-          afterNight = true;
-          break;
-        case ShiftTime.FREE:
-          next = ShiftTime.AFTERNOON;
-          break;
+      indexStart++;
+      if (indexStart <= indexMax) {
+        next = _timeOrders[indexStart];
+      } else {
+        indexStart = 0;
+        next = _timeOrders[indexStart];
       }
     }
     return generation;

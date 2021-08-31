@@ -14,6 +14,8 @@ class SchedulerRules {
 
   get static => _static;
 
+  get timeOrders => _timeOrders;
+
   void addTime(ShiftTime time) => _timeOrders.add(time);
 
   int size() => _timeOrders.length;
