@@ -33,8 +33,11 @@ class PeriodViewStep extends AbstractIndicatorStep {
           hintText: 'Please select a period of your shift',
           border: OutlineInputBorder(),
         ),
-        initialValue:
-            DateTimeRange(start: shiftScheduler.start, end: shiftScheduler.end),
+        initialValue: DateTimeRange(
+            start: DateTime.now(),
+            end: DateTime.now().isBefore(shiftScheduler.end)
+                ? shiftScheduler.end
+                : DateTime.now()),
         validator: (value) {
           if (value!.start.isBefore(DateTime.now())) {
             return 'Please enter a valid date';

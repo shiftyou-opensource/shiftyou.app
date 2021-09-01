@@ -13,25 +13,31 @@ class ShiftScheduler {
   late List<Shift> _exceptions;
   late Logger logger;
   late List<ShiftTime> _timeOrders;
+  // The orders of shift is manual, with this choice we need to make
+  // a change of decision when we need to sink on firebase.
+  bool _manual = false;
 
-  DateTime get end => _end;
-  DateTime get start => _start;
+  List<ShiftTime> get timeOrders => this._timeOrders;
+
+  bool get manual => _manual;
 
   static ShiftScheduler fromDatabase(
-      int id, int timeStart, int timeEnd, String schedulerRules) {
+      int id, int timeStart, int timeEnd, String schedulerRules, bool manual) {
     var shift = ShiftScheduler(
         -1,
         DateTime.fromMillisecondsSinceEpoch(timeStart),
         DateTime.fromMillisecondsSinceEpoch(timeEnd));
     shift._id = id;
     List<ShiftTime> timeOrder = List.empty(growable: true);
-    var tokens = schedulerRules.split(";");
-    for (var index = 0; index < tokens.length; index++) {
-      var token = tokens[index];
-      timeOrder.add(Converter.fromIntToShiftTime(int.parse(token)));
+    if (schedulerRules.trim().isNotEmpty) {
+      var tokens = schedulerRules.split(";");
+      for (var index = 0; index < tokens.length; index++) {
+        var token = tokens[index];
+        timeOrder.add(Converter.fromIntToShiftTime(int.parse(token)));
+      }
     }
-    print(timeOrder);
     shift.timeOrders = timeOrder;
+    shift.manual = manual;
     return shift;
   }
 
@@ -47,6 +53,9 @@ class ShiftScheduler {
     _timeOrders.add(ShiftTime.FREE);
   }
 
+  DateTime get end => _end;
+  DateTime get start => _start;
+
   set userId(int userID) {
     this._userId = userID;
   }
@@ -60,6 +69,8 @@ class ShiftScheduler {
   }
 
   set timeOrders(List<ShiftTime> rules) => this._timeOrders = rules;
+
+  set manual(bool manual) => this._manual = manual;
 
   void addException(Shift shift) {
     this._exceptions.add(shift);
@@ -81,6 +92,7 @@ class ShiftScheduler {
       "start": _start.millisecondsSinceEpoch,
       "end": _end.millisecondsSinceEpoch,
       "scheduler_rules": stringSchedulerRules.toString(),
+      "manual": _manual == false ? 0 : 1,
     };
   }
 
@@ -90,10 +102,12 @@ class ShiftScheduler {
     this._start = shift._start;
     this._end = shift._end;
     this._timeOrders = shift._timeOrders;
+    this.manual = shift.manual;
   }
 
   List<Shift> generateScheduler({bool complete = true}) {
     List<Shift> generation = List.empty(growable: true);
+    if (_timeOrders.isEmpty) return generation;
     var indexStart = 0;
     var indexMax = _timeOrders.length - 1;
     var iterate = _start;
@@ -120,5 +134,27 @@ class ShiftScheduler {
       }
     }
     return generation;
+  }
+
+  bool isCustom() {
+    return !this.isDefault() && !this.isManual();
+  }
+
+  bool isDefault() {
+    List<ShiftTime> list = List.empty(growable: true);
+    list.add(ShiftTime.AFTERNOON);
+    list.add(ShiftTime.MORNING);
+    list.add(ShiftTime.NIGHT);
+    list.add(ShiftTime.FREE);
+    list.add(ShiftTime.FREE);
+    if (list.length != _timeOrders.length) return false;
+    for (var index = 0; index < list.length; index++) {
+      if (list[index] != _timeOrders[index]) return false;
+    }
+    return true;
+  }
+
+  bool isManual() {
+    return this._manual;
   }
 }

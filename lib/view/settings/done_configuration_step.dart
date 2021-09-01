@@ -16,13 +16,15 @@ class DoneConfigurationView extends AbstractIndicatorStep {
   late AbstractDAO _dao;
   DateTimeRange? range;
   final List<ShiftTime> shiftTimePicker;
+  final bool manual;
 
   DoneConfigurationView(Widget title,
       {required this.startWith,
       required this.shiftScheduler,
       required this.userModel,
       required this.range,
-      required this.shiftTimePicker})
+      required this.shiftTimePicker,
+      required this.manual})
       : super(title) {
     this._dao = GetIt.instance.get<DAODatabase>();
   }
@@ -44,6 +46,7 @@ class DoneConfigurationView extends AbstractIndicatorStep {
                 shiftScheduler.end = range!.end;
                 shiftScheduler.userId = this.userModel.id;
                 shiftScheduler.timeOrders = shiftTimePicker;
+                shiftScheduler.manual = manual;
                 _dao.insertShift(shiftScheduler);
               });
               Navigator.of(context).push(MaterialPageRoute(builder: (context) {

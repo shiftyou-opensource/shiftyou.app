@@ -74,6 +74,6 @@ void main() {
     scheduler.timeOrders = Utils.makeCustomRules();
     var validation = Utils.checkListShiftWithRules(
         scheduler.generateScheduler(), Utils.makeDefaultRules());
-    expect(validation, true);
+    expect(validation, false);
   });
 }

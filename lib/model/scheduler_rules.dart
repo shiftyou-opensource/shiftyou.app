@@ -2,11 +2,18 @@ import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/utils/converter.dart';
 
 class SchedulerRules {
+  // Name of the scheduler that we add to it
   String _name;
+  // The list of time orders is fixed.
+  // This doesn't grown in the time
   bool _static;
+  // the shift orders selected by the user.
   late List<ShiftTime> _timeOrders;
+  // The user selected the manual mode, this means
+  // the the list of ShiftTime is ignored
+  bool manual;
 
-  SchedulerRules(this._name, this._static) {
+  SchedulerRules(this._name, this._static, {this.manual = false}) {
     _timeOrders = List.empty(growable: true);
   }
 
@@ -14,7 +21,9 @@ class SchedulerRules {
 
   get static => _static;
 
-  get timeOrders => _timeOrders;
+  List<ShiftTime> get timeOrders => _timeOrders;
+
+  set timeOrders(List<ShiftTime> timeOrders) => this._timeOrders = timeOrders;
 
   void addTime(ShiftTime time) => _timeOrders.add(time);
 

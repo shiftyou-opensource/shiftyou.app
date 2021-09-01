@@ -21,6 +21,10 @@ class OptionViewStep extends AbstractIndicatorStep {
     this._logger = GetIt.instance<Logger>();
   }
 
+  bool _isManualScheduler() {
+    return _schedulerRules[_selectedRules].manual;
+  }
+
   @override
   Widget buildView(BuildContext context) {
     return Column(
@@ -28,15 +32,18 @@ class OptionViewStep extends AbstractIndicatorStep {
         _makeChipsArea(context),
         makeVisibleComponent(
             makeTitleDivider("Shift order: How your shift looks like"),
-            _schedulerRules[_selectedRules].size() != 0,
+            _schedulerRules[_selectedRules].size() != 0 &&
+                !_isManualScheduler(),
             disappear: true),
         makeVisibleComponent(
             makeTitleDivider("Adding your shift time with one click"),
-            !_schedulerRules[_selectedRules].static,
+            !_schedulerRules[_selectedRules].static && !_isManualScheduler(),
             disappear: true),
         makeVisibleComponent(_makeShiftTimePicker(context),
-            !_schedulerRules[_selectedRules].static,
+            !_schedulerRules[_selectedRules].static && !_isManualScheduler(),
             disappear: true),
+        // TODO: adding view to communicate that the user need to configure the things manual
+        // without the helping of shift generator
       ],
     );
   }
@@ -73,7 +80,7 @@ class OptionViewStep extends AbstractIndicatorStep {
                       label: Text(
                           _schedulerRules[_selectedRules].shiftAtStr(index)))),
             )),
-        _schedulerRules[_selectedRules].size() != 0,
+        _schedulerRules[_selectedRules].size() != 0 && !_isManualScheduler(),
         disappear: true);
   }
 

@@ -19,15 +19,17 @@ class HomeView extends StatefulWidget {
 
 class _HomeView extends State<HomeView> {
   late List<Shift> _shifts;
+  late bool _manual;
   late Logger _logger;
   late PageController _pageController;
   int? _touchedIndex;
   int _selectedView = 1;
 
   _HomeView() {
-    ShiftScheduler scheduler = GetIt.instance.get<ShiftScheduler>();
+    ShiftScheduler shiftScheduler = GetIt.instance.get<ShiftScheduler>();
     this._logger = GetIt.instance.get<Logger>();
-    this._shifts = scheduler.generateScheduler(complete: false);
+    this._shifts = shiftScheduler.generateScheduler(complete: false);
+    this._manual = shiftScheduler.isManual();
     this._pageController = PageController(initialPage: _selectedView);
     _logger.d(_shifts.toString());
   }
@@ -52,6 +54,20 @@ class _HomeView extends State<HomeView> {
         elevation: 0,
         leading: Container(),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      floatingActionButton: makeVisibleComponent(
+          FloatingActionButton.extended(
+            onPressed: () {
+              // Add your onPressed code here!
+              this._logger.d("Adding shift button pressed");
+            },
+            icon: Icon(Icons.add),
+            backgroundColor: Theme.of(context).accentColor,
+            foregroundColor: Theme.of(context).primaryColor,
+            elevation: 5,
+            label: Text("Add"),
+          ),
+          _selectedView == 1 && _manual),
       body: PageView(
         controller: _pageController,
         onPageChanged: (index) => setState(() => _selectedView = index),

@@ -42,13 +42,12 @@ class MyApp extends StatelessWidget {
         logger.d("User not in database");
         return false;
       }
-      logger.d("User in database");
       var userModel = GetIt.instance.get<UserModel>();
+      logger.d("User in database ${userModel.toString()}");
       userModel.initialized = user.initialized;
       userModel.logged = true;
       userModel.name = user.name;
       userModel.id = user.id;
-
       var shift = await dao.getShift(user.id);
       logger.d("Shift from database is ", shift);
       if (shift != null) {
@@ -56,10 +55,10 @@ class MyApp extends StatelessWidget {
         logger.d("The user has a Shift stored in the database");
         shiftInstance.fromShift(shift);
       }
-
       return true;
     } catch (e, stacktrace) {
-      logger.e(e, stacktrace);
+      logger.e(e);
+      logger.e(stacktrace);
       showSnackBar(context, "Error with the Database");
       return false;
     }

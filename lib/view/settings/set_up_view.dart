@@ -29,12 +29,14 @@ class _SetUpView extends State<SetUpView> {
   late List<ShiftTime> _shiftTimePicker;
   int _selectedRules = 0;
   ShiftTime? _startWith;
-  DateTimeRange? _range;
+  late DateTimeRange _range;
 
   _SetUpView() {
     this._startWith = ShiftTime.MORNING;
     this._shiftScheduler = GetIt.instance.get<ShiftScheduler>();
     this._userModel = GetIt.instance.get<UserModel>();
+    this._range = DateTimeRange(
+        start: this._shiftScheduler.start, end: _shiftScheduler.end);
     // TODO, put it inside the getit?
     this._schedulerRules = List.empty(growable: true);
     var defaultRules = SchedulerRules("Default", true);
@@ -47,7 +49,21 @@ class _SetUpView extends State<SetUpView> {
     var custom = SchedulerRules("Custom (You will choose)", false);
     this._schedulerRules.add(custom);
     var manual = SchedulerRules("Manual", false);
+    manual.manual = true;
     this._schedulerRules.add(manual);
+
+    if (this._shiftScheduler.isDefault())
+      this._selectedRules = 0;
+    else if (this._shiftScheduler.isManual()) {
+      this._selectedRules = 2;
+      this._schedulerRules[this._selectedRules].timeOrders =
+          this._shiftScheduler.timeOrders;
+    } else if (this._shiftScheduler.isCustom()) {
+      this._selectedRules = 1;
+      this._schedulerRules[this._selectedRules].timeOrders =
+          this._shiftScheduler.timeOrders;
+    }
+
     // TODO: Set up the UI with the actual state of the application.
     _shiftTimePicker = List.from([
       ShiftTime.MORNING,
@@ -140,7 +156,8 @@ class _SetUpView extends State<SetUpView> {
                     shiftScheduler: _shiftScheduler,
                     userModel: _userModel,
                     range: _range,
-                    shiftTimePicker: _schedulerRules[_selectedRules].timeOrders)
+                    shiftTimePicker: _schedulerRules[_selectedRules].timeOrders,
+                    manual: _schedulerRules[_selectedRules].manual)
                 .build(context),
           ],
         ));
