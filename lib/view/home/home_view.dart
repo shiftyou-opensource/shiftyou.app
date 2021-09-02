@@ -10,6 +10,7 @@ import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/utils/converter.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:nurse_time/utils/map_reduce_shifts.dart';
+import 'package:nurse_time/view/home/insert_modify_shift.dart';
 import 'package:nurse_time/view/settings/set_up_view.dart';
 
 class HomeView extends StatefulWidget {
@@ -59,7 +60,29 @@ class _HomeView extends State<HomeView> {
           FloatingActionButton.extended(
             onPressed: () {
               // Add your onPressed code here!
-              this._logger.d("Adding shift button pressed");
+              showModalBottomSheet<void>(
+                  context: context,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(25.0),
+                        topRight: Radius.circular(25.0)),
+                  ),
+                  builder: (BuildContext context) {
+                    return InsertModifyShiftView(
+                      title: "Insert a Shift",
+                      start: _shifts.isEmpty
+                          ? DateTime.now()
+                          : _shifts.last.date.add(Duration(days: 1)),
+                      onSave: (Shift shift) => {
+                        _logger.d("On save called in the bottom dialog"),
+                        // TODO: save state and adding some method to handle the
+                        // manual method
+                        setState(() => _shifts.add(shift))
+                      },
+                      onClose: () => Navigator.of(context).pop(),
+                      modify: false,
+                    );
+                  });
             },
             icon: Icon(Icons.add),
             backgroundColor: Theme.of(context).accentColor,

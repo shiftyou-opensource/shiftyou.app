@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:nurse_time/model/shift.dart';
 
 class Converter {
@@ -55,11 +56,45 @@ class Converter {
       case ShiftTime.MORNING:
         return "morning.png";
       case ShiftTime.FREE:
-        return "for-you.png";
+        return "foryou.png";
       case ShiftTime.NIGHT:
         return "night.png";
       default:
         throw Exception("No image found with name $shift");
+    }
+  }
+
+  static List<Image> shiftToListOfImages(
+      {String baseImgPath = "assets/images", double height = 35.0}) {
+    var shiftTime = [
+      ShiftTime.MORNING,
+      ShiftTime.AFTERNOON,
+      ShiftTime.NIGHT,
+      ShiftTime.FREE
+    ];
+    List<Image> images = List.empty(growable: true);
+    for (var index = 0; index < shiftTime.length; index++) {
+      var shift = shiftTime[index];
+      images.add(Image(
+          image: AssetImage(
+              "$baseImgPath/${Converter.fromShiftTimeToImage(shift)}"),
+          height: height));
+    }
+    return images;
+  }
+
+  static int shiftToListPosition(ShiftTime time) {
+    switch (time) {
+      case ShiftTime.AFTERNOON:
+        return 1;
+      case ShiftTime.MORNING:
+        return 0;
+      case ShiftTime.FREE:
+        return 3;
+      case ShiftTime.NIGHT:
+        return 2;
+      default:
+        throw Exception("Not valid shift $time");
     }
   }
 }

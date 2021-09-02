@@ -44,6 +44,13 @@ class OptionViewStep extends AbstractIndicatorStep {
             disappear: true),
         // TODO: adding view to communicate that the user need to configure the things manual
         // without the helping of shift generator
+        makeVisibleComponent(
+            Text(
+              "Mode not ready YET",
+              style: TextStyle(color: Colors.red, fontSize: 20),
+            ),
+            _isManualScheduler(),
+            disappear: true),
       ],
     );
   }

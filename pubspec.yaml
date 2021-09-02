@@ -46,6 +46,7 @@ dependencies:
   bottom_navy_bar: ^6.0.0
   flutter_timeline:
     git: https://github.com/softmarshmallow/flutter-timeline
+  flutter_holo_date_picker: ^1.0.0-nullsafety.4
 
 dev_dependencies:
   flutter_test:

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/rendering.dart';
@@ -69,6 +71,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Your Shift',
       debugShowCheckedModeBanner: false,
+      themeMode: ThemeMode.dark,
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         primaryColor: Color.fromARGB(255, 40, 42, 54),
@@ -98,6 +101,8 @@ class MyApp extends StatelessWidget {
         textTheme: TextTheme(
           bodyText1: TextStyle(),
           bodyText2: TextStyle(),
+          headline5: TextStyle(fontWeight: FontWeight.bold),
+          caption: TextStyle(fontStyle: FontStyle.normal, fontSize: 13),
         ).apply(
           bodyColor: Color.fromARGB(255, 98, 114, 164),
           decorationColor: Color.fromARGB(255, 98, 114, 164),
@@ -120,6 +125,7 @@ class MyApp extends StatelessWidget {
           if (result.data == true) {
             return HomeView();
           } else {
+            //TODO reuse the actual view, abort the operation
             return LoginView();
           }
           //return LoginView();

@@ -124,12 +124,12 @@ class _SetUpView extends State<SetUpView> {
     return TimelineTheme(
         data: TimelineThemeData(
             lineColor: Theme.of(context).textTheme.bodyText1!.color!,
-            itemGap: 40,
+            itemGap: 20,
             lineGap: 20),
         child: Timeline(
           anchor: IndicatorPosition.center,
           indicatorSize: 30,
-          altOffset: Offset(10, 48),
+          altOffset: Offset(10, 10),
           events: [
             PeriodViewStep(Text("Select the shift period"),
                     shiftScheduler: _shiftScheduler,
