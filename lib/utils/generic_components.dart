@@ -34,6 +34,50 @@ BottomNavyBarItem makeItem(BuildContext context, String title, IconData icon,
   );
 }
 
+/// This method build a text component to make sure that the title of the radio title
+/// have the active color when it is active on the UI.
+/// TODO: This change should be done by flutter theme, and this mean that I'm missing somethings in the code.
+Text makeRadioTitle(BuildContext context, String message, bool active) {
+  return Text(message,
+      style: Theme.of(context).textTheme.bodyText1!.apply(
+          color: active
+              ? Theme.of(context).toggleableActiveColor
+              : Theme.of(context).textTheme.bodyText1!.color));
+}
+
+/// Make a component that is able to be hidden when the propriety visible is false
+Visibility makeVisibleComponent(Widget widget, bool visible,
+    {bool disappear = false}) {
+  return Visibility(
+    child: widget,
+    maintainSize: !disappear,
+    maintainAnimation: true,
+    maintainState: true,
+    visible: visible,
+  );
+}
+
+Widget makeTitleDivider(String titleString) {
+  return Column(
+    children: [
+      Divider(),
+      Text(titleString),
+    ],
+  );
+}
+
+CustomScrollView makeScrollView(BuildContext context, List<Widget> children) {
+  return CustomScrollView(
+    slivers: List<SliverList>.generate(
+      children.length,
+      (index) => SliverList(
+          delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) => children[index],
+              childCount: children.length)),
+    ),
+  );
+}
+
 void showSnackBar(BuildContext context, String message, {Action? action}) {
   var snackBar = SnackBar(
       content: Text(message),

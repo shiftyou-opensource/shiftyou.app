@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/rendering.dart';
@@ -42,13 +44,12 @@ class MyApp extends StatelessWidget {
         logger.d("User not in database");
         return false;
       }
-      logger.d("User in database");
       var userModel = GetIt.instance.get<UserModel>();
+      logger.d("User in database ${userModel.toString()}");
       userModel.initialized = user.initialized;
       userModel.logged = true;
       userModel.name = user.name;
       userModel.id = user.id;
-
       var shift = await dao.getShift(user.id);
       logger.d("Shift from database is ", shift);
       if (shift != null) {
@@ -56,9 +57,9 @@ class MyApp extends StatelessWidget {
         logger.d("The user has a Shift stored in the database");
         shiftInstance.fromShift(shift);
       }
-
       return true;
     } catch (e, stacktrace) {
+      logger.e(e);
       logger.e(stacktrace);
       showSnackBar(context, "Error with the Database");
       return false;
@@ -70,9 +71,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Your Shift',
       debugShowCheckedModeBanner: false,
+      themeMode: ThemeMode.dark,
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        primaryColor: Color.fromARGB(255, 68, 71, 90),
+        primaryColor: Color.fromARGB(255, 40, 42, 54),
         backgroundColor: Color.fromARGB(255, 40, 42, 54),
         cardColor: Color.fromARGB(255, 40, 42, 54),
         accentColor: Color.fromARGB(255, 255, 121, 197),
@@ -81,6 +83,8 @@ class MyApp extends StatelessWidget {
         dialogBackgroundColor: Color.fromARGB(255, 40, 42, 54),
         disabledColor: Color.fromARGB(255, 98, 114, 164),
         canvasColor: Color.fromARGB(255, 40, 42, 54),
+        toggleableActiveColor: Color.fromARGB(255, 255, 121, 197),
+        unselectedWidgetColor: Color.fromARGB(255, 98, 114, 164),
         colorScheme: ColorScheme.dark(
           background: Color.fromARGB(255, 40, 42, 54),
           onPrimary: Color.fromARGB(255, 40, 42, 54),
@@ -97,6 +101,8 @@ class MyApp extends StatelessWidget {
         textTheme: TextTheme(
           bodyText1: TextStyle(),
           bodyText2: TextStyle(),
+          headline5: TextStyle(fontWeight: FontWeight.bold),
+          caption: TextStyle(fontStyle: FontStyle.normal, fontSize: 13),
         ).apply(
           bodyColor: Color.fromARGB(255, 98, 114, 164),
           decorationColor: Color.fromARGB(255, 98, 114, 164),
@@ -119,6 +125,7 @@ class MyApp extends StatelessWidget {
           if (result.data == true) {
             return HomeView();
           } else {
+            //TODO reuse the actual view, abort the operation
             return LoginView();
           }
           //return LoginView();

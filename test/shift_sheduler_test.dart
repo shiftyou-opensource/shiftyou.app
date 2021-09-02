@@ -2,18 +2,20 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
 
+import 'utils/utils.dart';
+
 /// @author https://github.com/vincenzopalazzo
 void main() {
-  test('TestGenerateSchedulerOne', () {
+  test('TestGenerateScheduler Default', () {
     var start = DateTime.now();
     var end = start.add(Duration(days: 2));
 
     var scheduler = ShiftScheduler(-1, start, end);
+    scheduler.timeOrders = Utils.makeDefaultRules();
     var schedulerGenerate = scheduler.generateScheduler();
-    print(schedulerGenerate);
 
     var expectedScheduler = List.empty(growable: true);
-    var next = ShiftTime.MORNING;
+    var next = ShiftTime.AFTERNOON;
     var iterate = start;
     var afterNight = false;
     while (end.difference(iterate).inDays >= 0) {
@@ -39,7 +41,39 @@ void main() {
           break;
       }
     }
-    print(expectedScheduler);
     expect(expectedScheduler, equals(schedulerGenerate));
+  });
+
+  test("TestCustomSchedulerPassOne", () {
+    var start = DateTime.now();
+    var end = start.add(Duration(days: 2));
+
+    var scheduler = ShiftScheduler(-1, start, end);
+    scheduler.timeOrders = Utils.makeCustomRules();
+    var validation = Utils.checkListShiftWithRules(
+        scheduler.generateScheduler(), Utils.makeCustomRules());
+    expect(validation, true);
+  });
+
+  test("TestCustomSchedulerSuccessTwo", () {
+    var start = DateTime.now();
+    var end = start.add(Duration(days: 200));
+
+    var scheduler = ShiftScheduler(-1, start, end);
+    scheduler.timeOrders = Utils.makeCustomRules();
+    var validation = Utils.checkListShiftWithRules(
+        scheduler.generateScheduler(), Utils.makeCustomRules());
+    expect(validation, true);
+  });
+
+  test("TestCustomSchedulerFailOne", () {
+    var start = DateTime.now();
+    var end = start.add(Duration(days: 200));
+
+    var scheduler = ShiftScheduler(-1, start, end);
+    scheduler.timeOrders = Utils.makeCustomRules();
+    var validation = Utils.checkListShiftWithRules(
+        scheduler.generateScheduler(), Utils.makeDefaultRules());
+    expect(validation, false);
   });
 }

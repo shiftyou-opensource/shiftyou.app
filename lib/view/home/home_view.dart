@@ -7,8 +7,10 @@ import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
+import 'package:nurse_time/utils/converter.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:nurse_time/utils/map_reduce_shifts.dart';
+import 'package:nurse_time/view/home/insert_modify_shift.dart';
 import 'package:nurse_time/view/settings/set_up_view.dart';
 
 class HomeView extends StatefulWidget {
@@ -18,15 +20,17 @@ class HomeView extends StatefulWidget {
 
 class _HomeView extends State<HomeView> {
   late List<Shift> _shifts;
+  late bool _manual;
   late Logger _logger;
   late PageController _pageController;
   int? _touchedIndex;
   int _selectedView = 1;
 
   _HomeView() {
-    ShiftScheduler scheduler = GetIt.instance.get<ShiftScheduler>();
+    ShiftScheduler shiftScheduler = GetIt.instance.get<ShiftScheduler>();
     this._logger = GetIt.instance.get<Logger>();
-    this._shifts = scheduler.generateScheduler(complete: false);
+    this._shifts = shiftScheduler.generateScheduler(complete: false);
+    this._manual = shiftScheduler.isManual();
     this._pageController = PageController(initialPage: _selectedView);
     _logger.d(_shifts.toString());
   }
@@ -51,6 +55,42 @@ class _HomeView extends State<HomeView> {
         elevation: 0,
         leading: Container(),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      floatingActionButton: makeVisibleComponent(
+          FloatingActionButton.extended(
+            onPressed: () {
+              // Add your onPressed code here!
+              showModalBottomSheet<void>(
+                  context: context,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(25.0),
+                        topRight: Radius.circular(25.0)),
+                  ),
+                  builder: (BuildContext context) {
+                    return InsertModifyShiftView(
+                      title: "Insert a Shift",
+                      start: _shifts.isEmpty
+                          ? DateTime.now()
+                          : _shifts.last.date.add(Duration(days: 1)),
+                      onSave: (Shift shift) => {
+                        _logger.d("On save called in the bottom dialog"),
+                        // TODO: save state and adding some method to handle the
+                        // manual method
+                        setState(() => _shifts.add(shift))
+                      },
+                      onClose: () => Navigator.of(context).pop(),
+                      modify: false,
+                    );
+                  });
+            },
+            icon: Icon(Icons.add),
+            backgroundColor: Theme.of(context).accentColor,
+            foregroundColor: Theme.of(context).primaryColor,
+            elevation: 5,
+            label: Text("Add"),
+          ),
+          _selectedView == 1 && _manual),
       body: PageView(
         controller: _pageController,
         onPageChanged: (index) => setState(() => _selectedView = index),
@@ -150,36 +190,6 @@ class _HomeView extends State<HomeView> {
     ]);
   }
 
-  String fromShiftToImage(Shift shift) {
-    switch (shift.time) {
-      case ShiftTime.AFTERNOON:
-        return "coffee.png";
-      case ShiftTime.MORNING:
-        return "morning.png";
-      case ShiftTime.FREE:
-        return "for-you.png";
-      case ShiftTime.NIGHT:
-        return "night.png";
-      default:
-        throw Exception("No image found with name ${shift.time}");
-    }
-  }
-
-  String fromShiftTimeToImage(ShiftTime shift) {
-    switch (shift) {
-      case ShiftTime.AFTERNOON:
-        return "coffee.png";
-      case ShiftTime.MORNING:
-        return "morning.png";
-      case ShiftTime.FREE:
-        return "for-you.png";
-      case ShiftTime.NIGHT:
-        return "night.png";
-      default:
-        throw Exception("No image found with name $shift");
-    }
-  }
-
   Widget _buildShiftCardView(BuildContext context, Shift shift) {
     return Card(
         elevation: 10.0,
@@ -199,7 +209,7 @@ class _HomeView extends State<HomeView> {
                     Container(
                         child: Image(
                             image: AssetImage(
-                                "assets/images/${fromShiftToImage(shift)}"),
+                                "assets/images/${Converter.fromShiftTimeToImage(shift.time)}"),
                             height: 60.0)),
                   ],
                 ),
@@ -270,7 +280,7 @@ class _HomeView extends State<HomeView> {
             radius: radius,
             titleStyle: Theme.of(context).textTheme.subtitle1,
             badgeWidget: _Badge(
-              fromShiftTimeToImage(shift),
+              Converter.fromShiftTimeToImage(shift),
               size: widgetSize,
               borderColor: const Color(0xff0293ee),
             ),
@@ -285,7 +295,7 @@ class _HomeView extends State<HomeView> {
             radius: radius,
             titleStyle: Theme.of(context).textTheme.subtitle1,
             badgeWidget: _Badge(
-              fromShiftTimeToImage(shift),
+              Converter.fromShiftTimeToImage(shift),
               size: widgetSize,
               borderColor: const Color.fromARGB(190, 255, 0, 57),
             ),
@@ -300,7 +310,7 @@ class _HomeView extends State<HomeView> {
             radius: radius,
             titleStyle: Theme.of(context).textTheme.subtitle1,
             badgeWidget: _Badge(
-              fromShiftTimeToImage(shift),
+              Converter.fromShiftTimeToImage(shift),
               size: widgetSize,
               borderColor: const Color(0xff845bef),
             ),
@@ -315,7 +325,7 @@ class _HomeView extends State<HomeView> {
             radius: radius,
             titleStyle: Theme.of(context).textTheme.subtitle1,
             badgeWidget: _Badge(
-              fromShiftTimeToImage(shift),
+              Converter.fromShiftTimeToImage(shift),
               size: widgetSize,
               borderColor: const Color.fromARGB(190, 249, 168, 37),
             ),
