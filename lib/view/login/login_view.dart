@@ -60,16 +60,11 @@ class _LoginView extends State<LoginView> {
           this._userModel.bing(userModel);
           _dao.insertUser(userModel).then((_) {
             Navigator.pushNamed(context, "/setting");
-          })
-              .catchError((error) => {
-                _logger.e(error),
-                showSnackBar(context, error.toString())
-              });
+          }).catchError((error) =>
+              {_logger.e(error), showSnackBar(context, error.toString())});
           // ignore: invalid_return_type_for_catch_error
-        }).catchError((error) => {
-          _logger.e(error),
-          showSnackBar(context, error.toString())
-        });
+        }).catchError((error) =>
+            {_logger.e(error), showSnackBar(context, error.toString())});
       },
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
