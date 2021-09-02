@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:nurse_time/model/user_model.dart';
 import 'package:nurse_time/persistence/dao_database.dart';
 import '../../actions/google_sign_in.dart';
@@ -14,8 +15,9 @@ class _LoginView extends State<LoginView> {
   late GoogleManagerUserLogin _googleLogin;
   late DAODatabase _dao;
   late UserModel _userModel;
-
+  late Logger _logger;
   _LoginView() {
+    this._logger = GetIt.instance<Logger>();
     this._googleLogin = GetIt.instance.get<GoogleManagerUserLogin>();
     this._dao = GetIt.instance.get<DAODatabase>();
     this._userModel = GetIt.instance.get<UserModel>();
@@ -59,10 +61,15 @@ class _LoginView extends State<LoginView> {
           _dao.insertUser(userModel).then((_) {
             Navigator.pushNamed(context, "/setting");
           })
-              // ignore: invalid_return_type_for_catch_error
-              .catchError((error) => showSnackBar(context, error));
+              .catchError((error) => {
+                _logger.e(error),
+                showSnackBar(context, error.toString())
+              });
           // ignore: invalid_return_type_for_catch_error
-        }).catchError((error) => showSnackBar(context, error));
+        }).catchError((error) => {
+          _logger.e(error),
+          showSnackBar(context, error.toString())
+        });
       },
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
