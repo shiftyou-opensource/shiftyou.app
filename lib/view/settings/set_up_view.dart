@@ -5,18 +5,29 @@ import 'package:nurse_time/model/scheduler_rules.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/model/user_model.dart';
+import 'package:nurse_time/persistence/abstract_dao.dart';
+import 'package:nurse_time/persistence/dao_database.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter_timeline/flutter_timeline.dart';
-import 'package:nurse_time/view/settings/done_configuration_step.dart';
+import 'package:nurse_time/view/home/home_view.dart';
 import 'package:nurse_time/view/settings/generation_method_step.dart';
 import 'package:nurse_time/view/settings/optional_view_step.dart';
 import 'package:nurse_time/view/settings/period_view_step.dart';
 
 class SetUpView extends StatefulWidget {
   final bool ownView;
+  final ShiftScheduler? shiftScheduler;
+  final DateTimeRange? range;
+  final Function(int) onUpdate;
+  final List<SchedulerRules> schedulerRules;
 
-  SetUpView({this.ownView = true});
+  SetUpView(
+      {required this.onUpdate,
+      this.ownView = true,
+      this.shiftScheduler,
+      this.range,
+      required this.schedulerRules});
 
   @override
   State<StatefulWidget> createState() => _SetUpView();
@@ -25,44 +36,13 @@ class SetUpView extends StatefulWidget {
 class _SetUpView extends State<SetUpView> {
   late ShiftScheduler _shiftScheduler;
   late UserModel _userModel;
-  late List<SchedulerRules> _schedulerRules;
+  late AbstractDAO _dao;
   late List<ShiftTime> _shiftTimePicker;
   int _selectedRules = 0;
-  ShiftTime? _startWith;
-  late DateTimeRange _range;
 
   _SetUpView() {
-    this._startWith = ShiftTime.MORNING;
-    this._shiftScheduler = GetIt.instance.get<ShiftScheduler>();
     this._userModel = GetIt.instance.get<UserModel>();
-    this._range = DateTimeRange(
-        start: this._shiftScheduler.start, end: _shiftScheduler.end);
-    // TODO, put it inside the getit?
-    this._schedulerRules = List.empty(growable: true);
-    var defaultRules = SchedulerRules("Default", true);
-    defaultRules.addTime(ShiftTime.AFTERNOON);
-    defaultRules.addTime(ShiftTime.MORNING);
-    defaultRules.addTime(ShiftTime.NIGHT);
-    defaultRules.addTime(ShiftTime.FREE);
-    defaultRules.addTime(ShiftTime.FREE);
-    this._schedulerRules.add(defaultRules);
-    var custom = SchedulerRules("Custom (You will choose)", false);
-    this._schedulerRules.add(custom);
-    var manual = SchedulerRules("Manual", false);
-    manual.manual = true;
-    this._schedulerRules.add(manual);
-
-    if (this._shiftScheduler.isDefault())
-      this._selectedRules = 0;
-    else if (this._shiftScheduler.isManual()) {
-      this._selectedRules = 2;
-      this._schedulerRules[this._selectedRules].timeOrders =
-          this._shiftScheduler.timeOrders;
-    } else if (this._shiftScheduler.isCustom()) {
-      this._selectedRules = 1;
-      this._schedulerRules[this._selectedRules].timeOrders =
-          this._shiftScheduler.timeOrders;
-    }
+    this._dao = GetIt.instance<DAODatabase>();
 
     // TODO: Set up the UI with the actual state of the application.
     _shiftTimePicker = List.from([
@@ -74,9 +54,57 @@ class _SetUpView extends State<SetUpView> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.shiftScheduler == null) {
+      this._shiftScheduler = GetIt.instance.get<ShiftScheduler>();
+    } else
+      this._shiftScheduler = widget.shiftScheduler!;
+
+    if (this._shiftScheduler.isManual()) {
+      this._selectedRules = 1;
+      widget.schedulerRules[this._selectedRules].timeOrders =
+          this._shiftScheduler.timeOrders;
+    } else if (this._shiftScheduler.isCustom()) {
+      this._selectedRules = 0;
+      widget.schedulerRules[this._selectedRules].timeOrders =
+          this._shiftScheduler.timeOrders;
+    }
+  }
+
+  @override
+  void didUpdateWidget(oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    checkFinishSetup();
+  }
+
+  void checkFinishSetup() {}
+
+  @override
   Widget build(BuildContext context) {
     if (widget.ownView) {
       return Scaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () => {
+            setState(() {
+              _shiftScheduler.userId = this._userModel.id;
+              _shiftScheduler.timeOrders =
+                  widget.schedulerRules[_selectedRules].timeOrders;
+              _shiftScheduler.manual =
+                  widget.schedulerRules[_selectedRules].manual;
+              _dao.insertShift(_shiftScheduler);
+            }),
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+              return HomeView();
+            }))
+          },
+          icon: Icon(Icons.done),
+          backgroundColor: Theme.of(context).accentColor,
+          foregroundColor: Theme.of(context).primaryColor,
+          elevation: 5,
+          label: Text("Save"),
+        ),
         appBar: AppBar(
           elevation: 0,
           title: const Text("Setting Scheduler"),
@@ -112,7 +140,7 @@ class _SetUpView extends State<SetUpView> {
               ),
             ),
             Text("Hey ${this._userModel.name.split(" ")[0]}",
-                style: TextStyle(fontSize: 25)),
+                style: TextStyle(fontSize: 18)),
             _buildTimeline(context),
           ],
         )
@@ -133,32 +161,25 @@ class _SetUpView extends State<SetUpView> {
           events: [
             PeriodViewStep(Text("Select the shift period"),
                     shiftScheduler: _shiftScheduler,
-                    onSave: (timeRange) => setState(() => _range = timeRange))
+                    onSave: (timeRange) => setState(
+                        () => _shiftScheduler.updateRangeFromRange(timeRange)))
                 .build(context),
             GenerationMethodStep(
               Text("Set how generate the week shift"),
-              (value) => setState(() => _selectedRules = value!),
+              (value) => setState(() =>
+                  {_selectedRules = value!, widget.onUpdate(_selectedRules)}),
               _selectedRules,
-              _schedulerRules,
+              widget.schedulerRules,
             ).build(context),
             OptionViewStep(
-                    Text("Somethings random"),
-                    _schedulerRules,
-                    _selectedRules,
-                    (index) => setState(
-                        () => _schedulerRules[_selectedRules].removed(index)),
-                    _shiftTimePicker,
-                    (time) => setState(
-                        () => _schedulerRules[_selectedRules].addTime(time)))
-                .build(context),
-            DoneConfigurationView(Text("Your configuration it is finished."),
-                    startWith: _startWith,
-                    shiftScheduler: _shiftScheduler,
-                    userModel: _userModel,
-                    range: _range,
-                    shiftTimePicker: _schedulerRules[_selectedRules].timeOrders,
-                    manual: _schedulerRules[_selectedRules].manual)
-                .build(context),
+                Text("Somethings random"),
+                widget.schedulerRules,
+                _selectedRules,
+                (index) => setState(
+                    () => widget.schedulerRules[_selectedRules].removed(index)),
+                _shiftTimePicker,
+                (time) => setState(() => widget.schedulerRules[_selectedRules]
+                    .addTime(time))).build(context),
           ],
         ));
   }

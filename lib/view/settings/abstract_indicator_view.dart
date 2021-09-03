@@ -17,6 +17,7 @@ abstract class AbstractIndicatorStep {
         anchor: IndicatorPosition.top,
         indicatorOffset: Offset(0, 35),
         child: Card(
+          elevation: 3,
           child: TimelineEventCard(
               title: title,
               content: Expanded(

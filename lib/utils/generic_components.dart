@@ -57,11 +57,66 @@ Visibility makeVisibleComponent(Widget widget, bool visible,
   );
 }
 
+enum ButtonType { NORMAL }
+
+Widget makeButton(BuildContext context,
+    {required Function onPress,
+    ButtonType type = ButtonType.NORMAL,
+    ButtonStyle? style}) {
+  switch (type) {
+    case ButtonType.NORMAL:
+      return ElevatedButton.icon(
+          style: ElevatedButton.styleFrom(
+            elevation: 3,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          ),
+          onPressed: () => onPress(),
+          icon: Icon(Icons.done_all_rounded),
+          label: Text("Save"));
+  }
+}
+
+class ConstrainedWidthFlexible extends StatelessWidget {
+  final double minWidth;
+  final double maxWidth;
+  final int flex;
+  final int flexSum;
+  final Widget child;
+  final BoxConstraints outerConstraints;
+
+  ConstrainedWidthFlexible(
+      {required this.minWidth,
+      required this.maxWidth,
+      required this.flex,
+      required this.flexSum,
+      required this.outerConstraints,
+      required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minWidth: minWidth,
+        maxWidth: maxWidth,
+      ),
+      child: Container(
+        width: _getWidth(outerConstraints.maxWidth),
+        child: child,
+      ),
+    );
+  }
+
+  double _getWidth(double outerContainerWidth) {
+    return outerContainerWidth * flex / flexSum;
+  }
+}
+
 Widget makeTitleDivider(String titleString) {
   return Column(
     children: [
-      Divider(),
       Text(titleString),
+      Divider(),
     ],
   );
 }
@@ -78,7 +133,7 @@ CustomScrollView makeScrollView(BuildContext context, List<Widget> children) {
   );
 }
 
-void showSnackBar(BuildContext context, String message, {Action? action}) {
+dynamic showSnackBar(BuildContext context, String message, {Action? action}) {
   var snackBar = SnackBar(
       content: Text(message),
       action: SnackBarAction(

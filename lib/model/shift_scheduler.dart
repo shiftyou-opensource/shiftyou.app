@@ -1,25 +1,39 @@
+import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
+import 'package:nurse_time/model/scheduler_rules.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/utils/converter.dart';
 
 /// @author https://github.com/vincenzopalazzo
 class ShiftScheduler {
   late int _id;
-  late int _userId; // TODO: Use to make dependences in the database
+  // used to store the user id inside the db
+  late int _userId;
   late DateTime _start;
   late DateTime _end;
-  // Deprecated, with the new system we can autogenerate the scheduler
-  // form the list of recurrences.
-  late List<Shift> _exceptions;
-  late Logger logger;
+  late Logger _logger;
+  // The map of exception, during the life we have several
+  // exception to manage, and this is the place where the app
+  // will store yours exceptions.
+  // We use the map to speedup the algorithm to generate the exceptions.
+  late Map<String, Shift> _exceptions;
+  // The list of period cadence od shift time, with this list of enums
+  // we can autogenerate the period without storing a lot of information
+  // inside the database.
   late List<ShiftTime> _timeOrders;
   // The orders of shift is manual, with this choice we need to make
   // a change of decision when we need to sink on firebase.
   bool _manual = false;
 
-  List<ShiftTime> get timeOrders => this._timeOrders;
+  // The list of shift sorted in the time order by shift date
+  // in addition, only this class know when and how generate
+  // the shift from app event
+  late List<Shift> _shifts;
 
-  bool get manual => _manual;
+  // Store the information about the rules chosen to calculate the
+  // shift, in this way we can avoid to punt different object around
+  late SchedulerRules _rules;
 
   static ShiftScheduler fromDatabase(
       int id, int timeStart, int timeEnd, String schedulerRules, bool manual) {
@@ -28,6 +42,8 @@ class ShiftScheduler {
         DateTime.fromMillisecondsSinceEpoch(timeStart),
         DateTime.fromMillisecondsSinceEpoch(timeEnd));
     shift._id = id;
+    Logger _logger = GetIt.instance<Logger>();
+    _logger.d("ShiftScheduler With DB id ${shift._id}");
     List<ShiftTime> timeOrder = List.empty(growable: true);
     if (schedulerRules.trim().isNotEmpty) {
       var tokens = schedulerRules.split(";");
@@ -38,23 +54,34 @@ class ShiftScheduler {
     }
     shift.timeOrders = timeOrder;
     shift.manual = manual;
+    shift._generateSchedulerRule();
+    shift._generateScheduler();
     return shift;
   }
 
   ShiftScheduler(this._userId, this._start, this._end) {
+    this._logger = GetIt.instance<Logger>();
     this._id = -1;
-    this._exceptions = List.empty(growable: true);
+    this._exceptions = Map();
     // Default period
     this._timeOrders = List.empty(growable: true);
-    _timeOrders.add(ShiftTime.AFTERNOON);
-    _timeOrders.add(ShiftTime.MORNING);
-    _timeOrders.add(ShiftTime.NIGHT);
-    _timeOrders.add(ShiftTime.FREE);
-    _timeOrders.add(ShiftTime.FREE);
+    this._shifts = List.empty(growable: true);
+    this._rules = SchedulerRules(
+        this._manual ? "Up to you" : "Weekly Cadence", false,
+        manual: this._manual);
+    this._rules.timeOrders = this._timeOrders;
+    if (this.start != this.end) this._generateScheduler(complete: false);
   }
 
+  List<ShiftTime> get timeOrders => this._timeOrders;
+  List<Shift> getExceptions() {
+    return this._exceptions.values.toList(growable: true);
+  }
+
+  bool get manual => _manual;
   DateTime get end => _end;
   DateTime get start => _start;
+  List<Shift> get shifts => this._shifts;
 
   set userId(int userID) {
     this._userId = userID;
@@ -68,15 +95,58 @@ class ShiftScheduler {
     this._end = dateTime;
   }
 
+  void setExceptions(List<Shift> exceptions) {
+    this._exceptions.clear();
+    exceptions.forEach((element) {
+      this._exceptions[toDateKey(element.date)] = element;
+    });
+  }
+
   set timeOrders(List<ShiftTime> rules) => this._timeOrders = rules;
 
   set manual(bool manual) => this._manual = manual;
 
-  void addException(Shift shift) {
-    this._exceptions.add(shift);
+  set rules(SchedulerRules rules) {
+    this._rules = rules;
+    this._manual = rules.manual;
+    this.timeOrders = rules.timeOrders;
   }
 
-  //TODO(vincenzopalazzo) Adding exception to the serialization
+  void addException(Shift shift, {bool ignoreUpdate = false}) {
+    this._exceptions[toDateKey(shift.date)] = shift;
+    if (!ignoreUpdate) {
+      this._generateScheduler();
+    }
+  }
+
+  void updateShiftAt(int index, Shift shift, {bool isException = false}) {
+    //TODO for the moment we avoid to modify the date.
+    if (isException) this._exceptions[toDateKey(shift.date)] = shift;
+  }
+
+  void _generateSchedulerRule() {
+    this._rules = SchedulerRules(
+        this._manual ? "Up to you" : "Weekly Cadence", false,
+        manual: this._manual);
+    this._rules.timeOrders = this._timeOrders;
+  }
+
+  DateTimeRange range() => DateTimeRange(start: _start, end: _end);
+
+  void updateRange(DateTime start, DateTime end) {
+    this._start = start;
+    this._end = end;
+  }
+
+  void updateRangeFromRange(DateTimeRange range) {
+    this._start = range.start;
+    this._end = range.end;
+  }
+
+  String toDateKey(DateTime time) {
+    return "${time.day}/${time.month}/${time.year}";
+  }
+
   Map<String, dynamic> toMap() {
     var stringSchedulerRules = StringBuffer();
     for (var index = 0; index < _timeOrders.length; index++) {
@@ -102,9 +172,12 @@ class ShiftScheduler {
     this._start = shift._start;
     this._end = shift._end;
     this._timeOrders = shift._timeOrders;
-    this.manual = shift.manual;
+    this.manual = shift._manual;
+    this._shifts = shift._shifts;
   }
 
+  // Method to generate for the public the scheduler, with option to have
+  // a complete or a list of remains shift to do.
   List<Shift> generateScheduler({bool complete = true}) {
     List<Shift> generation = List.empty(growable: true);
     if (_timeOrders.isEmpty) return generation;
@@ -116,6 +189,11 @@ class ShiftScheduler {
     var now = DateTime.now();
     while (_end.difference(iterate).inDays >= 0) {
       var shift = Shift(iterate, next);
+      if (_exceptions.containsKey(toDateKey(iterate))) {
+        _logger.d("Contains exceptions");
+        shift = _exceptions.remove(toDateKey(iterate))!;
+      }
+
       if (iterate.difference(now).inDays < 0) shift.done = true;
       iterate = iterate.add(Duration(days: 1));
       // Jump the shift already done.
@@ -133,13 +211,31 @@ class ShiftScheduler {
         next = _timeOrders[indexStart];
       }
     }
+
+    _exceptions.values.forEach((element) {
+      generation.add(element);
+    });
+
     return generation;
   }
 
-  bool isCustom() {
-    return !this.isDefault() && !this.isManual();
+  void _generateScheduler({bool complete = true}) {
+    this._shifts = this.generateScheduler(complete: complete);
+    _logger.d(_shifts.toString());
   }
 
+  void notify() {
+    this._generateScheduler();
+  }
+
+  // Method to check if the scheduler policy is on the manual mode
+  bool isCustom() {
+    return !this.isManual();
+  }
+
+  // deprecated: The application use the custom setting to avoid
+  // confusion between person
+  @deprecated
   bool isDefault() {
     List<ShiftTime> list = List.empty(growable: true);
     list.add(ShiftTime.AFTERNOON);

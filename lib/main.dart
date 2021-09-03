@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:nurse_time/actions/google_sign_in.dart';
+import 'package:nurse_time/model/scheduler_rules.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/persistence/dao_database.dart';
 import 'package:nurse_time/utils/generic_components.dart';
@@ -31,6 +32,14 @@ void setUpInjector() {
       () => UserModel(id: -1, name: "", logged: false, initialized: false));
   GetIt.instance.registerLazySingleton<ShiftScheduler>(
       () => ShiftScheduler(-1, DateTime.now(), DateTime.now()));
+
+  List<SchedulerRules> schedulerRules = List.empty(growable: true);
+  var custom = SchedulerRules("Weekly Cadence", false);
+  schedulerRules.add(custom);
+  var manual = SchedulerRules("Up to you", false);
+  manual.manual = true;
+  schedulerRules.add(manual);
+  GetIt.instance.registerSingleton<List<SchedulerRules>>(schedulerRules);
 }
 
 class MyApp extends StatelessWidget {
@@ -117,18 +126,20 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         "/home": (context) => HomeView(),
-        "/setting": (context) => SetUpView()
+        "/setting": (context) => SetUpView(
+            schedulerRules: GetIt.instance.get<List<SchedulerRules>>(),
+            onUpdate: (index) => {
+                  GetIt.instance.registerSingleton<SchedulerRules>(
+                      GetIt.instance.get<List<SchedulerRules>>()[index])
+                })
       },
       home: FutureBuilder<bool>(
         future: checkUser(context),
         builder: (context, result) {
           if (result.data == true) {
             return HomeView();
-          } else {
-            //TODO reuse the actual view, abort the operation
-            return LoginView();
           }
-          //return LoginView();
+          return LoginView();
         },
       ),
     );
