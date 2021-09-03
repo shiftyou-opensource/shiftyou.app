@@ -20,10 +20,6 @@ import 'package:nurse_time/view/settings/set_up_view.dart';
 class HomeView extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _HomeView();
-
-  // https://stackoverflow.com/a/64628265/10854225
-  static _HomeView? of(BuildContext context) =>
-      context.findAncestorStateOfType<_HomeView>();
 }
 
 class _HomeView extends State<HomeView> {
@@ -32,6 +28,7 @@ class _HomeView extends State<HomeView> {
   int? _touchedIndex;
   int _selectedView = 1;
 
+  late List<SchedulerRules> _schedulerRules;
   late AbstractDAO _dao;
   late UserModel _userModel;
   late Logger _logger;
@@ -41,6 +38,7 @@ class _HomeView extends State<HomeView> {
     this._logger = GetIt.instance.get<Logger>();
     this._userModel = GetIt.instance.get<UserModel>();
     this._dao = GetIt.instance<DAODatabase>();
+    this._schedulerRules = GetIt.instance.get<List<SchedulerRules>>();
     this._pageController = PageController(initialPage: _selectedView);
   }
 
@@ -53,6 +51,13 @@ class _HomeView extends State<HomeView> {
   void initState() {
     super.initState();
     this._shiftScheduler = GetIt.instance.get<ShiftScheduler>();
+    // we are coming from the login view, and we have no information about the
+    // state chose from the user in the setting ui.
+    if (GetIt.instance.isRegistered<SchedulerRules>()) {
+      this._selectedScheduler = GetIt.instance.get<SchedulerRules>();
+      this._shiftScheduler!.timeOrders = this._selectedScheduler!.timeOrders;
+      this._shiftScheduler!.notify();
+    }
   }
 
   @override
@@ -107,10 +112,12 @@ class _HomeView extends State<HomeView> {
           SafeArea(child: _buildHomeView(context, _shiftScheduler!.shifts)),
           SafeArea(
               child: SetUpView(
+                  schedulerRules: _schedulerRules,
+                  onUpdate: (int selectedRules) => setState(() => this
+                      ._shiftScheduler!
+                      .rules = _schedulerRules[selectedRules]),
                   ownView: false,
-                  shiftScheduler: this._shiftScheduler
-              )
-          ),
+                  shiftScheduler: this._shiftScheduler)),
         ],
       ),
       bottomNavigationBar: BottomNavyBar(
@@ -144,8 +151,6 @@ class _HomeView extends State<HomeView> {
                 // Set the new data inside the _shiftScheduler and update the ui.
                 setState(() {
                   _shiftScheduler!.userId = this._userModel.id;
-                  _shiftScheduler!.timeOrders = _selectedScheduler!.timeOrders;
-                  _shiftScheduler!.manual = _selectedScheduler!.manual;
                   _shiftScheduler!.notify();
                   _dao.insertShift(_shiftScheduler!);
                   _pageController.jumpToPage(1);

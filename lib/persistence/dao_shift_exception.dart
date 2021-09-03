@@ -1,4 +1,3 @@
-import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/persistence/abstract_dao.dart';
@@ -7,11 +6,10 @@ import 'package:sqflite/sqlite_api.dart';
 
 /// @author https://github.com/vincenzopalazzo
 class DAOShiftException extends AbstractDAOModel<Shift> {
-
   late Logger _logger;
 
   DAOShiftException() {
-    this._logger = GetIt.instance<Logger>();
+    this._logger = Logger();
   }
 
   @override
@@ -21,7 +19,8 @@ class DAOShiftException extends AbstractDAOModel<Shift> {
 
   @override
   Future<List<Shift>> getAll(AbstractDAO dao) async {
-    List<Map<String, dynamic>> exceptionsMap = await dao.getInstance.query("Exception");
+    List<Map<String, dynamic>> exceptionsMap =
+        await dao.getInstance.query("Exception");
     List<Shift> exceptions = List.empty(growable: true);
     exceptionsMap.forEach((element) {
       var shift = Shift.fromDatabase(element);

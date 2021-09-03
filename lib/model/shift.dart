@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:intl/intl.dart';
 import 'package:nurse_time/utils/converter.dart';
 
@@ -22,7 +20,8 @@ class Shift {
 
   static Shift fromDatabase(Map<String, dynamic> element) {
     ShiftTime time = Converter.fromIntToShiftTime(element["shift"]);
-    DateTime date = DateTime.fromMillisecondsSinceEpoch(element["day_timestamp"]);
+    DateTime date =
+        DateTime.fromMillisecondsSinceEpoch(element["day_timestamp"]);
     var shift = Shift(date, time);
     shift.done = element["done"] == 0 ? false : true;
     return shift;
@@ -59,12 +58,12 @@ class Shift {
   }
 
   Map<String, dynamic> toMap() => {
-    if (_id != -1) "id": _id,
-    if (_userId != -1) "user_id": _userId,
-    "day_timestamp": date.millisecondsSinceEpoch,
-    "shift": Converter.fromShiftTimeToIndex(_time),
-    "done": _done ? 1 : 0,
-  };
+        if (_id != -1) "id": _id,
+        if (_userId != -1) "user_id": _userId,
+        "day_timestamp": date.millisecondsSinceEpoch,
+        "shift": Converter.fromShiftTimeToIndex(_time),
+        "done": _done ? 1 : 0,
+      };
 
   @override
   bool operator ==(Object other) =>

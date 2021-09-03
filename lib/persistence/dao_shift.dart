@@ -6,14 +6,11 @@ import 'package:nurse_time/persistence/dao_shift_exception.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DAOShift extends AbstractDAOModel<ShiftScheduler> {
-
   late DAOShiftException _daoShiftException;
-
 
   DAOShift() {
     _daoShiftException = DAOShiftException();
   }
-
 
   @override
   Future<ShiftScheduler?> get(

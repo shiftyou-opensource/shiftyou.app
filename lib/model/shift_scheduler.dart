@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
+import 'package:nurse_time/model/scheduler_rules.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/utils/converter.dart';
 
@@ -29,9 +30,9 @@ class ShiftScheduler {
   // the shift from app event
   late List<Shift> _shifts;
 
-  List<ShiftTime> get timeOrders => this._timeOrders;
-
-  bool get manual => _manual;
+  // Store the information about the rules chosen to calculate the
+  // shift, in this way we can avoid to punt different object around
+  late SchedulerRules _rules;
 
   static ShiftScheduler fromDatabase(
       int id, int timeStart, int timeEnd, String schedulerRules, bool manual) {
@@ -52,6 +53,7 @@ class ShiftScheduler {
     }
     shift.timeOrders = timeOrder;
     shift.manual = manual;
+    shift._generateSchedulerRule();
     shift._generateScheduler();
     return shift;
   }
@@ -62,12 +64,11 @@ class ShiftScheduler {
     this._exceptions = List.empty(growable: true);
     // Default period
     this._timeOrders = List.empty(growable: true);
-    _timeOrders.add(ShiftTime.AFTERNOON);
-    _timeOrders.add(ShiftTime.MORNING);
-    _timeOrders.add(ShiftTime.NIGHT);
-    _timeOrders.add(ShiftTime.FREE);
-    _timeOrders.add(ShiftTime.FREE);
     this._shifts = List.empty(growable: true);
+    this._rules = SchedulerRules(
+        this._manual ? "Up to you" : "Weekly Cadence", false,
+        manual: this._manual);
+    this._rules.timeOrders = this._timeOrders;
     if (this.start != this.end) this._generateScheduler(complete: false);
   }
 
@@ -96,6 +97,12 @@ class ShiftScheduler {
 
   set manual(bool manual) => this._manual = manual;
 
+  set rules(SchedulerRules rules) {
+    this._rules = rules;
+    this._manual = rules.manual;
+    this.timeOrders = rules.timeOrders;
+  }
+
   void addException(Shift shift, {bool ignoreUpdate = false}) {
     this._exceptions.add(shift);
     if (!ignoreUpdate) {
@@ -104,8 +111,14 @@ class ShiftScheduler {
   }
 
   void updateShiftAt(int index, Shift shift, {bool isException = false}) {
-    if (isException)
-      this._exceptions.elementAt(index).fromShift(shift);
+    if (isException) this._exceptions.elementAt(index).fromShift(shift);
+  }
+
+  void _generateSchedulerRule() {
+    this._rules = SchedulerRules(
+        this._manual ? "Up to you" : "Weekly Cadence", false,
+        manual: this._manual);
+    this._rules.timeOrders = this._timeOrders;
   }
 
   DateTimeRange range() => DateTimeRange(start: _start, end: _end);

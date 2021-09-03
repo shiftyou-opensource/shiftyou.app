@@ -19,8 +19,15 @@ class SetUpView extends StatefulWidget {
   final bool ownView;
   final ShiftScheduler? shiftScheduler;
   final DateTimeRange? range;
+  final Function(int) onUpdate;
+  final List<SchedulerRules> schedulerRules;
 
-  SetUpView({this.ownView = true, this.shiftScheduler, this.range});
+  SetUpView(
+      {required this.onUpdate,
+      this.ownView = true,
+      this.shiftScheduler,
+      this.range,
+      required this.schedulerRules});
 
   @override
   State<StatefulWidget> createState() => _SetUpView();
@@ -30,28 +37,12 @@ class _SetUpView extends State<SetUpView> {
   late ShiftScheduler _shiftScheduler;
   late UserModel _userModel;
   late AbstractDAO _dao;
-  late List<SchedulerRules> _schedulerRules;
   late List<ShiftTime> _shiftTimePicker;
   int _selectedRules = 0;
 
   _SetUpView() {
     this._userModel = GetIt.instance.get<UserModel>();
     this._dao = GetIt.instance<DAODatabase>();
-    // TODO, put it inside the getit?
-    this._schedulerRules = List.empty(growable: true);
-
-    /*var defaultRules = SchedulerRules("Default", true);
-    defaultRules.addTime(ShiftTime.AFTERNOON);
-    defaultRules.addTime(ShiftTime.MORNING);
-    defaultRules.addTime(ShiftTime.NIGHT);
-    defaultRules.addTime(ShiftTime.FREE);
-    defaultRules.addTime(ShiftTime.FREE);
-    this._schedulerRules.add(defaultRules);*/
-    var custom = SchedulerRules("Weekly Cadence", false);
-    this._schedulerRules.add(custom);
-    var manual = SchedulerRules("Up to you", false);
-    manual.manual = true;
-    this._schedulerRules.add(manual);
 
     // TODO: Set up the UI with the actual state of the application.
     _shiftTimePicker = List.from([
@@ -65,20 +56,18 @@ class _SetUpView extends State<SetUpView> {
   @override
   void initState() {
     super.initState();
-    if (widget.shiftScheduler == null)
+    if (widget.shiftScheduler == null) {
       this._shiftScheduler = GetIt.instance.get<ShiftScheduler>();
-    else
+    } else
       this._shiftScheduler = widget.shiftScheduler!;
 
-    // We start to indexing from 0 because we remove the default mode in the
-    // view.
     if (this._shiftScheduler.isManual()) {
-      this._selectedRules = 2;
-      this._schedulerRules[this._selectedRules].timeOrders =
+      this._selectedRules = 1;
+      widget.schedulerRules[this._selectedRules].timeOrders =
           this._shiftScheduler.timeOrders;
     } else if (this._shiftScheduler.isCustom()) {
-      this._selectedRules = 1;
-      this._schedulerRules[this._selectedRules].timeOrders =
+      this._selectedRules = 0;
+      widget.schedulerRules[this._selectedRules].timeOrders =
           this._shiftScheduler.timeOrders;
     }
   }
@@ -99,13 +88,11 @@ class _SetUpView extends State<SetUpView> {
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () => {
             setState(() {
-              var range = HomeView.of(context)!.shiftScheduler.range();
-              _shiftScheduler.start = range.start;
-              _shiftScheduler.end = range.end;
               _shiftScheduler.userId = this._userModel.id;
               _shiftScheduler.timeOrders =
-                  _schedulerRules[_selectedRules].timeOrders;
-              _shiftScheduler.manual = _schedulerRules[_selectedRules].manual;
+                  widget.schedulerRules[_selectedRules].timeOrders;
+              _shiftScheduler.manual =
+                  widget.schedulerRules[_selectedRules].manual;
               _dao.insertShift(_shiftScheduler);
             }),
             Navigator.of(context).push(MaterialPageRoute(builder: (context) {
@@ -175,28 +162,24 @@ class _SetUpView extends State<SetUpView> {
             PeriodViewStep(Text("Select the shift period"),
                     shiftScheduler: _shiftScheduler,
                     onSave: (timeRange) => setState(
-                        () => HomeView.of(context)!.shiftScheduler.updateRangeFromRange(timeRange)))
+                        () => _shiftScheduler.updateRangeFromRange(timeRange)))
                 .build(context),
             GenerationMethodStep(
               Text("Set how generate the week shift"),
-              (value) => setState(() => {
-                    _selectedRules = value!,
-                    HomeView.of(context)!.selectedScheduler =
-                        _schedulerRules[_selectedRules]
-                  }),
+              (value) => setState(() =>
+                  {_selectedRules = value!, widget.onUpdate(_selectedRules)}),
               _selectedRules,
-              _schedulerRules,
+              widget.schedulerRules,
             ).build(context),
             OptionViewStep(
-                    Text("Somethings random"),
-                    _schedulerRules,
-                    _selectedRules,
-                    (index) => setState(
-                        () => _schedulerRules[_selectedRules].removed(index)),
-                    _shiftTimePicker,
-                    (time) => setState(
-                        () => _schedulerRules[_selectedRules].addTime(time)))
-                .build(context),
+                Text("Somethings random"),
+                widget.schedulerRules,
+                _selectedRules,
+                (index) => setState(
+                    () => widget.schedulerRules[_selectedRules].removed(index)),
+                _shiftTimePicker,
+                (time) => setState(() => widget.schedulerRules[_selectedRules]
+                    .addTime(time))).build(context),
           ],
         ));
   }
