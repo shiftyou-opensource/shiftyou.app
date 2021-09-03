@@ -29,19 +29,10 @@ class OptionViewStep extends AbstractIndicatorStep {
   Widget buildView(BuildContext context) {
     return Column(
       children: [
-        _makeChipsArea(context),
-        makeVisibleComponent(
-            makeTitleDivider("Shift order: How your shift looks like"),
-            _schedulerRules[_selectedRules].size() != 0 &&
-                !_isManualScheduler(),
-            disappear: true),
-        makeVisibleComponent(
-            makeTitleDivider("Adding your shift time with one click"),
-            !_schedulerRules[_selectedRules].static && !_isManualScheduler(),
-            disappear: true),
         makeVisibleComponent(_makeShiftTimePicker(context),
             !_schedulerRules[_selectedRules].static && !_isManualScheduler(),
             disappear: true),
+        _makeChipsArea(context),
         // TODO: adding view to communicate that the user need to configure the things manual
         // without the helping of shift generator
         makeVisibleComponent(
@@ -57,36 +48,39 @@ class OptionViewStep extends AbstractIndicatorStep {
 
   Widget _makeChipsArea(BuildContext context) {
     return makeVisibleComponent(
-        Container(
-            decoration: BoxDecoration(
-                color: Theme.of(context).buttonColor,
-                border: Border.all(
+        Center(
+          child: Container(
+              decoration: BoxDecoration(
                   color: Theme.of(context).buttonColor,
-                ),
-                borderRadius: BorderRadius.all(Radius.circular(20))),
-            padding: EdgeInsets.all(4),
-            child: Wrap(
-              children: List<Chip>.generate(
-                  _schedulerRules[_selectedRules].size(),
-                  (index) => Chip(
-                      backgroundColor: Theme.of(context).cardColor,
-                      deleteButtonTooltipMessage: "Remove Shift time",
-                      deleteIcon: Icon(Icons.highlight_remove,
-                          color: Theme.of(context).textTheme.bodyText1!.color),
-                      autofocus: true,
-                      onDeleted: () => removeChipAt(context, index),
-                      materialTapTargetSize: MaterialTapTargetSize.padded,
-                      padding: EdgeInsets.all(2),
-                      elevation: 0,
-                      avatar: CircleAvatar(
-                        backgroundColor: Colors.transparent,
-                        child: Image(
-                            image: AssetImage(
-                                "assets/images/${Converter.fromShiftTimeToImage(_schedulerRules[_selectedRules].shiftAt(index))}")),
-                      ),
-                      label: Text(
-                          _schedulerRules[_selectedRules].shiftAtStr(index)))),
-            )),
+                  border: Border.all(
+                    color: Theme.of(context).buttonColor,
+                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(20))),
+              padding: EdgeInsets.all(4),
+              child: Wrap(
+                children: List<Chip>.generate(
+                    _schedulerRules[_selectedRules].size(),
+                    (index) => Chip(
+                        backgroundColor: Theme.of(context).cardColor,
+                        deleteButtonTooltipMessage: "Remove Shift time",
+                        deleteIcon: Icon(Icons.highlight_remove,
+                            color:
+                                Theme.of(context).textTheme.bodyText1!.color),
+                        autofocus: true,
+                        onDeleted: () => removeChipAt(context, index),
+                        materialTapTargetSize: MaterialTapTargetSize.padded,
+                        padding: EdgeInsets.all(2),
+                        elevation: 0,
+                        avatar: CircleAvatar(
+                          backgroundColor: Colors.transparent,
+                          child: Image(
+                              image: AssetImage(
+                                  "assets/images/${Converter.fromShiftTimeToImage(_schedulerRules[_selectedRules].shiftAt(index))}")),
+                        ),
+                        label: Text(_schedulerRules[_selectedRules]
+                            .shiftAtStr(index)))),
+              )),
+        ),
         _schedulerRules[_selectedRules].size() != 0 && !_isManualScheduler(),
         disappear: true);
   }
@@ -126,7 +120,7 @@ class OptionViewStep extends AbstractIndicatorStep {
         Expanded(
             flex: 1,
             child: IconButton(
-                icon: Icon(Icons.add), onPressed: () => _onAddTime(time)))
+                icon: Icon(Icons.add), onPressed: () => {_onAddTime(time)}))
       ],
     );
   }

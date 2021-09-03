@@ -124,11 +124,8 @@ class MyApp extends StatelessWidget {
         builder: (context, result) {
           if (result.data == true) {
             return HomeView();
-          } else {
-            //TODO reuse the actual view, abort the operation
-            return LoginView();
           }
-          //return LoginView();
+          return LoginView();
         },
       ),
     );

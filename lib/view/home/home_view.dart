@@ -5,8 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
+import 'package:nurse_time/model/scheduler_rules.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
+import 'package:nurse_time/model/user_model.dart';
+import 'package:nurse_time/persistence/abstract_dao.dart';
+import 'package:nurse_time/persistence/dao_database.dart';
 import 'package:nurse_time/utils/converter.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:nurse_time/utils/map_reduce_shifts.dart';
@@ -16,28 +20,43 @@ import 'package:nurse_time/view/settings/set_up_view.dart';
 class HomeView extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _HomeView();
+
+  // https://stackoverflow.com/a/64628265/10854225
+  static _HomeView? of(BuildContext context) =>
+      context.findAncestorStateOfType<_HomeView>();
 }
 
 class _HomeView extends State<HomeView> {
-  late List<Shift> _shifts;
-  late bool _manual;
-  late Logger _logger;
-  late PageController _pageController;
+  List<Shift>? _shifts;
+  ShiftScheduler? _shiftScheduler;
+  SchedulerRules? _selectedScheduler;
+  DateTimeRange? _range;
   int? _touchedIndex;
   int _selectedView = 1;
 
+  late AbstractDAO _dao;
+  late UserModel _userModel;
+  late Logger _logger;
+  late PageController _pageController;
+
   _HomeView() {
-    ShiftScheduler shiftScheduler = GetIt.instance.get<ShiftScheduler>();
     this._logger = GetIt.instance.get<Logger>();
-    this._shifts = shiftScheduler.generateScheduler(complete: false);
-    this._manual = shiftScheduler.isManual();
+    this._userModel = GetIt.instance.get<UserModel>();
+    this._dao = GetIt.instance<DAODatabase>();
     this._pageController = PageController(initialPage: _selectedView);
     _logger.d(_shifts.toString());
   }
 
+  set selectedScheduler(SchedulerRules schedulerRules) =>
+      this._selectedScheduler = schedulerRules;
+
   @override
   void initState() {
     super.initState();
+    this._shiftScheduler = GetIt.instance.get<ShiftScheduler>();
+    this._shifts = _shiftScheduler!.generateScheduler(complete: false);
+    this._range = DateTimeRange(
+        start: this._shiftScheduler!.start, end: _shiftScheduler!.end);
   }
 
   @override
@@ -57,6 +76,7 @@ class _HomeView extends State<HomeView> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       floatingActionButton: _makeFloatingButton(context,
+          settingView: _selectedView == 2,
           onPress: (context, modify, index) => _makeBottomDialog(
               context: context, modify: modify, index: index)),
       body: PageView(
@@ -88,8 +108,12 @@ class _HomeView extends State<HomeView> {
                   sections: showingSections()),
             ),
           ),
-          SafeArea(child: _buildHomeView(context, _shifts)),
-          SafeArea(child: SetUpView(ownView: false)),
+          SafeArea(child: _buildHomeView(context, _shifts!)),
+          SafeArea(
+              child: SetUpView(
+                  ownView: false,
+                  shiftScheduler: this._shiftScheduler,
+                  range: this._range)),
         ],
       ),
       bottomNavigationBar: BottomNavyBar(
@@ -109,17 +133,35 @@ class _HomeView extends State<HomeView> {
 
   Widget _makeFloatingButton(BuildContext context,
       {bool modify = false,
+      bool settingView = false,
       int? index,
       Icon icon = const Icon(Icons.add),
       required Function(BuildContext, bool, int?) onPress}) {
     return makeVisibleComponent(
         FloatingActionButton.extended(
-          onPressed: () => onPress(context, modify, index),
-          icon: icon,
+          onPressed: () => {
+            if (!settingView)
+              {onPress(context, modify, index)}
+            else
+              {
+                setState(() {
+                  _shiftScheduler!.start = _range!.start;
+                  _shiftScheduler!.end = _range!.end;
+                  _shiftScheduler!.userId = this._userModel.id;
+                  _shiftScheduler!.timeOrders = _selectedScheduler!.timeOrders;
+                  _shiftScheduler!.manual = _selectedScheduler!.manual;
+                  this._shifts =
+                      _shiftScheduler!.generateScheduler(complete: false);
+                  _dao.insertShift(_shiftScheduler!);
+                  _pageController.jumpToPage(1);
+                }),
+              }
+          },
+          icon: settingView ? Icon(Icons.done) : icon,
           backgroundColor: Theme.of(context).accentColor,
           foregroundColor: Theme.of(context).primaryColor,
           elevation: 5,
-          label: Text("Add"),
+          label: settingView ? Text("Save") : Text("Add"),
         ),
         (_selectedView == 1 || _selectedView == 2));
   }
@@ -135,18 +177,18 @@ class _HomeView extends State<HomeView> {
         builder: (BuildContext context) {
           return InsertModifyShiftView(
             title: modify ? "Modify the Shift" : "Insert a Shift",
-            start: _shifts.isEmpty
+            start: _shifts!.isEmpty
                 ? DateTime.now()
-                : _shifts.last.date.add(Duration(days: 1)),
-            shift: index != null ? _shifts[index] : null,
+                : _shifts!.last.date.add(Duration(days: 1)),
+            shift: index != null ? _shifts![index] : null,
             onSave: (Shift shift) => {
               _logger.d("On save called in the bottom dialog"),
               // TODO: save state and adding some method to handle the
               // manual method
               if (index == null)
-                setState(() => _shifts.add(shift))
+                setState(() => _shifts!.add(shift))
               else
-                setState(() => _shifts.elementAt(index).fromShift(shift))
+                setState(() => _shifts!.elementAt(index).fromShift(shift))
             },
             onClose: () => Navigator.of(context).pop(),
             modify: modify,
@@ -158,38 +200,37 @@ class _HomeView extends State<HomeView> {
     return Column(children: [
       Expanded(
           flex: 2,
-            child: Container(
-              width: 150,
-              height: 280,
-              color: Theme.of(context).backgroundColor,
-              child: Center(
-                child: PieChart(
-                  PieChartData(
-                      pieTouchData:
-                          PieTouchData(touchCallback: (pieTouchResponse) {
-                        setState(() {
-                          final desiredTouch = pieTouchResponse.touchInput
-                                  is! PointerExitEvent &&
-                              pieTouchResponse.touchInput is! PointerUpEvent;
-                          if (desiredTouch &&
-                              pieTouchResponse.touchedSection != null) {
-                            _touchedIndex = pieTouchResponse
-                                .touchedSection!.touchedSectionIndex;
-                          } else {
-                            _touchedIndex = -1;
-                          }
-                        });
-                      }),
-                      borderData: FlBorderData(
-                        show: false,
-                      ),
-                      sectionsSpace: 0,
-                      centerSpaceRadius: 0,
-                      sections: showingSections()),
-                ),
+          child: Container(
+            width: 150,
+            height: 280,
+            color: Theme.of(context).backgroundColor,
+            child: Center(
+              child: PieChart(
+                PieChartData(
+                    pieTouchData:
+                        PieTouchData(touchCallback: (pieTouchResponse) {
+                      setState(() {
+                        final desiredTouch =
+                            pieTouchResponse.touchInput is! PointerExitEvent &&
+                                pieTouchResponse.touchInput is! PointerUpEvent;
+                        if (desiredTouch &&
+                            pieTouchResponse.touchedSection != null) {
+                          _touchedIndex = pieTouchResponse
+                              .touchedSection!.touchedSectionIndex;
+                        } else {
+                          _touchedIndex = -1;
+                        }
+                      });
+                    }),
+                    borderData: FlBorderData(
+                      show: false,
+                    ),
+                    sectionsSpace: 0,
+                    centerSpaceRadius: 0,
+                    sections: showingSections()),
               ),
-            )
-          ),
+            ),
+          )),
       Expanded(
         flex: 3,
         child: ListView.builder(
@@ -259,7 +300,7 @@ class _HomeView extends State<HomeView> {
   List<PieChartSectionData> showingSections() {
     List<PieChartSectionData> pieChartData = List.empty(growable: true);
     // We need to make the sum to runtime to paint the chart
-    var shiftCalculation = MapReduceShift.reduce(_shifts);
+    var shiftCalculation = MapReduceShift.reduce(_shifts!);
     var indexElem = 0;
     shiftCalculation.forEach((shift, count) {
       final isTouched = indexElem++ == _touchedIndex;
@@ -270,8 +311,8 @@ class _HomeView extends State<HomeView> {
         case ShiftTime.AFTERNOON:
           pieChartData.add(PieChartSectionData(
             color: const Color(0xff89ddff),
-            value: (count * 100) / _shifts.length,
-            title: '${(count * 100) ~/ _shifts.length}%',
+            value: (count * 100) / _shifts!.length,
+            title: '${(count * 100) ~/ _shifts!.length}%',
             radius: radius,
             titleStyle: Theme.of(context).textTheme.subtitle1,
             badgeWidget: _Badge(
@@ -285,8 +326,8 @@ class _HomeView extends State<HomeView> {
         case ShiftTime.FREE:
           pieChartData.add(PieChartSectionData(
             color: const Color(0xfff07178),
-            value: (count * 100) / _shifts.length,
-            title: '${(count * 100) ~/ _shifts.length}%',
+            value: (count * 100) / _shifts!.length,
+            title: '${(count * 100) ~/ _shifts!.length}%',
             radius: radius,
             titleStyle: Theme.of(context).textTheme.subtitle1,
             badgeWidget: _Badge(
@@ -300,8 +341,8 @@ class _HomeView extends State<HomeView> {
         case ShiftTime.NIGHT:
           pieChartData.add(PieChartSectionData(
             color: const Color(0xffc792ea),
-            value: (count * 100) / _shifts.length,
-            title: '${(count * 100) ~/ _shifts.length}%',
+            value: (count * 100) / _shifts!.length,
+            title: '${(count * 100) ~/ _shifts!.length}%',
             radius: radius,
             titleStyle: Theme.of(context).textTheme.subtitle1,
             badgeWidget: _Badge(
@@ -315,8 +356,8 @@ class _HomeView extends State<HomeView> {
         case ShiftTime.MORNING:
           pieChartData.add(PieChartSectionData(
             color: const Color(0xffffcb6b),
-            value: (count * 100) / _shifts.length,
-            title: '${(count * 100) ~/ _shifts.length}%',
+            value: (count * 100) / _shifts!.length,
+            title: '${(count * 100) ~/ _shifts!.length}%',
             radius: radius,
             titleStyle: Theme.of(context).textTheme.subtitle1,
             badgeWidget: _Badge(

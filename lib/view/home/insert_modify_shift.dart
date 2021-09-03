@@ -52,7 +52,8 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
     if (widget.shift != null) {
       this._shiftTime = widget.shift!.time;
       // assume that the shift is null only when the modify it is enabled
-      widget.logger.d("Widget open in modify mode? ${widget.modify ? "Yes" : "no"}");
+      widget.logger
+          .d("Widget open in modify mode? ${widget.modify ? "Yes" : "no"}");
       this._selectedDate = widget.shift!.date;
     }
     super.initState();

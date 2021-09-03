@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:nurse_time/model/user_model.dart';
 import 'package:nurse_time/persistence/dao_database.dart';
-import '../../actions/google_sign_in.dart';
-import '../../utils/generic_components.dart';
+import 'package:nurse_time/actions/google_sign_in.dart';
+import 'package:nurse_time/utils/generic_components.dart';
 import 'package:get_it/get_it.dart';
 
 class LoginView extends StatefulWidget {
@@ -48,6 +50,11 @@ class _LoginView extends State<LoginView> {
     );
   }
 
+  FutureOr<Null> _handleError(dynamic error) async {
+    _logger.e(error);
+    showSnackBar(context, error.toString());
+  }
+
   Widget _signInButton() {
     return OutlinedButton(
       style: OutlinedButton.styleFrom(
@@ -60,11 +67,8 @@ class _LoginView extends State<LoginView> {
           this._userModel.bing(userModel);
           _dao.insertUser(userModel).then((_) {
             Navigator.pushNamed(context, "/setting");
-          }).catchError((error) =>
-              {_logger.e(error), showSnackBar(context, error.toString())});
-          // ignore: invalid_return_type_for_catch_error
-        }).catchError((error) =>
-            {_logger.e(error), showSnackBar(context, error.toString())});
+          }).catchError((error) => _handleError(error));
+        }).catchError((error) => _handleError(error));
       },
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
