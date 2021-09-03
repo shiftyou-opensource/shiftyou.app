@@ -3,19 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_holo_date_picker/date_picker_theme.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:nurse_time/model/shift.dart';
-import 'package:nurse_time/utils/SpinnerChooser.dart';
+import 'package:nurse_time/utils/spinner_chooser.dart';
 import 'package:nurse_time/utils/converter.dart';
-import 'package:nurse_time/utils/generic_components.dart';
 
 class InsertModifyShiftView extends StatefulWidget {
+
   final String title;
   final Function(Shift) onSave;
   final Function onClose;
   final Shift? shift;
   final bool modify;
   final DateTime? start;
+  late final List<Image> icons;
 
-  const InsertModifyShiftView(
+  InsertModifyShiftView(
       {Key? key,
       required this.title,
       required this.onSave,
@@ -23,7 +24,9 @@ class InsertModifyShiftView extends StatefulWidget {
       required this.modify,
       this.shift,
       this.start})
-      : super(key: key);
+      : super(key: key) {
+    this.icons = Converter.shiftToListOfImages(height: 50.0);
+  }
 
   @override
   State<StatefulWidget> createState() => _InsertModifyShiftView();
@@ -48,54 +51,86 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    for (var index = 0; index < widget.icons.length; index++)
+      precacheImage(widget.icons[index].image, context);
+  }
+
+  Widget _makeInsertView(BuildContext context) {
+    return Column(
+      children: [
+        _makeTitleView(context: context, text: widget.title),
+        Divider(),
+        _makeShiftView(context: context),
+        Divider(),
+        Expanded(
+            flex: 6,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+              child: DatePickerWidget(
+                looping: false,
+                // default is not looping
+                firstDate: this._selectedDate,
+                //DateTime(1960),
+                dateFormat: "dd-MMMM",
+                onChange: (DateTime newDate, _) {
+                  _selectedDate = newDate;
+                },
+                pickerTheme: DateTimePickerTheme(
+                  backgroundColor: Theme.of(context).backgroundColor,
+                  itemTextStyle: Theme.of(context).textTheme.caption!,
+                  dividerColor: Theme.of(context).accentColor,
+                ),
+              ),
+            )),
+        Expanded(
+          flex: 1,
+          child: Container(
+            child: OutlinedButton.icon(
+                onPressed: () => {
+                      widget.onSave(Shift(_selectedDate, _shiftTime)),
+                      widget.onClose()
+                    },
+                icon: Icon(Icons.done_all_rounded),
+                label: Text("Insert")),
+          ),
+        ),
+        Spacer(),
+      ],
+    );
+  }
+
+  Widget _makeModifyView(BuildContext context) {
+    return Column(
+      children: [
+        _makeTitleView(context: context, text: widget.title),
+        Divider(),
+        Expanded(child: Text("To work on"), flex: 2),
+        _makeShiftView(context: context),
+        Expanded(
+          flex: 1,
+          child: Container(
+            child: OutlinedButton.icon(
+                onPressed: () => {
+                      widget.onSave(Shift(_selectedDate, _shiftTime)),
+                      widget.onClose()
+                    },
+                icon: Icon(Icons.done_all_rounded),
+                label: Text("Insert")),
+          ),
+        ),
+        Spacer(),
+      ],
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
-        children: [
-          _makeTitleView(context: context, text: widget.title),
-          Divider(),
-          makeVisibleComponent(
-              Expanded(child: Text("To work on"), flex: 2), widget.modify),
-          _makeShiftView(context: context),
-          makeVisibleComponent(Divider(), !widget.modify),
-          makeVisibleComponent(
-              Expanded(
-                  flex: 3,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 25),
-                    child: DatePickerWidget(
-                      looping: false,
-                      // default is not looping
-                      firstDate: this._selectedDate,
-                      //DateTime(1960),
-                      dateFormat: "dd-MMMM",
-                      onChange: (DateTime newDate, _) {
-                        _selectedDate = newDate;
-                      },
-                      pickerTheme: DateTimePickerTheme(
-                        backgroundColor: Theme.of(context).backgroundColor,
-                        itemTextStyle: Theme.of(context).textTheme.caption!,
-                        dividerColor: Theme.of(context).accentColor,
-                      ),
-                    ),
-                  )),
-              !widget.modify),
-          Expanded(
-            flex: 1,
-            child: Container(
-              child: OutlinedButton.icon(
-                  onPressed: () => {
-                        widget.onSave(Shift(_selectedDate, _shiftTime)),
-                        widget.onClose()
-                      },
-                  icon: Icon(Icons.done_all_rounded),
-                  label: Text("Insert")),
-            ),
-          ),
-          Spacer(),
-        ],
-      ),
-    );
+        child: widget.modify
+            ? _makeModifyView(context)
+            : _makeInsertView(context));
   }
 
   Widget _makeTitleView({context: BuildContext, text: String}) {
@@ -130,7 +165,7 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
           onValueChanged: (s, index) => {
             setState(() => _shiftTime = Converter.fromIntToShiftTime(index))
           },
-          options: Converter.shiftToListOfImages(height: 50.0),
+          options: widget.icons,
           startPosition: Converter.shiftToListPosition(_shiftTime),
           dividerColor: Theme.of(context).accentColor,
           builder: (image, index) => Column(
