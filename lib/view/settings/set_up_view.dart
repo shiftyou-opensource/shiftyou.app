@@ -116,7 +116,7 @@ class _SetUpView extends State<SetUpView> {
           backgroundColor: Theme.of(context).accentColor,
           foregroundColor: Theme.of(context).primaryColor,
           elevation: 5,
-          label: Text("Add"),
+          label: Text("Save"),
         ),
         appBar: AppBar(
           elevation: 0,

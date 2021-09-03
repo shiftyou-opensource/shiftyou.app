@@ -116,7 +116,6 @@ class _HomeView extends State<HomeView> {
       bottomNavigationBar: BottomNavyBar(
         backgroundColor: Theme.of(context).backgroundColor,
         selectedIndex: _selectedView,
-        containerHeight: 70,
         itemCornerRadius: 24,
         onItemSelected: (index) => _pageController.jumpToPage(index),
         items: <BottomNavyBarItem>[

@@ -40,6 +40,8 @@ class ShiftScheduler {
         DateTime.fromMillisecondsSinceEpoch(timeStart),
         DateTime.fromMillisecondsSinceEpoch(timeEnd));
     shift._id = id;
+    Logger _logger = GetIt.instance<Logger>();
+    _logger.d("ShiftScheduler With DB id ${shift._id}");
     List<ShiftTime> timeOrder = List.empty(growable: true);
     if (schedulerRules.trim().isNotEmpty) {
       var tokens = schedulerRules.split(";");
@@ -69,6 +71,9 @@ class ShiftScheduler {
     if (this.start != this.end) this._generateScheduler(complete: false);
   }
 
+  List<ShiftTime> get timeOrders => this._timeOrders;
+  List<Shift> get exceptions => this._exceptions;
+  bool get manual => _manual;
   DateTime get end => _end;
   DateTime get start => _start;
   List<Shift> get shifts => this._shifts;
@@ -84,6 +89,8 @@ class ShiftScheduler {
   set end(DateTime dateTime) {
     this._end = dateTime;
   }
+
+  set exceptions(List<Shift> exceptions) => this._exceptions = exceptions;
 
   set timeOrders(List<ShiftTime> rules) => this._timeOrders = rules;
 
