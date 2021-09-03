@@ -33,6 +33,12 @@ class Shift {
 
   Shift(this._date, this._time);
 
+  void fromShift(Shift shift) {
+    this._date = shift.date;
+    this._time = shift.time;
+    this._done = shift.done;
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

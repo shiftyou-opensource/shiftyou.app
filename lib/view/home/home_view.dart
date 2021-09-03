@@ -56,41 +56,9 @@ class _HomeView extends State<HomeView> {
         leading: Container(),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
-      floatingActionButton: makeVisibleComponent(
-          FloatingActionButton.extended(
-            onPressed: () {
-              // Add your onPressed code here!
-              showModalBottomSheet<void>(
-                  context: context,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(25.0),
-                        topRight: Radius.circular(25.0)),
-                  ),
-                  builder: (BuildContext context) {
-                    return InsertModifyShiftView(
-                      title: "Insert a Shift",
-                      start: _shifts.isEmpty
-                          ? DateTime.now()
-                          : _shifts.last.date.add(Duration(days: 1)),
-                      onSave: (Shift shift) => {
-                        _logger.d("On save called in the bottom dialog"),
-                        // TODO: save state and adding some method to handle the
-                        // manual method
-                        setState(() => _shifts.add(shift))
-                      },
-                      onClose: () => Navigator.of(context).pop(),
-                      modify: false,
-                    );
-                  });
-            },
-            icon: Icon(Icons.add),
-            backgroundColor: Theme.of(context).accentColor,
-            foregroundColor: Theme.of(context).primaryColor,
-            elevation: 5,
-            label: Text("Add"),
-          ),
-          _selectedView == 1 && _manual),
+      floatingActionButton: _makeFloatingButton(context,
+          onPress: (context, modify, index) => _makeBottomDialog(
+              context: context, modify: modify, index: index)),
       body: PageView(
         controller: _pageController,
         onPageChanged: (index) => setState(() => _selectedView = index),
@@ -139,13 +107,58 @@ class _HomeView extends State<HomeView> {
     );
   }
 
+  Widget _makeFloatingButton(BuildContext context,
+      {bool modify = false,
+      int? index,
+      Icon icon = const Icon(Icons.add),
+      required Function(BuildContext, bool, int?) onPress}) {
+    return makeVisibleComponent(
+        FloatingActionButton.extended(
+          onPressed: () => onPress(context, modify, index),
+          icon: icon,
+          backgroundColor: Theme.of(context).accentColor,
+          foregroundColor: Theme.of(context).primaryColor,
+          elevation: 5,
+          label: Text("Add"),
+        ),
+        (_selectedView == 1 || _selectedView == 2));
+  }
+
+  void _makeBottomDialog(
+      {required BuildContext context, bool modify = false, int? index}) {
+    showModalBottomSheet<void>(
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(25.0), topRight: Radius.circular(25.0)),
+        ),
+        builder: (BuildContext context) {
+          return InsertModifyShiftView(
+            title: modify ? "Modify the Shift" : "Insert a Shift",
+            start: _shifts.isEmpty
+                ? DateTime.now()
+                : _shifts.last.date.add(Duration(days: 1)),
+            shift: index != null ? _shifts[index] : null,
+            onSave: (Shift shift) => {
+              _logger.d("On save called in the bottom dialog"),
+              // TODO: save state and adding some method to handle the
+              // manual method
+              if (index == null)
+                setState(() => _shifts.add(shift))
+              else
+                setState(() => _shifts.elementAt(index).fromShift(shift))
+            },
+            onClose: () => Navigator.of(context).pop(),
+            modify: modify,
+          );
+        });
+  }
+
   Widget _buildHomeView(BuildContext context, List<Shift> shifts) {
     return Column(children: [
-      Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
+      Expanded(
+          flex: 2,
+            child: Container(
               width: 150,
               height: 280,
               color: Theme.of(context).backgroundColor,
@@ -176,21 +189,22 @@ class _HomeView extends State<HomeView> {
                 ),
               ),
             )
-          ]),
+          ),
       Expanded(
+        flex: 3,
         child: ListView.builder(
             shrinkWrap: true,
             itemCount: shifts.length,
             physics: AlwaysScrollableScrollPhysics(),
             scrollDirection: Axis.vertical,
-            itemBuilder: (BuildContext contex, int index) {
-              return _buildShiftCardView(context, shifts[index]);
+            itemBuilder: (BuildContext context, int index) {
+              return _buildShiftCardView(context, shifts[index], index);
             }),
       ),
     ]);
   }
 
-  Widget _buildShiftCardView(BuildContext context, Shift shift) {
+  Widget _buildShiftCardView(BuildContext context, Shift shift, int index) {
     return Card(
         elevation: 10.0,
         margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
@@ -202,59 +216,40 @@ class _HomeView extends State<HomeView> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
+                Expanded(
+                  flex: 2,
+                  child: Center(
+                    child: Container(
                         child: Image(
                             image: AssetImage(
                                 "assets/images/${Converter.fromShiftTimeToImage(shift.time)}"),
                             height: 60.0)),
-                  ],
+                  ),
                 ),
-                Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(15),
-                      padding: EdgeInsets.all(10),
-                      alignment: Alignment.center,
-                      child: Text(
-                          "${shift.date.day}/${shift.date.month}/${shift.date.year}",
-                          style:
-                              TextStyle(fontFamily: 'DsDigit', fontSize: 30)),
-                    )
-                  ],
+                Expanded(
+                  flex: 6,
+                  child: Center(
+                      child: Container(
+                    margin: EdgeInsets.all(15),
+                    padding: EdgeInsets.all(10),
+                    alignment: Alignment.center,
+                    child: Text(
+                        "${shift.date.day}/${shift.date.month}/${shift.date.year}",
+                        style: TextStyle(fontFamily: 'DsDigit', fontSize: 30)),
+                  )),
                 ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        child: Icon(
-                          Icons.edit,
-                          color: Theme.of(context).textTheme.bodyText1!.color,
-                          size: 25.0,
-                        ),
-                        style: ElevatedButton.styleFrom(
-                            side: BorderSide(
-                              width: 0,
-                              color:
-                                  Theme.of(context).textTheme.bodyText1!.color!,
-                            ),
-                            padding: EdgeInsets.all(15),
-                            shape: CircleBorder(),
-                            primary: Theme.of(context).backgroundColor),
+                Expanded(
+                    flex: 2,
+                    child: Center(
+                        child: IconButton(
+                      onPressed: () => _makeBottomDialog(
+                          modify: true, index: index, context: context),
+                      icon: Icon(
+                        Icons.edit,
+                        color: Theme.of(context).textTheme.bodyText1!.color,
+                        size: 25.0,
                       ),
-                    )
-                  ],
-                )
+                    )))
               ],
             ),
           ),

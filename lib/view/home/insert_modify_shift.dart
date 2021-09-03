@@ -2,12 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_holo_date_picker/date_picker_theme.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
+import 'package:get_it/get_it.dart';
+import 'package:logger/logger.dart';
 import 'package:nurse_time/model/shift.dart';
+import 'package:nurse_time/utils/generic_components.dart';
 import 'package:nurse_time/utils/spinner_chooser.dart';
 import 'package:nurse_time/utils/converter.dart';
 
 class InsertModifyShiftView extends StatefulWidget {
-
   final String title;
   final Function(Shift) onSave;
   final Function onClose;
@@ -15,6 +17,7 @@ class InsertModifyShiftView extends StatefulWidget {
   final bool modify;
   final DateTime? start;
   late final List<Image> icons;
+  late final Logger logger;
 
   InsertModifyShiftView(
       {Key? key,
@@ -26,6 +29,7 @@ class InsertModifyShiftView extends StatefulWidget {
       this.start})
       : super(key: key) {
     this.icons = Converter.shiftToListOfImages(height: 50.0);
+    this.logger = GetIt.instance<Logger>();
   }
 
   @override
@@ -43,10 +47,14 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
 
   @override
   void initState() {
+    if (widget.start != null) this._selectedDate = widget.start!;
+
     if (widget.shift != null) {
       this._shiftTime = widget.shift!.time;
+      // assume that the shift is null only when the modify it is enabled
+      widget.logger.d("Widget open in modify mode? ${widget.modify ? "Yes" : "no"}");
+      this._selectedDate = widget.shift!.date;
     }
-    if (widget.start != null) this._selectedDate = widget.start!;
     super.initState();
   }
 
@@ -64,7 +72,7 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
         Divider(),
         _makeShiftView(context: context),
         Divider(),
-        Expanded(
+        Flexible(
             flex: 6,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -84,17 +92,16 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
                 ),
               ),
             )),
-        Expanded(
+        Flexible(
           flex: 1,
-          child: Container(
-            child: OutlinedButton.icon(
-                onPressed: () => {
-                      widget.onSave(Shift(_selectedDate, _shiftTime)),
-                      widget.onClose()
-                    },
-                icon: Icon(Icons.done_all_rounded),
-                label: Text("Insert")),
-          ),
+          child: SizedBox(
+              width: 120,
+              height: 150,
+              child: makeButton(context,
+                  onPress: () => {
+                        widget.onSave(Shift(_selectedDate, _shiftTime)),
+                        widget.onClose()
+                      })),
         ),
         Spacer(),
       ],
@@ -106,18 +113,17 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
       children: [
         _makeTitleView(context: context, text: widget.title),
         Divider(),
-        Expanded(child: Text("To work on"), flex: 2),
+        Flexible(child: Text("To work on"), flex: 1),
         _makeShiftView(context: context),
-        Expanded(
+        Flexible(
           flex: 1,
-          child: Container(
-            child: OutlinedButton.icon(
-                onPressed: () => {
+          child: SizedBox(
+            width: 120,
+            child: makeButton(context,
+                onPress: () => {
                       widget.onSave(Shift(_selectedDate, _shiftTime)),
                       widget.onClose()
-                    },
-                icon: Icon(Icons.done_all_rounded),
-                label: Text("Insert")),
+                    }),
           ),
         ),
         Spacer(),
@@ -154,7 +160,7 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
   }
 
   Widget _makeShiftView({context: BuildContext}) {
-    return Expanded(
+    return Flexible(
         flex: 5,
         child: SpinnerChooser<Widget>(
           horizontal: true,
