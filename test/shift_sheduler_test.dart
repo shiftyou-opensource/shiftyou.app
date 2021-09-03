@@ -6,6 +6,7 @@ import 'utils/utils.dart';
 
 /// @author https://github.com/vincenzopalazzo
 void main() {
+  Utils.setUpInjector();
   test('TestGenerateScheduler Default', () {
     var start = DateTime.now();
     var end = start.add(Duration(days: 2));

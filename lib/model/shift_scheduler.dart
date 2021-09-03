@@ -77,6 +77,7 @@ class ShiftScheduler {
   List<Shift> getExceptions() {
     return this._exceptions.values.toList(growable: true);
   }
+
   bool get manual => _manual;
   DateTime get end => _end;
   DateTime get start => _start;

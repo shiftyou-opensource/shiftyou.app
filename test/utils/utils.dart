@@ -1,4 +1,9 @@
+import 'package:get_it/get_it.dart';
+import 'package:logger/logger.dart';
+import 'package:nurse_time/model/scheduler_rules.dart';
 import 'package:nurse_time/model/shift.dart';
+import 'package:nurse_time/model/shift_scheduler.dart';
+import 'package:nurse_time/model/user_model.dart';
 
 class Utils {
   static List<ShiftTime> makeDefaultRules() {
@@ -33,5 +38,22 @@ class Utils {
       }
     }
     return true;
+  }
+
+  static void setUpInjector() {
+    GetIt.instance.registerLazySingleton<Logger>(() => Logger());
+    //TODO Review the database rules here
+    GetIt.instance.registerLazySingleton<UserModel>(
+            () => UserModel(id: -1, name: "", logged: false, initialized: false));
+    GetIt.instance.registerLazySingleton<ShiftScheduler>(
+            () => ShiftScheduler(-1, DateTime.now(), DateTime.now()));
+
+    List<SchedulerRules> schedulerRules = List.empty(growable: true);
+    var custom = SchedulerRules("Weekly Cadence", false);
+    schedulerRules.add(custom);
+    var manual = SchedulerRules("Up to you", false);
+    manual.manual = true;
+    schedulerRules.add(manual);
+    GetIt.instance.registerSingleton<List<SchedulerRules>>(schedulerRules);
   }
 }

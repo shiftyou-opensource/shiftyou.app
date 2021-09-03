@@ -5,6 +5,7 @@ import 'utils/utils.dart';
 
 /// @author https://github.com/vincenzopalazzo
 void main() {
+  Utils.setUpInjector();
   test('TestShiftSchedulerRulesOne', () {
     var start = DateTime.now();
     var end = start.add(Duration(days: 200));

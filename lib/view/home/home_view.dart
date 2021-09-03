@@ -187,7 +187,7 @@ class _HomeView extends State<HomeView> {
               _logger.d("On save called in the bottom dialog"),
               // TODO: save state and adding some method to handle the
               // manual method
-                setState(() => {_shiftScheduler!.addException(shift)})
+              setState(() => {_shiftScheduler!.addException(shift)})
             },
             onClose: () => Navigator.of(context).pop(),
             modify: modify,
