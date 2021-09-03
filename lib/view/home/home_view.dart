@@ -123,6 +123,7 @@ class _HomeView extends State<HomeView> {
       bottomNavigationBar: BottomNavyBar(
         backgroundColor: Theme.of(context).backgroundColor,
         selectedIndex: _selectedView,
+        containerHeight: 65,
         itemCornerRadius: 24,
         onItemSelected: (index) => _pageController.jumpToPage(index),
         items: <BottomNavyBarItem>[
@@ -186,10 +187,7 @@ class _HomeView extends State<HomeView> {
               _logger.d("On save called in the bottom dialog"),
               // TODO: save state and adding some method to handle the
               // manual method
-              if (index == null)
                 setState(() => {_shiftScheduler!.addException(shift)})
-              else
-                setState(() => _shiftScheduler!.updateShiftAt(index, shift))
             },
             onClose: () => Navigator.of(context).pop(),
             modify: modify,

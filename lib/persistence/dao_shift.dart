@@ -40,7 +40,7 @@ class DAOShift extends AbstractDAOModel<ShiftScheduler> {
     );
 
     List<Shift> exceptions = await _daoShiftException.getAll(dao);
-    scheduler.exceptions = exceptions;
+    scheduler.setExceptions(exceptions);
     return scheduler;
   }
 
@@ -78,7 +78,7 @@ class DAOShift extends AbstractDAOModel<ShiftScheduler> {
     dao.getInstance.insert("Shifts", toInsert.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     // Find a way to do it in a single db operation
-    toInsert.exceptions.forEach((element) {
+    toInsert.getExceptions().forEach((element) {
       _daoShiftException.insert(dao, element);
     });
   }

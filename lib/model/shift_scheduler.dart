@@ -13,10 +13,11 @@ class ShiftScheduler {
   late DateTime _start;
   late DateTime _end;
   late Logger _logger;
-  // The list of exception, during the life we have several
+  // The map of exception, during the life we have several
   // exception to manage, and this is the place where the app
-  // will store yours exceptions
-  late List<Shift> _exceptions;
+  // will store yours exceptions.
+  // We use the map to speedup the algorithm to generate the exceptions.
+  late Map<String, Shift> _exceptions;
   // The list of period cadence od shift time, with this list of enums
   // we can autogenerate the period without storing a lot of information
   // inside the database.
@@ -61,7 +62,7 @@ class ShiftScheduler {
   ShiftScheduler(this._userId, this._start, this._end) {
     this._logger = GetIt.instance<Logger>();
     this._id = -1;
-    this._exceptions = List.empty(growable: true);
+    this._exceptions = Map();
     // Default period
     this._timeOrders = List.empty(growable: true);
     this._shifts = List.empty(growable: true);
@@ -73,7 +74,9 @@ class ShiftScheduler {
   }
 
   List<ShiftTime> get timeOrders => this._timeOrders;
-  List<Shift> get exceptions => this._exceptions;
+  List<Shift> getExceptions() {
+    return this._exceptions.values.toList(growable: true);
+  }
   bool get manual => _manual;
   DateTime get end => _end;
   DateTime get start => _start;
@@ -91,7 +94,12 @@ class ShiftScheduler {
     this._end = dateTime;
   }
 
-  set exceptions(List<Shift> exceptions) => this._exceptions = exceptions;
+  void setExceptions(List<Shift> exceptions) {
+    this._exceptions.clear();
+    exceptions.forEach((element) {
+      this._exceptions[toDateKey(element.date)] = element;
+    });
+  }
 
   set timeOrders(List<ShiftTime> rules) => this._timeOrders = rules;
 
@@ -104,14 +112,15 @@ class ShiftScheduler {
   }
 
   void addException(Shift shift, {bool ignoreUpdate = false}) {
-    this._exceptions.add(shift);
+    this._exceptions[toDateKey(shift.date)] = shift;
     if (!ignoreUpdate) {
       this._generateScheduler();
     }
   }
 
   void updateShiftAt(int index, Shift shift, {bool isException = false}) {
-    if (isException) this._exceptions.elementAt(index).fromShift(shift);
+    //TODO for the moment we avoid to modify the date.
+    if (isException) this._exceptions[toDateKey(shift.date)] = shift;
   }
 
   void _generateSchedulerRule() {
@@ -131,6 +140,10 @@ class ShiftScheduler {
   void updateRangeFromRange(DateTimeRange range) {
     this._start = range.start;
     this._end = range.end;
+  }
+
+  String toDateKey(DateTime time) {
+    return "${time.day}/${time.month}/${time.year}";
   }
 
   Map<String, dynamic> toMap() {
@@ -175,6 +188,11 @@ class ShiftScheduler {
     var now = DateTime.now();
     while (_end.difference(iterate).inDays >= 0) {
       var shift = Shift(iterate, next);
+      if (_exceptions.containsKey(toDateKey(iterate))) {
+        _logger.d("Contains exceptions");
+        shift = _exceptions.remove(toDateKey(iterate))!;
+      }
+
       if (iterate.difference(now).inDays < 0) shift.done = true;
       iterate = iterate.add(Duration(days: 1));
       // Jump the shift already done.
@@ -192,6 +210,11 @@ class ShiftScheduler {
         next = _timeOrders[indexStart];
       }
     }
+
+    _exceptions.values.forEach((element) {
+      generation.add(element);
+    });
+
     return generation;
   }
 
