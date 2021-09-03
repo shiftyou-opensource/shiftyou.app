@@ -33,23 +33,23 @@ class _SetUpView extends State<SetUpView> {
   late List<SchedulerRules> _schedulerRules;
   late List<ShiftTime> _shiftTimePicker;
   int _selectedRules = 0;
-  late DateTimeRange _range;
 
   _SetUpView() {
     this._userModel = GetIt.instance.get<UserModel>();
     this._dao = GetIt.instance<DAODatabase>();
     // TODO, put it inside the getit?
     this._schedulerRules = List.empty(growable: true);
-    var defaultRules = SchedulerRules("Default", true);
+
+    /*var defaultRules = SchedulerRules("Default", true);
     defaultRules.addTime(ShiftTime.AFTERNOON);
     defaultRules.addTime(ShiftTime.MORNING);
     defaultRules.addTime(ShiftTime.NIGHT);
     defaultRules.addTime(ShiftTime.FREE);
     defaultRules.addTime(ShiftTime.FREE);
-    this._schedulerRules.add(defaultRules);
-    var custom = SchedulerRules("Custom (You will choose)", false);
+    this._schedulerRules.add(defaultRules);*/
+    var custom = SchedulerRules("Weekly Cadence", false);
     this._schedulerRules.add(custom);
-    var manual = SchedulerRules("Manual", false);
+    var manual = SchedulerRules("Up to you", false);
     manual.manual = true;
     this._schedulerRules.add(manual);
 
@@ -70,15 +70,9 @@ class _SetUpView extends State<SetUpView> {
     else
       this._shiftScheduler = widget.shiftScheduler!;
 
-    if (widget.range == null)
-      this._range = DateTimeRange(
-          start: this._shiftScheduler.start, end: _shiftScheduler.end);
-    else
-      this._range = widget.range!;
-
-    if (this._shiftScheduler.isDefault())
-      this._selectedRules = 0;
-    else if (this._shiftScheduler.isManual()) {
+    // We start to indexing from 0 because we remove the default mode in the
+    // view.
+    if (this._shiftScheduler.isManual()) {
       this._selectedRules = 2;
       this._schedulerRules[this._selectedRules].timeOrders =
           this._shiftScheduler.timeOrders;
@@ -105,8 +99,9 @@ class _SetUpView extends State<SetUpView> {
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () => {
             setState(() {
-              _shiftScheduler.start = _range.start;
-              _shiftScheduler.end = _range.end;
+              var range = HomeView.of(context)!.shiftScheduler.range();
+              _shiftScheduler.start = range.start;
+              _shiftScheduler.end = range.end;
               _shiftScheduler.userId = this._userModel.id;
               _shiftScheduler.timeOrders =
                   _schedulerRules[_selectedRules].timeOrders;
@@ -179,7 +174,8 @@ class _SetUpView extends State<SetUpView> {
           events: [
             PeriodViewStep(Text("Select the shift period"),
                     shiftScheduler: _shiftScheduler,
-                    onSave: (timeRange) => setState(() => _range = timeRange))
+                    onSave: (timeRange) => setState(
+                        () => HomeView.of(context)!.shiftScheduler.updateRangeFromRange(timeRange)))
                 .build(context),
             GenerationMethodStep(
               Text("Set how generate the week shift"),

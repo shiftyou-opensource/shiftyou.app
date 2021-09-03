@@ -11,7 +11,6 @@ void main() {
     var scheduler = ShiftScheduler(-1, start, end);
     scheduler.timeOrders = Utils.makeCustomRules();
 
-    expect(false, scheduler.isDefault());
     expect(false, scheduler.isManual());
     expect(true, scheduler.isCustom());
   });
@@ -23,7 +22,6 @@ void main() {
     scheduler.timeOrders = Utils.makeCustomRules();
     scheduler.manual = true;
 
-    expect(false, scheduler.isDefault());
     expect(true, scheduler.isManual());
     expect(false, scheduler.isCustom());
   });
