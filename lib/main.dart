@@ -60,11 +60,17 @@ class MyApp extends StatelessWidget {
       userModel.name = user.name;
       userModel.id = user.id;
       var shift = await dao.getShift(user.id);
-      logger.d("Shift from database is ", shift);
+      logger.d("Shift from database is ${shift.toString()}");
+      var shiftInstance = GetIt.instance.get<ShiftScheduler>();
+      shiftInstance.userId = user.id;
       if (shift != null) {
-        var shiftInstance = GetIt.instance.get<ShiftScheduler>();
         logger.d("The user has a Shift stored in the database");
         shiftInstance.fromShift(shift);
+      } else {
+        // Init inside the db the null shift
+        // after that we can call only update on the shift scheduler
+        shiftInstance.notify();
+        shiftInstance.id = await dao.insertShift(shiftInstance);
       }
       return true;
     } catch (e, stacktrace) {

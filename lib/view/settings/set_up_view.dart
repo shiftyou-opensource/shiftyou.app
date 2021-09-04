@@ -93,7 +93,8 @@ class _SetUpView extends State<SetUpView> {
                   widget.schedulerRules[_selectedRules].timeOrders;
               _shiftScheduler.manual =
                   widget.schedulerRules[_selectedRules].manual;
-              _dao.insertShift(_shiftScheduler);
+              _shiftScheduler.notify();
+              _dao.updateShift(_shiftScheduler);
             }),
             Navigator.of(context).push(MaterialPageRoute(builder: (context) {
               return HomeView();

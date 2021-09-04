@@ -5,6 +5,7 @@ import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:nurse_time/model/shift.dart';
+import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:nurse_time/utils/spinner_chooser.dart';
 import 'package:nurse_time/utils/converter.dart';
@@ -13,6 +14,7 @@ class InsertModifyShiftView extends StatefulWidget {
   final String title;
   final Function(Shift) onSave;
   final Function onClose;
+  final ShiftScheduler shiftScheduler;
   final Shift? shift;
   final bool modify;
   final DateTime? start;
@@ -25,6 +27,7 @@ class InsertModifyShiftView extends StatefulWidget {
       required this.onSave,
       required this.onClose,
       required this.modify,
+      required this.shiftScheduler,
       this.shift,
       this.start})
       : super(key: key) {
@@ -114,7 +117,10 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
       children: [
         _makeTitleView(context: context, text: widget.title),
         Divider(),
-        Flexible(child: Text("To work on"), flex: 1),
+        Flexible(
+            child: Text(
+                "Your Shift for the day ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}"),
+            flex: 1),
         _makeShiftView(context: context),
         Flexible(
           flex: 1,

@@ -14,12 +14,10 @@ class DAODatabase extends AbstractDAO<Database> {
   late DAOUser _daoUser;
   late DAOShift _daoShift;
   late Logger _logger;
-  Map<int, String> _migrationScripts = {
-    4: "ALTER TABLE Shifts ADD scheduler_rules TEXT; ALTER TABLE Shifts DROP start_with;",
-    5: "ALTER TABLE Shifts ADD manual INTEGER;",
-    6: "CREATE TABLE Exception(id INTEGER PRIMARY KEY autoincrement, "
-        "day_timestamp INTEGER, shift INTEGER, done INTEGER, user_id REFERENCES Users(id))",
-  };
+
+  // Used to store the QUERY to migrate the database
+  // it is useful to add or remove row in the db table.
+  Map<int, String> _migrationScripts = {};
 
   DAODatabase() {
     _logger = Logger();
@@ -36,23 +34,19 @@ class DAODatabase extends AbstractDAO<Database> {
         // Set the path to the database. Note: Using the `join` function from the
         // `path` package is best practice to ensure the path is correctly
         // constructed for each platform.
-        join(await getDatabasesPath(), 'database.db'),
-        onCreate: (db, version) async {
+        join(await getDatabasesPath(), 'database.db'), onConfigure: (db) async {
+      await db.execute('PRAGMA foreign_keys = ON');
+    }, onCreate: (db, version) async {
       await db.execute(
           "CREATE TABLE Users(id INTEGER PRIMARY KEY autoincrement, name TEXT)");
-      // In this case it is useful to have the user as foreign key because a shift can be composed
-      // also from only exception, an example can be the manual scheduler.
-      // at this time we have no information on how will use this app, for this reason, we maintains the table
-      // more general. In this case is more logic that a shift have a sequence of exception, however in this case
-      // the design choice is explained before. p.s: I'm very bad make decision on the SQL schema.
-      await db.execute(
-          "CREATE TABLE Exception(id INTEGER PRIMARY KEY autoincrement, "
-          "day_timestamp INTEGER, shift INTEGER, done INTEGER, user_id REFERENCES Users(id))");
       await db.execute("CREATE TABLE "
           "Shifts(id INTEGER PRIMARY KEY autoincrement, start INTEGER, "
           "end INTEGER, start_with INTEGER, scheduler_rules TEXT, manual INTEGER,"
-          "user_id REFERENCES Users(id)"
-          ")");
+          "user_id INTEGER, FOREIGN KEY(user_id) REFERENCES Users(id) ON DELETE CASCADE ON UPDATE CASCADE)");
+      await db.execute(
+          "CREATE TABLE Exception(id INTEGER PRIMARY KEY autoincrement, "
+          "day_timestamp INTEGER, shift INTEGER, done INTEGER, shift_id INTEGER, "
+          "FOREIGN KEY(shift_id) REFERENCES Shifts(id) ON DELETE CASCADE ON UPDATE CASCADE)");
     }, onUpgrade: (db, oldVersion, newVersion) async {
       _logger.d(
           "Migrate DB from a old version $oldVersion to new version $newVersion");
@@ -74,17 +68,33 @@ class DAODatabase extends AbstractDAO<Database> {
   }
 
   @override
-  Future<void> insertUser(UserModel user) async {
-    this._daoUser.insert(this, user);
+  Future<int> insertUser(UserModel user) async {
+    return await this._daoUser.insert(this, user);
   }
 
   @override
   Future<ShiftScheduler?> getShift(int userId) async {
-    return await this._daoShift.get(this, {"user_id": userId});
+    var result =  await this._daoShift.get(this, {"user_id": userId});
+    if (result != null)
+      result.notify();
+    return result;
   }
 
   @override
-  Future<void> insertShift(ShiftScheduler shift) async {
-    this._daoShift.insert(this, shift);
+  Future<int> insertShift(ShiftScheduler shift) async {
+    var id = await this._daoShift.insert(this, shift);
+    shift.id = id;
+    return id;
+  }
+
+  @override
+  Future<void> deleteShift(ShiftScheduler shift) {
+    // TODO: implement deleteShift
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateShift(ShiftScheduler shift) async {
+    return await this._daoShift.update(this, shift);
   }
 }

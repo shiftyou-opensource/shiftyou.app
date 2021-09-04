@@ -6,11 +6,15 @@ abstract class AbstractDAO<T> {
 
   T get getInstance;
 
-  Future<void> insertUser(UserModel user);
+  Future<int> insertUser(UserModel user);
 
   Future<UserModel?> getUser();
 
-  Future<void> insertShift(ShiftScheduler shift);
+  Future<int> insertShift(ShiftScheduler shift);
 
   Future<ShiftScheduler?> getShift(int user);
+
+  Future<void> deleteShift(ShiftScheduler shift);
+
+  Future<void> updateShift(ShiftScheduler shift);
 }

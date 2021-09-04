@@ -5,8 +5,8 @@ import 'abstract_dao.dart';
 
 class DAOUser extends AbstractDAOModel<UserModel> {
   @override
-  void insert(AbstractDAO<dynamic> dao, UserModel toInsert) {
-    dao.getInstance.insert("Users", toInsert.toMap(),
+  Future<int> insert(AbstractDAO<dynamic> dao, UserModel toInsert) async {
+    return await dao.getInstance.insert("Users", toInsert.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
@@ -41,5 +41,16 @@ class DAOUser extends AbstractDAOModel<UserModel> {
         initialized: true,
       );
     });
+  }
+
+  @override
+  Future<UserModel> delete(AbstractDAO dao, Map<String, dynamic> options) {
+    // TODO: implement delete
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> update(AbstractDAO dao, UserModel user) async {
+    return await dao.getInstance.update("Users", user.toMap());
   }
 }

@@ -123,7 +123,7 @@ class _HomeView extends State<HomeView> {
       bottomNavigationBar: BottomNavyBar(
         backgroundColor: Theme.of(context).backgroundColor,
         selectedIndex: _selectedView,
-        containerHeight: 65,
+        containerHeight: 68,
         itemCornerRadius: 24,
         onItemSelected: (index) => _pageController.jumpToPage(index),
         items: <BottomNavyBarItem>[
@@ -150,10 +150,10 @@ class _HomeView extends State<HomeView> {
             else
               {
                 // Set the new data inside the _shiftScheduler and update the ui.
-                setState(() {
+                setState(() async {
                   _shiftScheduler!.userId = this._userModel.id;
                   _shiftScheduler!.notify();
-                  _dao.insertShift(_shiftScheduler!);
+                  _dao.updateShift(_shiftScheduler!);
                   _pageController.jumpToPage(1);
                 }),
               }
@@ -182,12 +182,17 @@ class _HomeView extends State<HomeView> {
             start: _shifts.isEmpty
                 ? DateTime.now()
                 : _shifts.last.date.add(Duration(days: 1)),
+            shiftScheduler: _shiftScheduler!,
             shift: index != null ? _shifts[index] : null,
             onSave: (Shift shift) => {
               _logger.d("On save called in the bottom dialog"),
               // TODO: save state and adding some method to handle the
               // manual method
-              setState(() => {_shiftScheduler!.addException(shift)})
+              setState(() => {
+                    _shiftScheduler!.addException(shift),
+                    _dao.updateShift(_shiftScheduler!),
+                _logger.d("Update shift inside the db")
+                  })
             },
             onClose: () => Navigator.of(context).pop(),
             modify: modify,
