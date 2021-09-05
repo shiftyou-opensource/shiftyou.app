@@ -6,6 +6,7 @@ enum ShiftTime {
   MORNING,
   AFTERNOON,
   NIGHT,
+  STOP_WORK,
   FREE,
 }
 

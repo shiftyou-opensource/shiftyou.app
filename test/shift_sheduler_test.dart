@@ -18,14 +18,9 @@ void main() {
     var expectedScheduler = List.empty(growable: true);
     var next = ShiftTime.AFTERNOON;
     var iterate = start;
-    var afterNight = false;
     while (end.difference(iterate).inDays >= 0) {
       expectedScheduler.add(Shift(iterate, next));
       iterate = iterate.add(Duration(days: 1));
-      if (afterNight) {
-        afterNight = false;
-        continue;
-      }
       switch (next) {
         case ShiftTime.AFTERNOON:
           next = ShiftTime.MORNING;
@@ -34,10 +29,12 @@ void main() {
           next = ShiftTime.NIGHT;
           break;
         case ShiftTime.NIGHT:
-          next = ShiftTime.FREE;
-          afterNight = true;
+          next = ShiftTime.STOP_WORK;
           break;
         case ShiftTime.FREE:
+          next = ShiftTime.STOP_WORK;
+          break;
+        case ShiftTime.STOP_WORK:
           next = ShiftTime.AFTERNOON;
           break;
       }

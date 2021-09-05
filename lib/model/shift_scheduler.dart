@@ -171,7 +171,7 @@ class ShiftScheduler {
     }
     return {
       if (_id != -1 && !update) "id": _id,
-      if (_userId != -1 && !update)"user_id": _userId,
+      if (_userId != -1 && !update) "user_id": _userId,
       "start": _start.millisecondsSinceEpoch,
       "end": _end.millisecondsSinceEpoch,
       "scheduler_rules": stringSchedulerRules.toString(),

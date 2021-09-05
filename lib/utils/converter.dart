@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:logger/logger.dart';
 import 'package:nurse_time/model/shift.dart';
 
 class Converter {
@@ -11,11 +12,15 @@ class Converter {
       case 2:
         return ShiftTime.NIGHT;
       case 3:
+        return ShiftTime.STOP_WORK;
+      case 4:
         return ShiftTime.FREE;
       default:
-        print(index);
+        var logger = Logger();
+        logger.wtf(
+            "Index  $index not recognize to (re)create the shift time enums");
         throw Exception(
-            "Index not recognize to (re)cereate the shift time enumas");
+            "Index  $index not recognize to (re)create the shift time enums");
     }
   }
 
@@ -27,8 +32,10 @@ class Converter {
         return 1;
       case ShiftTime.NIGHT:
         return 2;
-      case ShiftTime.FREE:
+      case ShiftTime.STOP_WORK:
         return 3;
+      case ShiftTime.FREE:
+        return 4;
       default:
         throw Exception("Shift time not recognized");
     }
@@ -44,6 +51,8 @@ class Converter {
         return "Night";
       case ShiftTime.FREE:
         return "Free";
+      case ShiftTime.STOP_WORK:
+        return "Stop Work";
       default:
         throw Exception("Shift time not recognized");
     }
@@ -59,6 +68,8 @@ class Converter {
         return "foryou.png";
       case ShiftTime.NIGHT:
         return "night.png";
+      case ShiftTime.STOP_WORK:
+        return "home.png";
       default:
         throw Exception("No image found with name $shift");
     }
@@ -70,6 +81,7 @@ class Converter {
       ShiftTime.MORNING,
       ShiftTime.AFTERNOON,
       ShiftTime.NIGHT,
+      ShiftTime.STOP_WORK,
       ShiftTime.FREE
     ];
     List<Image> images = List.empty(growable: true);
@@ -90,9 +102,11 @@ class Converter {
       case ShiftTime.MORNING:
         return 0;
       case ShiftTime.FREE:
-        return 3;
+        return 4;
       case ShiftTime.NIGHT:
         return 2;
+      case ShiftTime.STOP_WORK:
+        return 3;
       default:
         throw Exception("Not valid shift $time");
     }

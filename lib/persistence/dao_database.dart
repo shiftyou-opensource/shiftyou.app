@@ -74,9 +74,8 @@ class DAODatabase extends AbstractDAO<Database> {
 
   @override
   Future<ShiftScheduler?> getShift(int userId) async {
-    var result =  await this._daoShift.get(this, {"user_id": userId});
-    if (result != null)
-      result.notify();
+    var result = await this._daoShift.get(this, {"user_id": userId});
+    if (result != null) result.notify();
     return result;
   }
 

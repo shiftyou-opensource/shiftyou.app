@@ -49,6 +49,7 @@ class _SetUpView extends State<SetUpView> {
       ShiftTime.MORNING,
       ShiftTime.AFTERNOON,
       ShiftTime.NIGHT,
+      ShiftTime.STOP_WORK,
       ShiftTime.FREE
     ]);
   }

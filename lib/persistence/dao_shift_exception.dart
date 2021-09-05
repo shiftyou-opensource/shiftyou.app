@@ -21,7 +21,8 @@ class DAOShiftException extends AbstractDAOModel<Shift> {
   Future<List<Shift>> getAll(AbstractDAO dao) async {
     List<Map<String, dynamic>> exceptionsMap =
         await dao.getInstance.query("Exception");
-    _logger.d("Get all exception inside the db return the following result ${exceptionsMap.toString()}");
+    _logger.d(
+        "Get all exception inside the db return the following result ${exceptionsMap.toString()}");
     List<Shift> exceptions = List.empty(growable: true);
     exceptionsMap.forEach((element) {
       var shift = Shift.fromDatabase(element);
@@ -46,7 +47,10 @@ class DAOShiftException extends AbstractDAOModel<Shift> {
 
   @override
   Future<void> update(AbstractDAO dao, Shift toUpdate) async {
-    _logger.d("Update Exception with the following data ${toUpdate.toMap(update: true)}");
-    return await dao.getInstance.update("Exception", toUpdate.toMap(update: true), where: 'id = ?', whereArgs: [toUpdate.id]);
+    _logger.d(
+        "Update Exception with the following data ${toUpdate.toMap(update: true)}");
+    return await dao.getInstance.update(
+        "Exception", toUpdate.toMap(update: true),
+        where: 'id = ?', whereArgs: [toUpdate.id]);
   }
 }
