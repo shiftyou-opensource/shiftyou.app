@@ -17,9 +17,24 @@ class DAODatabase extends AbstractDAO<Database> {
   late DAOShiftException _daoShiftException;
   late Logger _logger;
 
+  static const String CREATE_USERS_TABLE_QUERY =
+      "CREATE TABLE Users(id INTEGER PRIMARY KEY autoincrement, name TEXT)";
+
+  static const String CREATE_SHIFT_TABLE_QUERY = "CREATE TABLE "
+      "Shifts(id INTEGER PRIMARY KEY autoincrement, start INTEGER, "
+      "end INTEGER, start_with INTEGER, scheduler_rules TEXT, manual INTEGER,"
+      "user_id INTEGER, FOREIGN KEY(user_id) REFERENCES Users(id) ON DELETE CASCADE ON UPDATE CASCADE)";
+
+  static const String CREATE_EXCEPTION_TABLE_QUERY =
+      "CREATE TABLE Exception(id INTEGER PRIMARY KEY autoincrement, "
+      "day_timestamp INTEGER, shift INTEGER, done INTEGER, shift_id INTEGER, "
+      "FOREIGN KEY(shift_id) REFERENCES Shifts(id) ON DELETE CASCADE ON UPDATE CASCADE)";
+
   // Used to store the QUERY to migrate the database
   // it is useful to add or remove row in the db table.
-  Map<int, String> _migrationScripts = {};
+  Map<int, String> _migrationScripts = {
+    6: "DROP TABLE IF EXIST Shifts; DROP TABLE IF EXIST Exception; " + CREATE_SHIFT_TABLE_QUERY + "; " + CREATE_EXCEPTION_TABLE_QUERY
+  };
 
   DAODatabase() {
     _logger = Logger();
@@ -40,24 +55,19 @@ class DAODatabase extends AbstractDAO<Database> {
         join(await getDatabasesPath(), 'database.db'), onConfigure: (db) async {
       await db.execute('PRAGMA foreign_keys = ON');
     }, onCreate: (db, version) async {
-      await db.execute(
-          "CREATE TABLE Users(id INTEGER PRIMARY KEY autoincrement, name TEXT)");
-      await db.execute("CREATE TABLE "
-          "Shifts(id INTEGER PRIMARY KEY autoincrement, start INTEGER, "
-          "end INTEGER, start_with INTEGER, scheduler_rules TEXT, manual INTEGER,"
-          "user_id INTEGER, FOREIGN KEY(user_id) REFERENCES Users(id) ON DELETE CASCADE ON UPDATE CASCADE)");
-      await db.execute(
-          "CREATE TABLE Exception(id INTEGER PRIMARY KEY autoincrement, "
-          "day_timestamp INTEGER, shift INTEGER, done INTEGER, shift_id INTEGER, "
-          "FOREIGN KEY(shift_id) REFERENCES Shifts(id) ON DELETE CASCADE ON UPDATE CASCADE)");
+      await db.execute(CREATE_USERS_TABLE_QUERY);
+      await db.execute(CREATE_SHIFT_TABLE_QUERY);
+      await db.execute(CREATE_EXCEPTION_TABLE_QUERY);
     }, onUpgrade: (db, oldVersion, newVersion) async {
       _logger.d(
           "Migrate DB from a old version $oldVersion to new version $newVersion");
       for (int i = oldVersion + 1; i <= newVersion; i++) {
-        if (_migrationScripts.containsKey(i))
+        if (_migrationScripts.containsKey(i)) {
+          _logger.i("Migrate statement ${_migrationScripts[i]}");
           await db.execute(_migrationScripts[i]!);
+        }
       }
-    }, version: 6);
+    }, version: 7);
   }
 
   @override
