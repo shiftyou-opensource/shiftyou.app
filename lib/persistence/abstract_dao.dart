@@ -17,4 +17,6 @@ abstract class AbstractDAO<T> {
   Future<void> deleteShift(ShiftScheduler shift);
 
   Future<void> updateShift(ShiftScheduler shift);
+
+  Future<void> deleteShiftException(ShiftScheduler shift);
 }

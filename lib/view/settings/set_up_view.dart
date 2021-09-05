@@ -44,7 +44,6 @@ class _SetUpView extends State<SetUpView> {
     this._userModel = GetIt.instance.get<UserModel>();
     this._dao = GetIt.instance<DAODatabase>();
 
-    // TODO: Set up the UI with the actual state of the application.
     _shiftTimePicker = List.from([
       ShiftTime.MORNING,
       ShiftTime.AFTERNOON,

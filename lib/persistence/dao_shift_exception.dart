@@ -8,7 +8,7 @@ import 'package:sqflite/sqlite_api.dart';
 class DAOShiftException extends AbstractDAOModel<Shift> {
   late Logger _logger;
 
-  DAOShiftException() {
+  DAOShiftException({String tableName = "Exception"}) : super(tableName) {
     this._logger = Logger();
   }
 
@@ -20,7 +20,7 @@ class DAOShiftException extends AbstractDAOModel<Shift> {
   @override
   Future<List<Shift>> getAll(AbstractDAO dao) async {
     List<Map<String, dynamic>> exceptionsMap =
-        await dao.getInstance.query("Exception");
+        await dao.getInstance.query(super.tableName);
     _logger.d(
         "Get all exception inside the db return the following result ${exceptionsMap.toString()}");
     List<Shift> exceptions = List.empty(growable: true);
@@ -35,14 +35,13 @@ class DAOShiftException extends AbstractDAOModel<Shift> {
   @override
   Future<int> insert(AbstractDAO dao, Shift toInsert) async {
     _logger.d("Put in the db the following exception ${toInsert.toMap()}");
-    return await dao.getInstance.insert("Exception", toInsert.toMap(),
+    return await dao.getInstance.insert(super.tableName, toInsert.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   @override
-  Future<Shift> delete(AbstractDAO dao, Map<String, dynamic> options) {
-    // TODO: implement delete
-    throw UnimplementedError();
+  Future<void> delete(AbstractDAO dao, Map<String, dynamic> options) async {
+    return await dao.getInstance.delete(super.tableName);
   }
 
   @override

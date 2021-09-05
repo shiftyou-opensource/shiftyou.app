@@ -7,7 +7,6 @@ import 'package:nurse_time/utils/converter.dart';
 import 'package:nurse_time/utils/map_reduce_shifts.dart';
 
 class PieChartShift extends StatefulWidget {
-
   final List<Shift> shifts;
 
   const PieChartShift({Key? key, required this.shifts}) : super(key: key);
@@ -17,7 +16,6 @@ class PieChartShift extends StatefulWidget {
 }
 
 class _PieChartShift extends State<PieChartShift> {
-
   late int _touchedIndex;
 
   // The int is the index of the shift, and the list of color
@@ -60,10 +58,9 @@ class _PieChartShift extends State<PieChartShift> {
               final desiredTouch =
                   pieTouchResponse.touchInput is! PointerExitEvent &&
                       pieTouchResponse.touchInput is! PointerUpEvent;
-              if (desiredTouch &&
-                  pieTouchResponse.touchedSection != null) {
-                _touchedIndex = pieTouchResponse
-                    .touchedSection!.touchedSectionIndex;
+              if (desiredTouch && pieTouchResponse.touchedSection != null) {
+                _touchedIndex =
+                    pieTouchResponse.touchedSection!.touchedSectionIndex;
               } else {
                 _touchedIndex = -1;
               }
@@ -78,11 +75,12 @@ class _PieChartShift extends State<PieChartShift> {
     );
   }
 
-  PieChartSectionData _makePieChartData({required ShiftTime shift,
-    required double count,
-    required int total,
-    required bool isTouched,
-    required BuildContext context}) {
+  PieChartSectionData _makePieChartData(
+      {required ShiftTime shift,
+      required double count,
+      required int total,
+      required bool isTouched,
+      required BuildContext context}) {
     double radius = isTouched ? 110 : 100;
     final double widgetSize = isTouched ? 70 : 55;
     int indexShiftTime = Converter.fromShiftTimeToIndex(shift);
@@ -91,10 +89,7 @@ class _PieChartShift extends State<PieChartShift> {
       value: (count * 100) / total,
       title: '${(count * 100) ~/ total}%',
       radius: radius,
-      titleStyle: Theme
-          .of(context)
-          .textTheme
-          .bodyText1,
+      titleStyle: Theme.of(context).textTheme.bodyText1,
       badgeWidget: _Badge(
         Converter.fromShiftTimeToImage(shift),
         size: widgetSize,
@@ -112,7 +107,8 @@ class _PieChartShift extends State<PieChartShift> {
     var indexElem = 0;
     shiftCalculation.forEach((shift, count) {
       final isTouched = indexElem++ == _touchedIndex;
-      var pieData = _makePieChartData(shift: shift,
+      var pieData = _makePieChartData(
+          shift: shift,
           count: count,
           total: _shifts.length,
           isTouched: isTouched,
@@ -121,7 +117,6 @@ class _PieChartShift extends State<PieChartShift> {
     });
     return pieChartData;
   }
-
 }
 
 class _Badge extends StatelessWidget {
@@ -129,7 +124,8 @@ class _Badge extends StatelessWidget {
   final double size;
   final Color borderColor;
 
-  const _Badge(this.svgAsset, {
+  const _Badge(
+    this.svgAsset, {
     required this.size,
     required this.borderColor,
   }) : super();
@@ -141,9 +137,7 @@ class _Badge extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: Theme
-            .of(context)
-            .backgroundColor,
+        color: Theme.of(context).backgroundColor,
         shape: BoxShape.circle,
         border: Border.all(
           color: borderColor,
@@ -160,7 +154,7 @@ class _Badge extends StatelessWidget {
       //padding: EdgeInsets.all(size * .15),
       child: Center(
         child:
-        Image(image: AssetImage("assets/images/$svgAsset"), height: 35.0),
+            Image(image: AssetImage("assets/images/$svgAsset"), height: 35.0),
       ),
     );
   }

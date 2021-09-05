@@ -10,7 +10,7 @@ class DAOShift extends AbstractDAOModel<ShiftScheduler> {
   late DAOShiftException _daoShiftException;
   late Logger _logger;
 
-  DAOShift() {
+  DAOShift({String tableName = "Shifts"}) : super(tableName) {
     _daoShiftException = DAOShiftException();
     _logger = Logger();
   }
@@ -18,8 +18,9 @@ class DAOShift extends AbstractDAOModel<ShiftScheduler> {
   @override
   Future<ShiftScheduler?> get(
       AbstractDAO dao, Map<String, dynamic> options) async {
-    final List<Map<String, dynamic>> maps = await dao.getInstance
-        .query('Shifts', where: "user_id = " + options["user_id"].toString());
+    final List<Map<String, dynamic>> maps = await dao.getInstance.query(
+        super.tableName,
+        where: "user_id = " + options["user_id"].toString());
     if (maps.isEmpty) {
       return null;
     }
@@ -52,7 +53,7 @@ class DAOShift extends AbstractDAOModel<ShiftScheduler> {
   @override
   Future<List<ShiftScheduler>> getAll(AbstractDAO dao) async {
     final List<Map<String, dynamic>> maps =
-        await dao.getInstance.query('Shifts');
+        await dao.getInstance.query(super.tableName);
     if (maps.isEmpty) {
       return List.empty();
     }
@@ -80,7 +81,8 @@ class DAOShift extends AbstractDAOModel<ShiftScheduler> {
   @override
   Future<int> insert(AbstractDAO dao, ShiftScheduler toInsert) async {
     _logger.d("Insert shift with the following data ${toInsert.toMap()}");
-    var shiftId = await dao.getInstance.insert("Shifts", toInsert.toMap(),
+    var shiftId = await dao.getInstance.insert(
+        super.tableName, toInsert.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     // Find a way to do it in a single db operation
     toInsert.getExceptions().forEach((element) async {
@@ -100,7 +102,7 @@ class DAOShift extends AbstractDAOModel<ShiftScheduler> {
   @override
   Future<void> update(AbstractDAO dao, ShiftScheduler shift) async {
     _logger.d("Update shift with the following data ${shift.toMap()}");
-    await dao.getInstance.update("Shifts", shift.toMap(update: true));
+    await dao.getInstance.update(super.tableName, shift.toMap(update: true));
     // Find a way to do it in a single db operation
     shift.getExceptions().forEach((element) {
       element.shiftId = shift.id;

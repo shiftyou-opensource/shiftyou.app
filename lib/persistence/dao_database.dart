@@ -5,6 +5,7 @@ import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/model/user_model.dart';
 import 'package:nurse_time/persistence/abstract_dao.dart';
 import 'package:nurse_time/persistence/dao_shift.dart';
+import 'package:nurse_time/persistence/dao_shift_exception.dart';
 import 'package:nurse_time/persistence/dao_user.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -13,6 +14,7 @@ class DAODatabase extends AbstractDAO<Database> {
   Database? _database;
   late DAOUser _daoUser;
   late DAOShift _daoShift;
+  late DAOShiftException _daoShiftException;
   late Logger _logger;
 
   // Used to store the QUERY to migrate the database
@@ -30,6 +32,7 @@ class DAODatabase extends AbstractDAO<Database> {
     }
     this._daoUser = DAOUser();
     this._daoShift = DAOShift();
+    this._daoShiftException = DAOShiftException();
     this._database = await openDatabase(
         // Set the path to the database. Note: Using the `join` function from the
         // `path` package is best practice to ensure the path is correctly
@@ -95,5 +98,10 @@ class DAODatabase extends AbstractDAO<Database> {
   @override
   Future<void> updateShift(ShiftScheduler shift) async {
     return await this._daoShift.update(this, shift);
+  }
+
+  @override
+  Future<void> deleteShiftException(ShiftScheduler shift) async {
+    return await this._daoShiftException.delete(this, {"shift_id": shift.id});
   }
 }

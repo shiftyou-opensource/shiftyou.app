@@ -111,8 +111,9 @@ class ShiftScheduler {
   void setExceptions(List<Shift> exceptions) {
     this._exceptions.clear();
     exceptions.forEach((element) {
-      this.addException(element);
+      this.addException(element, ignoreUpdate: true);
     });
+    this.notify();
   }
 
   set timeOrders(List<ShiftTime> rules) => this._timeOrders = rules;
@@ -187,6 +188,7 @@ class ShiftScheduler {
     this._timeOrders = shift._timeOrders;
     this.manual = shift._manual;
     this._shifts = shift._shifts;
+    this._exceptions = shift._exceptions;
     this._generateScheduler();
     this._generateSchedulerRule();
   }

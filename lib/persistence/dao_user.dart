@@ -4,9 +4,11 @@ import 'package:sqflite/sqflite.dart';
 import 'abstract_dao.dart';
 
 class DAOUser extends AbstractDAOModel<UserModel> {
+  DAOUser({String tableName = "Users"}) : super(tableName);
+
   @override
   Future<int> insert(AbstractDAO<dynamic> dao, UserModel toInsert) async {
-    return await dao.getInstance.insert("Users", toInsert.toMap(),
+    return await dao.getInstance.insert(super.tableName, toInsert.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
@@ -14,7 +16,7 @@ class DAOUser extends AbstractDAOModel<UserModel> {
   Future<UserModel?> get(
       AbstractDAO<dynamic> dao, Map<String, dynamic> options) async {
     final List<Map<String, dynamic>> maps =
-        await dao.getInstance.query('Users');
+        await dao.getInstance.query(super.tableName);
     if (maps.isEmpty) {
       return null;
     }
@@ -29,7 +31,7 @@ class DAOUser extends AbstractDAOModel<UserModel> {
   @override
   Future<List<UserModel>> getAll(AbstractDAO dao) async {
     final List<Map<String, dynamic>> maps =
-        await dao.getInstance.query('Users');
+        await dao.getInstance.query(super.tableName);
     if (maps.isEmpty) {
       return List.empty();
     }
@@ -51,6 +53,6 @@ class DAOUser extends AbstractDAOModel<UserModel> {
 
   @override
   Future<void> update(AbstractDAO dao, UserModel user) async {
-    return await dao.getInstance.update("Users", user.toMap());
+    return await dao.getInstance.update(super.tableName, user.toMap());
   }
 }

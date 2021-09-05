@@ -72,7 +72,7 @@ Widget makeButton(BuildContext context,
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           ),
           onPressed: () => onPress(),
-          icon: Icon(Icons.done_all_rounded),
+          icon: Icon(Icons.done),
           label: Text("Save"));
   }
 }
@@ -133,12 +133,65 @@ CustomScrollView makeScrollView(BuildContext context, List<Widget> children) {
   );
 }
 
-dynamic showSnackBar(BuildContext context, String message, {Action? action}) {
+void showSnackBar(BuildContext context, String message,
+    {Action? action, String label = "Close"}) {
   var snackBar = SnackBar(
-      content: Text(message),
+      backgroundColor: Theme.of(context).selectedRowColor,
+      content: EmojiText(text: message),
       action: SnackBarAction(
-          label: "Close",
+          label: label,
+          textColor: Theme.of(context).textTheme.button!.color,
           onPressed: () =>
               ScaffoldMessenger.of(context).hideCurrentSnackBar()));
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+}
+
+// Stackoverflow Solution: https://stackoverflow.com/a/56839834/10854225
+class EmojiText extends StatelessWidget {
+  final String text;
+
+  const EmojiText({
+    Key? key,
+    required this.text,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return RichText(
+      text: _buildText(context, this.text),
+    );
+  }
+
+  TextSpan _buildText(BuildContext context, String text) {
+    final children = <TextSpan>[];
+    final runes = text.runes;
+
+    for (int i = 0; i < runes.length; /* empty */) {
+      int current = runes.elementAt(i);
+
+      // we assume that everything that is not
+      // in Extended-ASCII set is an emoji...
+      final isEmoji = current > 255;
+      final shouldBreak = isEmoji ? (x) => x <= 255 : (x) => x > 255;
+
+      final chunk = <int>[];
+      while (!shouldBreak(current)) {
+        chunk.add(current);
+        if (++i >= runes.length) break;
+        current = runes.elementAt(i);
+      }
+
+      children.add(
+        TextSpan(
+            text: String.fromCharCodes(chunk),
+            style: isEmoji
+                ? TextStyle(
+                    fontFamily: 'EmojiOne',
+                  )
+                : Theme.of(context).textTheme.subtitle1),
+      );
+    }
+
+    return TextSpan(children: children);
+  }
 }

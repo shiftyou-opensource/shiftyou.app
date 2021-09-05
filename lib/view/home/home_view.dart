@@ -81,9 +81,7 @@ class _HomeView extends State<HomeView> {
         controller: _pageController,
         onPageChanged: (index) => setState(() => _selectedView = index),
         children: [
-          SafeArea(
-            child: PieChartShift(shifts: _shiftScheduler!.shifts)
-          ),
+          SafeArea(child: PieChartShift(shifts: _shiftScheduler!.shifts)),
           SafeArea(child: _buildHomeView(context, _shiftScheduler!.shifts)),
           SafeArea(
               child: SetUpView(
@@ -118,19 +116,22 @@ class _HomeView extends State<HomeView> {
       required Function(BuildContext, bool, int?) onPress}) {
     return makeVisibleComponent(
         FloatingActionButton.extended(
-          onPressed: () => {
+          onPressed: () async => {
             // add and modify shift
             if (!settingView)
               {onPress(context, modify, index)}
             else
               {
                 // Set the new data inside the _shiftScheduler and update the ui.
-                setState(() async {
+                await _dao.deleteShiftException(_shiftScheduler!),
+
+                setState(() {
                   _shiftScheduler!.userId = this._userModel.id;
                   _shiftScheduler!.notify();
                   _dao.updateShift(_shiftScheduler!);
-                  _pageController.jumpToPage(1);
                 }),
+                _pageController.jumpToPage(1),
+                showSnackBar(context, "New Scheduler generated"),
               }
           },
           icon: settingView ? Icon(Icons.done) : icon,
@@ -154,19 +155,16 @@ class _HomeView extends State<HomeView> {
           var _shifts = _shiftScheduler!.shifts;
           return InsertModifyShiftView(
             title: modify ? "Modify the Shift" : "Insert a Shift",
-            start: _shifts.isEmpty
-                ? DateTime.now()
-                : _shifts.last.date.add(Duration(days: 1)),
+            start: _shifts.isEmpty ? DateTime.now() : _shifts.first.date,
             shiftScheduler: _shiftScheduler!,
             shift: index != null ? _shifts[index] : null,
             onSave: (Shift shift) => {
               _logger.d("On save called in the bottom dialog"),
-              // TODO: save state and adding some method to handle the
-              // manual method
               setState(() => {
                     _shiftScheduler!.addException(shift),
                     _dao.updateShift(_shiftScheduler!),
-                    _logger.d("Update shift inside the db")
+                    _logger.d("Update shift inside the db"),
+                    showSnackBar(context, "All done 🌈"),
                   })
             },
             onClose: () => Navigator.of(context).pop(),
@@ -183,9 +181,8 @@ class _HomeView extends State<HomeView> {
             width: 150,
             height: 280,
             color: Theme.of(context).backgroundColor,
-            child: Center(
-              child: PieChartShift(shifts: _shiftScheduler!.shifts)
-            ),
+            child:
+                Center(child: PieChartShift(shifts: _shiftScheduler!.shifts)),
           )),
       Expanded(
         flex: 3,
@@ -252,6 +249,4 @@ class _HomeView extends State<HomeView> {
           ),
         ));
   }
-
-
 }
