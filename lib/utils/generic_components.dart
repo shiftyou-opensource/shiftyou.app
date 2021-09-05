@@ -1,6 +1,7 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nurse_time/utils/icon_provider.dart';
 
 Widget buildUserIcon(BuildContext context, String imageUrl) {
   return CircleAvatar(
@@ -72,7 +73,7 @@ Widget makeButton(BuildContext context,
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           ),
           onPressed: () => onPress(),
-          icon: Icon(Icons.done_all_rounded),
+          icon: Icon(Icons.done),
           label: Text("Save"));
   }
 }
@@ -133,12 +134,103 @@ CustomScrollView makeScrollView(BuildContext context, List<Widget> children) {
   );
 }
 
-dynamic showSnackBar(BuildContext context, String message, {Action? action}) {
+void showSnackBar(BuildContext context, String message,
+    {Action? action, String label = "Close"}) {
   var snackBar = SnackBar(
-      content: Text(message),
+      backgroundColor: Theme.of(context).selectedRowColor,
+      content: EmojiText(text: message),
       action: SnackBarAction(
-          label: "Close",
+          label: label,
+          textColor: Theme.of(context).textTheme.button!.color,
           onPressed: () =>
               ScaffoldMessenger.of(context).hideCurrentSnackBar()));
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+}
+
+void showAppDialog(
+    {required BuildContext context,
+    required String title,
+    required String message}) {
+  print("Show message dialog");
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      // return object of type Dialog
+      return AlertDialog(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0))),
+        title: new Text(title),
+        content: SizedBox(
+            height: 200,
+            width: 400,
+            child: Column(
+              children: [
+                Expanded(
+                    flex: 6,
+                    child: Image(
+                        image: IconProvider.instance.getImage(AppIcon.SORRY))),
+                Spacer(),
+                Expanded(flex: 5, child: Text(message))
+              ],
+            )),
+        actions: <Widget>[
+          new TextButton(
+            child: new Text("Close"),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+// Stackoverflow Solution: https://stackoverflow.com/a/56839834/10854225
+class EmojiText extends StatelessWidget {
+  final String text;
+
+  const EmojiText({
+    Key? key,
+    required this.text,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return RichText(
+      text: _buildText(context, this.text),
+    );
+  }
+
+  TextSpan _buildText(BuildContext context, String text) {
+    final children = <TextSpan>[];
+    final runes = text.runes;
+
+    for (int i = 0; i < runes.length; /* empty */) {
+      int current = runes.elementAt(i);
+
+      // we assume that everything that is not
+      // in Extended-ASCII set is an emoji...
+      final isEmoji = current > 255;
+      final shouldBreak = isEmoji ? (x) => x <= 255 : (x) => x > 255;
+
+      final chunk = <int>[];
+      while (!shouldBreak(current)) {
+        chunk.add(current);
+        if (++i >= runes.length) break;
+        current = runes.elementAt(i);
+      }
+
+      children.add(
+        TextSpan(
+            text: String.fromCharCodes(chunk),
+            style: isEmoji
+                ? TextStyle(
+                    fontFamily: 'EmojiOne',
+                  )
+                : Theme.of(context).textTheme.subtitle1),
+      );
+    }
+
+    return TextSpan(children: children);
+  }
 }

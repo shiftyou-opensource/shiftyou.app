@@ -5,6 +5,7 @@ import 'package:logger/logger.dart';
 import 'package:nurse_time/model/user_model.dart';
 import 'package:nurse_time/persistence/dao_database.dart';
 import 'package:nurse_time/actions/google_sign_in.dart';
+import 'package:nurse_time/utils/app_preferences.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:get_it/get_it.dart';
 
@@ -27,6 +28,18 @@ class _LoginView extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
+    Future.delayed(Duration.zero, () async {
+      var showDialog = await AppPreferences.instance
+          .valueWithKey(PreferenceKey.DIALOG_SHOWS, defValue: false) as bool;
+      if (showDialog) {
+        await AppPreferences.instance
+            .putValue(PreferenceKey.DIALOG_SHOWS, false);
+        var message = await AppPreferences.instance
+            .valueWithKey(PreferenceKey.DIALOG_MESSAGE) as String;
+        showAppDialog(
+            context: context, title: "Upgrade info", message: message);
+      }
+    });
     return Scaffold(
       appBar: AppBar(
         elevation: 0,

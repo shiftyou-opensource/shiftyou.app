@@ -13,8 +13,11 @@ void main() {
     index = Converter.fromShiftTimeToIndex(ShiftTime.NIGHT);
     expect(2, index);
 
-    index = Converter.fromShiftTimeToIndex(ShiftTime.FREE);
+    index = Converter.fromShiftTimeToIndex(ShiftTime.STOP_WORK);
     expect(3, index);
+
+    index = Converter.fromShiftTimeToIndex(ShiftTime.FREE);
+    expect(4, index);
   });
 
   test("convert number to shift", () {
@@ -28,6 +31,9 @@ void main() {
     expect(ShiftTime.NIGHT, shift);
 
     shift = Converter.fromIntToShiftTime(3);
+    expect(ShiftTime.STOP_WORK, shift);
+
+    shift = Converter.fromIntToShiftTime(4);
     expect(ShiftTime.FREE, shift);
   });
 }

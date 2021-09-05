@@ -5,6 +5,7 @@ import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:nurse_time/model/shift.dart';
+import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:nurse_time/utils/spinner_chooser.dart';
 import 'package:nurse_time/utils/converter.dart';
@@ -13,6 +14,7 @@ class InsertModifyShiftView extends StatefulWidget {
   final String title;
   final Function(Shift) onSave;
   final Function onClose;
+  final ShiftScheduler shiftScheduler;
   final Shift? shift;
   final bool modify;
   final DateTime? start;
@@ -25,6 +27,7 @@ class InsertModifyShiftView extends StatefulWidget {
       required this.onSave,
       required this.onClose,
       required this.modify,
+      required this.shiftScheduler,
       this.shift,
       this.start})
       : super(key: key) {
@@ -82,7 +85,7 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
                 // default is not looping
                 firstDate: this._selectedDate,
                 //DateTime(1960),
-                dateFormat: "dd-MMMM",
+                dateFormat: "dd-MMMM-yyyy",
                 onChange: (DateTime newDate, _) {
                   _selectedDate = newDate;
                 },
@@ -93,17 +96,7 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
                 ),
               ),
             )),
-        Flexible(
-          flex: 1,
-          child: SizedBox(
-              width: 120,
-              height: 150,
-              child: makeButton(context,
-                  onPress: () => {
-                        widget.onSave(Shift(_selectedDate, _shiftTime)),
-                        widget.onClose()
-                      })),
-        ),
+        _makeButton(context),
         Spacer(),
       ],
     );
@@ -114,20 +107,18 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
       children: [
         _makeTitleView(context: context, text: widget.title),
         Divider(),
-        Flexible(child: Text("To work on"), flex: 1),
-        _makeShiftView(context: context),
         Flexible(
-          flex: 1,
-          child: SizedBox(
-            width: 120,
-            child: makeButton(context,
-                onPress: () => {
-                      widget.onSave(Shift(_selectedDate, _shiftTime)),
-                      widget.onClose()
-                    }),
-          ),
-        ),
+            child: Text(
+              "You are modify the Shift of day ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText1!
+                  .apply(fontSizeFactor: 1.3),
+            ),
+            flex: 1),
+        _makeShiftView(context: context),
         Spacer(),
+        _makeButton(context),
       ],
     );
   }
@@ -140,22 +131,47 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
             : _makeInsertView(context));
   }
 
+  Widget _makeButton(BuildContext context) {
+    return Flexible(
+      flex: 2,
+      child: SingleChildScrollView(
+        child: SizedBox(
+          width: 120,
+          height: 50,
+          child: makeButton(context,
+              onPress: () => {
+                    widget.onSave(Shift(_selectedDate, _shiftTime)),
+                    widget.onClose()
+                  }),
+        ),
+      ),
+    );
+  }
+
   Widget _makeTitleView({context: BuildContext, text: String}) {
     return Row(
       children: [
         Expanded(
-            flex: 2,
+            flex: 3,
             child: Container(
+              margin: EdgeInsets.all(10.0),
               padding: EdgeInsets.all(10.0),
-              child: Text(text, style: Theme.of(context).textTheme.headline5),
+              child: Text(text,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1!
+                      .apply(fontSizeFactor: 1.7)),
             )),
-        Container(
-          padding: EdgeInsets.all(10.0),
-          child: IconButton(
-              iconSize: 30,
-              onPressed: () => widget.onClose(),
-              icon: Icon(Icons.close)),
-        )
+        Expanded(
+          flex: 0,
+          child: Container(
+            padding: EdgeInsets.all(10.0),
+            child: IconButton(
+                iconSize: 30,
+                onPressed: () => widget.onClose(),
+                icon: Icon(Icons.close)),
+          ),
+        ),
       ],
     );
   }

@@ -44,11 +44,11 @@ class _SetUpView extends State<SetUpView> {
     this._userModel = GetIt.instance.get<UserModel>();
     this._dao = GetIt.instance<DAODatabase>();
 
-    // TODO: Set up the UI with the actual state of the application.
     _shiftTimePicker = List.from([
       ShiftTime.MORNING,
       ShiftTime.AFTERNOON,
       ShiftTime.NIGHT,
+      ShiftTime.STOP_WORK,
       ShiftTime.FREE
     ]);
   }
@@ -93,7 +93,8 @@ class _SetUpView extends State<SetUpView> {
                   widget.schedulerRules[_selectedRules].timeOrders;
               _shiftScheduler.manual =
                   widget.schedulerRules[_selectedRules].manual;
-              _dao.insertShift(_shiftScheduler);
+              _shiftScheduler.notify();
+              _dao.updateShift(_shiftScheduler);
             }),
             Navigator.of(context).push(MaterialPageRoute(builder: (context) {
               return HomeView();

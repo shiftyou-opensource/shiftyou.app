@@ -9,6 +9,7 @@ import 'package:nurse_time/actions/google_sign_in.dart';
 import 'package:nurse_time/model/scheduler_rules.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/persistence/dao_database.dart';
+import 'package:nurse_time/utils/app_preferences.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:nurse_time/view/home/home_view.dart';
 import 'package:nurse_time/view/settings/set_up_view.dart';
@@ -18,14 +19,18 @@ import 'model/user_model.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  setUpInjector();
+  await AppPreferences.instance
+      .putValue(PreferenceKey.BRUTE_MIGRATION_DB, true, override: false);
+  await setUpInjector();
   runApp(MyApp());
 }
 
-void setUpInjector() {
+Future<void> setUpInjector() async {
   GetIt.instance.registerLazySingleton<GoogleManagerUserLogin>(
       () => GoogleManagerUserLogin());
-  GetIt.instance.registerSingleton<DAODatabase>(DAODatabase());
+  var db = DAODatabase();
+  await db.init();
+  GetIt.instance.registerSingleton<DAODatabase>(db);
   GetIt.instance.registerLazySingleton<Logger>(() => Logger());
   //TODO Review the database rules here
   GetIt.instance.registerLazySingleton<UserModel>(
@@ -47,7 +52,6 @@ class MyApp extends StatelessWidget {
     var dao = GetIt.instance.get<DAODatabase>();
     var logger = GetIt.instance.get<Logger>();
     try {
-      await dao.init();
       var user = await dao.getUser();
       if (user == null) {
         logger.d("User not in database");
@@ -60,17 +64,23 @@ class MyApp extends StatelessWidget {
       userModel.name = user.name;
       userModel.id = user.id;
       var shift = await dao.getShift(user.id);
-      logger.d("Shift from database is ", shift);
+      logger.d("Shift from database is ${shift.toString()}");
+      var shiftInstance = GetIt.instance.get<ShiftScheduler>();
+      shiftInstance.userId = user.id;
       if (shift != null) {
-        var shiftInstance = GetIt.instance.get<ShiftScheduler>();
         logger.d("The user has a Shift stored in the database");
         shiftInstance.fromShift(shift);
+      } else {
+        // Init inside the db the null shift
+        // after that we can call only update on the shift scheduler
+        shiftInstance.notify();
+        shiftInstance.id = await dao.insertShift(shiftInstance);
       }
       return true;
     } catch (e, stacktrace) {
+      showSnackBar(context, "Error with the Database");
       logger.e(e);
       logger.e(stacktrace);
-      showSnackBar(context, "Error with the Database");
       return false;
     }
   }
@@ -128,10 +138,11 @@ class MyApp extends StatelessWidget {
         "/home": (context) => HomeView(),
         "/setting": (context) => SetUpView(
             schedulerRules: GetIt.instance.get<List<SchedulerRules>>(),
-            onUpdate: (index) => {
-                  GetIt.instance.registerSingleton<SchedulerRules>(
-                      GetIt.instance.get<List<SchedulerRules>>()[index])
-                })
+            onUpdate: (index) {
+              if (!GetIt.instance.isRegistered<SchedulerRules>())
+                GetIt.instance.registerSingleton<SchedulerRules>(
+                    GetIt.instance.get<List<SchedulerRules>>()[index]);
+            })
       },
       home: FutureBuilder<bool>(
         future: checkUser(context),

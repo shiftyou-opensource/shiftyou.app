@@ -1,6 +1,4 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
@@ -13,7 +11,7 @@ import 'package:nurse_time/persistence/abstract_dao.dart';
 import 'package:nurse_time/persistence/dao_database.dart';
 import 'package:nurse_time/utils/converter.dart';
 import 'package:nurse_time/utils/generic_components.dart';
-import 'package:nurse_time/utils/map_reduce_shifts.dart';
+import 'package:nurse_time/view/charts/pie_chart.dart';
 import 'package:nurse_time/view/home/insert_modify_shift.dart';
 import 'package:nurse_time/view/settings/set_up_view.dart';
 
@@ -25,7 +23,6 @@ class HomeView extends StatefulWidget {
 class _HomeView extends State<HomeView> {
   ShiftScheduler? _shiftScheduler;
   SchedulerRules? _selectedScheduler;
-  int? _touchedIndex;
   int _selectedView = 1;
 
   late List<SchedulerRules> _schedulerRules;
@@ -84,31 +81,7 @@ class _HomeView extends State<HomeView> {
         controller: _pageController,
         onPageChanged: (index) => setState(() => _selectedView = index),
         children: [
-          SafeArea(
-            child: PieChart(
-              PieChartData(
-                  pieTouchData: PieTouchData(touchCallback: (pieTouchResponse) {
-                    setState(() {
-                      final desiredTouch =
-                          pieTouchResponse.touchInput is! PointerExitEvent &&
-                              pieTouchResponse.touchInput is! PointerUpEvent;
-                      if (desiredTouch &&
-                          pieTouchResponse.touchedSection != null) {
-                        _touchedIndex = pieTouchResponse
-                            .touchedSection!.touchedSectionIndex;
-                      } else {
-                        _touchedIndex = -1;
-                      }
-                    });
-                  }),
-                  borderData: FlBorderData(
-                    show: false,
-                  ),
-                  sectionsSpace: 0,
-                  centerSpaceRadius: 0,
-                  sections: showingSections()),
-            ),
-          ),
+          SafeArea(child: PieChartShift(shifts: _shiftScheduler!.shifts)),
           SafeArea(child: _buildHomeView(context, _shiftScheduler!.shifts)),
           SafeArea(
               child: SetUpView(
@@ -123,7 +96,7 @@ class _HomeView extends State<HomeView> {
       bottomNavigationBar: BottomNavyBar(
         backgroundColor: Theme.of(context).backgroundColor,
         selectedIndex: _selectedView,
-        containerHeight: 65,
+        containerHeight: 68,
         itemCornerRadius: 24,
         onItemSelected: (index) => _pageController.jumpToPage(index),
         items: <BottomNavyBarItem>[
@@ -143,19 +116,22 @@ class _HomeView extends State<HomeView> {
       required Function(BuildContext, bool, int?) onPress}) {
     return makeVisibleComponent(
         FloatingActionButton.extended(
-          onPressed: () => {
+          onPressed: () async => {
             // add and modify shift
             if (!settingView)
               {onPress(context, modify, index)}
             else
               {
                 // Set the new data inside the _shiftScheduler and update the ui.
+                await _dao.deleteShiftException(_shiftScheduler!),
+
                 setState(() {
                   _shiftScheduler!.userId = this._userModel.id;
                   _shiftScheduler!.notify();
-                  _dao.insertShift(_shiftScheduler!);
-                  _pageController.jumpToPage(1);
+                  _dao.updateShift(_shiftScheduler!);
                 }),
+                _pageController.jumpToPage(1),
+                showSnackBar(context, "New Scheduler generated"),
               }
           },
           icon: settingView ? Icon(Icons.done) : icon,
@@ -179,15 +155,17 @@ class _HomeView extends State<HomeView> {
           var _shifts = _shiftScheduler!.shifts;
           return InsertModifyShiftView(
             title: modify ? "Modify the Shift" : "Insert a Shift",
-            start: _shifts.isEmpty
-                ? DateTime.now()
-                : _shifts.last.date.add(Duration(days: 1)),
+            start: _shifts.isEmpty ? DateTime.now() : _shifts.first.date,
+            shiftScheduler: _shiftScheduler!,
             shift: index != null ? _shifts[index] : null,
             onSave: (Shift shift) => {
               _logger.d("On save called in the bottom dialog"),
-              // TODO: save state and adding some method to handle the
-              // manual method
-              setState(() => {_shiftScheduler!.addException(shift)})
+              setState(() => {
+                    _shiftScheduler!.addException(shift),
+                    _dao.updateShift(_shiftScheduler!),
+                    _logger.d("Update shift inside the db"),
+                    showSnackBar(context, "All done 🌈"),
+                  })
             },
             onClose: () => Navigator.of(context).pop(),
             modify: modify,
@@ -203,32 +181,8 @@ class _HomeView extends State<HomeView> {
             width: 150,
             height: 280,
             color: Theme.of(context).backgroundColor,
-            child: Center(
-              child: PieChart(
-                PieChartData(
-                    pieTouchData:
-                        PieTouchData(touchCallback: (pieTouchResponse) {
-                      setState(() {
-                        final desiredTouch =
-                            pieTouchResponse.touchInput is! PointerExitEvent &&
-                                pieTouchResponse.touchInput is! PointerUpEvent;
-                        if (desiredTouch &&
-                            pieTouchResponse.touchedSection != null) {
-                          _touchedIndex = pieTouchResponse
-                              .touchedSection!.touchedSectionIndex;
-                        } else {
-                          _touchedIndex = -1;
-                        }
-                      });
-                    }),
-                    borderData: FlBorderData(
-                      show: false,
-                    ),
-                    sectionsSpace: 0,
-                    centerSpaceRadius: 0,
-                    sections: showingSections()),
-              ),
-            ),
+            child:
+                Center(child: PieChartShift(shifts: _shiftScheduler!.shifts)),
           )),
       Expanded(
         flex: 3,
@@ -294,125 +248,5 @@ class _HomeView extends State<HomeView> {
             ),
           ),
         ));
-  }
-
-  List<PieChartSectionData> showingSections() {
-    List<PieChartSectionData> pieChartData = List.empty(growable: true);
-    // We need to make the sum to runtime to paint the chart
-    var _shifts = _shiftScheduler!.shifts;
-    var shiftCalculation = MapReduceShift.reduce(_shifts);
-    var indexElem = 0;
-    shiftCalculation.forEach((shift, count) {
-      final isTouched = indexElem++ == _touchedIndex;
-      final double radius = isTouched ? 110 : 100;
-      final double widgetSize = isTouched ? 70 : 55;
-
-      switch (shift) {
-        case ShiftTime.AFTERNOON:
-          pieChartData.add(PieChartSectionData(
-            color: const Color(0xff89ddff),
-            value: (count * 100) / _shifts.length,
-            title: '${(count * 100) ~/ _shifts.length}%',
-            radius: radius,
-            titleStyle: Theme.of(context).textTheme.subtitle1,
-            badgeWidget: _Badge(
-              Converter.fromShiftTimeToImage(shift),
-              size: widgetSize,
-              borderColor: const Color(0xff0293ee),
-            ),
-            badgePositionPercentageOffset: .98,
-          ));
-          break;
-        case ShiftTime.FREE:
-          pieChartData.add(PieChartSectionData(
-            color: const Color(0xfff07178),
-            value: (count * 100) / _shifts.length,
-            title: '${(count * 100) ~/ _shifts.length}%',
-            radius: radius,
-            titleStyle: Theme.of(context).textTheme.subtitle1,
-            badgeWidget: _Badge(
-              Converter.fromShiftTimeToImage(shift),
-              size: widgetSize,
-              borderColor: const Color.fromARGB(190, 255, 0, 57),
-            ),
-            badgePositionPercentageOffset: .98,
-          ));
-          break;
-        case ShiftTime.NIGHT:
-          pieChartData.add(PieChartSectionData(
-            color: const Color(0xffc792ea),
-            value: (count * 100) / _shifts.length,
-            title: '${(count * 100) ~/ _shifts.length}%',
-            radius: radius,
-            titleStyle: Theme.of(context).textTheme.subtitle1,
-            badgeWidget: _Badge(
-              Converter.fromShiftTimeToImage(shift),
-              size: widgetSize,
-              borderColor: const Color(0xff845bef),
-            ),
-            badgePositionPercentageOffset: .98,
-          ));
-          break;
-        case ShiftTime.MORNING:
-          pieChartData.add(PieChartSectionData(
-            color: const Color(0xffffcb6b),
-            value: (count * 100) / _shifts.length,
-            title: '${(count * 100) ~/ _shifts.length}%',
-            radius: radius,
-            titleStyle: Theme.of(context).textTheme.subtitle1,
-            badgeWidget: _Badge(
-              Converter.fromShiftTimeToImage(shift),
-              size: widgetSize,
-              borderColor: const Color.fromARGB(190, 249, 168, 37),
-            ),
-            badgePositionPercentageOffset: .98,
-          ));
-          break;
-        default:
-          return null;
-      }
-    });
-    return pieChartData;
-  }
-}
-
-class _Badge extends StatelessWidget {
-  final String svgAsset;
-  final double size;
-  final Color borderColor;
-
-  const _Badge(
-    this.svgAsset, {
-    required this.size,
-    required this.borderColor,
-  }) : super();
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: PieChart.defaultDuration,
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: Theme.of(context).backgroundColor,
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: borderColor,
-          width: 2,
-        ),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: Colors.black.withOpacity(.5),
-            offset: const Offset(3, 3),
-            blurRadius: 3,
-          ),
-        ],
-      ),
-      //padding: EdgeInsets.all(size * .15),
-      child: Center(
-        child:
-            Image(image: AssetImage("assets/images/$svgAsset"), height: 35.0),
-      ),
-    );
   }
 }

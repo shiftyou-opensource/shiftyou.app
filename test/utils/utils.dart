@@ -44,9 +44,9 @@ class Utils {
     GetIt.instance.registerLazySingleton<Logger>(() => Logger());
     //TODO Review the database rules here
     GetIt.instance.registerLazySingleton<UserModel>(
-            () => UserModel(id: -1, name: "", logged: false, initialized: false));
+        () => UserModel(id: -1, name: "", logged: false, initialized: false));
     GetIt.instance.registerLazySingleton<ShiftScheduler>(
-            () => ShiftScheduler(-1, DateTime.now(), DateTime.now()));
+        () => ShiftScheduler(-1, DateTime.now(), DateTime.now()));
 
     List<SchedulerRules> schedulerRules = List.empty(growable: true);
     var custom = SchedulerRules("Weekly Cadence", false);

@@ -1,3 +1,4 @@
+import 'package:logger/logger.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/persistence/abstract_dao.dart';
@@ -7,16 +8,19 @@ import 'package:sqflite/sqflite.dart';
 
 class DAOShift extends AbstractDAOModel<ShiftScheduler> {
   late DAOShiftException _daoShiftException;
+  late Logger _logger;
 
-  DAOShift() {
+  DAOShift({String tableName = "Shifts"}) : super(tableName) {
     _daoShiftException = DAOShiftException();
+    _logger = Logger();
   }
 
   @override
   Future<ShiftScheduler?> get(
       AbstractDAO dao, Map<String, dynamic> options) async {
-    final List<Map<String, dynamic>> maps = await dao.getInstance
-        .query('Shifts', where: "user_id = " + options["user_id"].toString());
+    final List<Map<String, dynamic>> maps = await dao.getInstance.query(
+        super.tableName,
+        where: "user_id = " + options["user_id"].toString());
     if (maps.isEmpty) {
       return null;
     }
@@ -40,6 +44,7 @@ class DAOShift extends AbstractDAOModel<ShiftScheduler> {
     );
 
     List<Shift> exceptions = await _daoShiftException.getAll(dao);
+    _logger.i(exceptions.toString());
     scheduler.setExceptions(exceptions);
     return scheduler;
   }
@@ -48,7 +53,7 @@ class DAOShift extends AbstractDAOModel<ShiftScheduler> {
   @override
   Future<List<ShiftScheduler>> getAll(AbstractDAO dao) async {
     final List<Map<String, dynamic>> maps =
-        await dao.getInstance.query('Shifts');
+        await dao.getInstance.query(super.tableName);
     if (maps.isEmpty) {
       return List.empty();
     }
@@ -74,11 +79,33 @@ class DAOShift extends AbstractDAOModel<ShiftScheduler> {
   }
 
   @override
-  void insert(AbstractDAO dao, ShiftScheduler toInsert) {
-    dao.getInstance.insert("Shifts", toInsert.toMap(),
+  Future<int> insert(AbstractDAO dao, ShiftScheduler toInsert) async {
+    _logger.d("Insert shift with the following data ${toInsert.toMap()}");
+    var shiftId = await dao.getInstance.insert(
+        super.tableName, toInsert.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     // Find a way to do it in a single db operation
-    toInsert.getExceptions().forEach((element) {
+    toInsert.getExceptions().forEach((element) async {
+      _logger.d("Shift scheduler id is $shiftId");
+      element.shiftId = shiftId;
+      await _daoShiftException.insert(dao, element);
+    });
+    return shiftId;
+  }
+
+  @override
+  Future<ShiftScheduler> delete(AbstractDAO dao, Map<String, dynamic> options) {
+    // TODO: implement delete
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> update(AbstractDAO dao, ShiftScheduler shift) async {
+    _logger.d("Update shift with the following data ${shift.toMap()}");
+    await dao.getInstance.update(super.tableName, shift.toMap(update: true));
+    // Find a way to do it in a single db operation
+    shift.getExceptions().forEach((element) {
+      element.shiftId = shift.id;
       _daoShiftException.insert(dao, element);
     });
   }
