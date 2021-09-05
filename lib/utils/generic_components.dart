@@ -1,6 +1,7 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nurse_time/utils/icon_provider.dart';
 
 Widget buildUserIcon(BuildContext context, String imageUrl) {
   return CircleAvatar(
@@ -144,6 +145,44 @@ void showSnackBar(BuildContext context, String message,
           onPressed: () =>
               ScaffoldMessenger.of(context).hideCurrentSnackBar()));
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+}
+
+void showAppDialog(
+    {required BuildContext context,
+    required String title,
+    required String message}) {
+  print("Show message dialog");
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      // return object of type Dialog
+      return AlertDialog(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0))),
+        title: new Text(title),
+        content: SizedBox(
+            height: 200,
+            width: 400,
+            child: Column(
+              children: [
+                Expanded(
+                    flex: 6,
+                    child: Image(
+                        image: IconProvider.instance.getImage(AppIcon.SORRY))),
+                Spacer(),
+                Expanded(flex: 5, child: Text(message))
+              ],
+            )),
+        actions: <Widget>[
+          new TextButton(
+            child: new Text("Close"),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      );
+    },
+  );
 }
 
 // Stackoverflow Solution: https://stackoverflow.com/a/56839834/10854225

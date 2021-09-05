@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:logger/logger.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
@@ -7,6 +8,7 @@ import 'package:nurse_time/persistence/abstract_dao.dart';
 import 'package:nurse_time/persistence/dao_shift.dart';
 import 'package:nurse_time/persistence/dao_shift_exception.dart';
 import 'package:nurse_time/persistence/dao_user.dart';
+import 'package:nurse_time/utils/app_preferences.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -18,7 +20,7 @@ class DAODatabase extends AbstractDAO<Database> {
   late Logger _logger;
 
   static const String CREATE_USERS_TABLE_QUERY =
-      "CREATE TABLE Users(id INTEGER PRIMARY KEY autoincrement, name TEXT)";
+      "CREATE TABLE Users(id INTEGER PRIMARY KEY, name TEXT)";
 
   static const String CREATE_SHIFT_TABLE_QUERY = "CREATE TABLE "
       "Shifts(id INTEGER PRIMARY KEY autoincrement, start INTEGER, "
@@ -32,32 +34,41 @@ class DAODatabase extends AbstractDAO<Database> {
 
   // Used to store the QUERY to migrate the database
   // it is useful to add or remove row in the db table.
-  Map<int, String> _migrationScripts = {
-    6: "DROP TABLE IF EXISTS Shifts; DROP TABLE IF EXISTS Exception; " + CREATE_SHIFT_TABLE_QUERY + "; " + CREATE_EXCEPTION_TABLE_QUERY + ";"
-  };
+  Map<int, String> _migrationScripts = {};
 
   DAODatabase() {
     _logger = Logger();
-    init();
   }
 
   Future<void> init() async {
     if (this._database != null) {
       return;
     }
-    this._daoUser = DAOUser();
-    this._daoShift = DAOShift();
-    this._daoShiftException = DAOShiftException();
+
+    var bruteForce = await AppPreferences.instance
+        .valueWithKey(PreferenceKey.BRUTE_MIGRATION_DB) as bool;
+    var path = join(await getDatabasesPath(), 'database.db');
+
+    if (bruteForce && await File(path).exists()) {
+      _logger.d("Bruce force execution");
+      await deleteDatabase(path);
+      await AppPreferences.instance.putValue(PreferenceKey.DIALOG_SHOWS, true);
+      await AppPreferences.instance.putValue(PreferenceKey.DIALOG_MESSAGE,
+          "The app is update to the new version, and your data for the moment are over. We are working hard to provide a solution for the next updates");
+    }
+
     this._database = await openDatabase(
         // Set the path to the database. Note: Using the `join` function from the
         // `path` package is best practice to ensure the path is correctly
         // constructed for each platform.
-        join(await getDatabasesPath(), 'database.db'), onConfigure: (db) async {
+        path, onConfigure: (db) async {
       await db.execute('PRAGMA foreign_keys = ON');
     }, onCreate: (db, version) async {
       await db.execute(CREATE_USERS_TABLE_QUERY);
       await db.execute(CREATE_SHIFT_TABLE_QUERY);
       await db.execute(CREATE_EXCEPTION_TABLE_QUERY);
+      await AppPreferences.instance
+          .putValue(PreferenceKey.BRUTE_MIGRATION_DB, false, override: true);
     }, onUpgrade: (db, oldVersion, newVersion) async {
       _logger.i(
           "Migrate DB from a old version $oldVersion to new version $newVersion");
@@ -67,7 +78,11 @@ class DAODatabase extends AbstractDAO<Database> {
           await db.execute(_migrationScripts[i]!);
         }
       }
-    }, version: 7);
+    }, version: 12);
+
+    this._daoUser = DAOUser();
+    this._daoShift = DAOShift();
+    this._daoShiftException = DAOShiftException();
   }
 
   @override
