@@ -33,7 +33,7 @@ class DAODatabase extends AbstractDAO<Database> {
   // Used to store the QUERY to migrate the database
   // it is useful to add or remove row in the db table.
   Map<int, String> _migrationScripts = {
-    6: "DROP TABLE IF EXIST Shifts; DROP TABLE IF EXIST Exception; " + CREATE_SHIFT_TABLE_QUERY + "; " + CREATE_EXCEPTION_TABLE_QUERY
+    6: "DROP TABLE IF EXISTS Shifts; DROP TABLE IF EXISTS Exception; " + CREATE_SHIFT_TABLE_QUERY + "; " + CREATE_EXCEPTION_TABLE_QUERY + ";"
   };
 
   DAODatabase() {
@@ -59,7 +59,7 @@ class DAODatabase extends AbstractDAO<Database> {
       await db.execute(CREATE_SHIFT_TABLE_QUERY);
       await db.execute(CREATE_EXCEPTION_TABLE_QUERY);
     }, onUpgrade: (db, oldVersion, newVersion) async {
-      _logger.d(
+      _logger.i(
           "Migrate DB from a old version $oldVersion to new version $newVersion");
       for (int i = oldVersion + 1; i <= newVersion; i++) {
         if (_migrationScripts.containsKey(i)) {
