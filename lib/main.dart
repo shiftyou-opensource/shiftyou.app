@@ -69,7 +69,7 @@ class MyApp extends StatelessWidget {
       shiftInstance.userId = user.id;
       if (shift != null) {
         logger.d("The user has a Shift stored in the database");
-        shiftInstance.fromShift(shift);
+        shiftInstance.fromShift(shift).notify();
       } else {
         // Init inside the db the null shift
         // after that we can call only update on the shift scheduler

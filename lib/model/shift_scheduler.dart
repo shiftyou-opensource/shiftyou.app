@@ -60,7 +60,7 @@ class ShiftScheduler {
     shift.timeOrders = timeOrder;
     shift.manual = manual;
     shift._generateSchedulerRule();
-    shift._generateScheduler();
+    shift._generateScheduler(complete: false);
     return shift;
   }
 
@@ -180,7 +180,7 @@ class ShiftScheduler {
     };
   }
 
-  void fromShift(ShiftScheduler shift) {
+  ShiftScheduler fromShift(ShiftScheduler shift) {
     this._userId = shift._userId;
     this._id = shift._id;
     this._start = shift._start;
@@ -191,6 +191,7 @@ class ShiftScheduler {
     this._exceptions = shift._exceptions;
     this._generateScheduler();
     this._generateSchedulerRule();
+    return this;
   }
 
   // Method to generate for the public the scheduler, with option to have
@@ -246,8 +247,9 @@ class ShiftScheduler {
     _logger.d("Scheduler generated is ${_shifts.toString()}");
   }
 
-  void notify() {
-    this._generateScheduler();
+  ShiftScheduler notify() {
+    this._generateScheduler(complete: false);
+    return this;
   }
 
 // Method to check if the scheduler policy is on the manual mode
