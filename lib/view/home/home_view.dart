@@ -48,6 +48,8 @@ class _HomeView extends State<HomeView> {
   void initState() {
     super.initState();
     this._shiftScheduler = GetIt.instance.get<ShiftScheduler>();
+    //TODO this contains the bug to have the UI lean to startup.
+    // but I don't know why at the moment.
     // we are coming from the login view, and we have no information about the
     // state chose from the user in the setting ui.
     if (GetIt.instance.isRegistered<SchedulerRules>()) {
@@ -86,9 +88,12 @@ class _HomeView extends State<HomeView> {
           SafeArea(
               child: SetUpView(
                   schedulerRules: _schedulerRules,
-                  onUpdate: (int selectedRules) => setState(() => this
-                      ._shiftScheduler!
-                      .rules = _schedulerRules[selectedRules]),
+                  onUpdate: (int selectedRules) {
+                    setState(() {
+                      this._shiftScheduler!.rules =
+                          _schedulerRules[selectedRules];
+                    });
+                  },
                   ownView: false,
                   shiftScheduler: this._shiftScheduler)),
         ],
@@ -116,23 +121,26 @@ class _HomeView extends State<HomeView> {
       required Function(BuildContext, bool, int?) onPress}) {
     return makeVisibleComponent(
         FloatingActionButton.extended(
-          onPressed: () async => {
+          onPressed: () async {
             // add and modify shift
-            if (!settingView)
-              {onPress(context, modify, index)}
-            else
-              {
-                // Set the new data inside the _shiftScheduler and update the ui.
-                await _dao.deleteShiftException(_shiftScheduler!),
-
-                setState(() {
-                  _shiftScheduler!.userId = this._userModel.id;
-                  _shiftScheduler!.notify();
+            if (!settingView) {
+              onPress(context, modify, index);
+            } else {
+              // Set the new data inside the _shiftScheduler and update the ui.
+              setState(() {
+                _shiftScheduler!.userId = this._userModel.id;
+                _dao.deleteShiftException(_shiftScheduler!).then((value) {
+                  // we are modify the shift, this mean that we can delete the
+                  // old exception and save the new one
+                  // TODO: We have the necessity to remove the exception in every case?
+                  _shiftScheduler!.cleanException().notify();
                   _dao.updateShift(_shiftScheduler!);
-                }),
-                _pageController.jumpToPage(1),
-                showSnackBar(context, "New Scheduler generated"),
-              }
+                  _pageController.jumpToPage(1);
+                  showSnackBar(context, "New Scheduler generated");
+                }).catchError((error) => showSnackBar(
+                    context, "Error with code -1, contact the support"));
+              });
+            }
           },
           icon: settingView ? Icon(Icons.done) : icon,
           backgroundColor: Theme.of(context).accentColor,
@@ -176,7 +184,7 @@ class _HomeView extends State<HomeView> {
   Widget _buildHomeView(BuildContext context, List<Shift> shifts) {
     return Column(children: [
       Expanded(
-          flex: 2,
+          flex: 3,
           child: Container(
             width: 150,
             height: 280,

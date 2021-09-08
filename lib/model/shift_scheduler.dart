@@ -252,6 +252,13 @@ class ShiftScheduler {
     return this;
   }
 
+  /// clean the exception stored inside the db, however
+  /// after this call we need to call the method notify.
+  ShiftScheduler cleanException() {
+    this._exceptions.clear();
+    return this;
+  }
+
 // Method to check if the scheduler policy is on the manual mode
   bool isCustom() {
     return !this.isManual();

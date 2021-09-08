@@ -88,6 +88,8 @@ class _SetUpView extends State<SetUpView> {
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () => {
             setState(() {
+              // TODO: remove exception here, because we are storing a new shift.
+              // and the old one it is over.
               _shiftScheduler.userId = this._userModel.id;
               _shiftScheduler.timeOrders =
                   widget.schedulerRules[_selectedRules].timeOrders;
@@ -109,7 +111,6 @@ class _SetUpView extends State<SetUpView> {
         appBar: AppBar(
           elevation: 0,
           title: const Text("Setting Scheduler"),
-          centerTitle: true,
           leading: Container(),
         ),
         body: SafeArea(child: makeBody(context)),
@@ -167,8 +168,10 @@ class _SetUpView extends State<SetUpView> {
                 .build(context),
             GenerationMethodStep(
               Text("Set how generate the week shift"),
-              (value) => setState(() =>
-                  {_selectedRules = value!, widget.onUpdate(_selectedRules)}),
+              (value) => setState(() {
+                _selectedRules = value!;
+                widget.onUpdate(_selectedRules);
+              }),
               _selectedRules,
               widget.schedulerRules,
             ).build(context),
