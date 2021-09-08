@@ -88,15 +88,13 @@ class _SetUpView extends State<SetUpView> {
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () => {
             setState(() {
-              // TODO: remove exception here, because we are storing a new shift.
-              // and the old one it is over.
               _shiftScheduler.userId = this._userModel.id;
               _shiftScheduler.timeOrders =
                   widget.schedulerRules[_selectedRules].timeOrders;
               _shiftScheduler.manual =
                   widget.schedulerRules[_selectedRules].manual;
-              _shiftScheduler.notify();
-              _dao.updateShift(_shiftScheduler);
+              _shiftScheduler.cleanException().notify();
+              _dao.insertShift(_shiftScheduler);
             }),
             Navigator.of(context).push(MaterialPageRoute(builder: (context) {
               return HomeView();

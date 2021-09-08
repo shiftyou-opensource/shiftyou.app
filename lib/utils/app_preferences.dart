@@ -24,7 +24,7 @@ class AppPreferences {
     if (_prefs.containsKey(localKey)) return _prefs.get(localKey)!;
     if (defValue == null)
       throw ErrorDescription("Value with key $key not present");
-    this.putValue(key, defValue);
+    await this.putValue(key, defValue);
     return _prefs.get(localKey)!;
   }
 

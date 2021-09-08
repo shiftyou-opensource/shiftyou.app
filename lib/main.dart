@@ -138,11 +138,7 @@ class MyApp extends StatelessWidget {
         "/home": (context) => HomeView(),
         "/setting": (context) => SetUpView(
             schedulerRules: GetIt.instance.get<List<SchedulerRules>>(),
-            onUpdate: (index) {
-              if (!GetIt.instance.isRegistered<SchedulerRules>())
-                GetIt.instance.registerSingleton<SchedulerRules>(
-                    GetIt.instance.get<List<SchedulerRules>>()[index]);
-            })
+            onUpdate: (_) { })
       },
       home: FutureBuilder<bool>(
         future: checkUser(context),

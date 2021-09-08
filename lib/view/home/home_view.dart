@@ -48,15 +48,17 @@ class _HomeView extends State<HomeView> {
   void initState() {
     super.initState();
     this._shiftScheduler = GetIt.instance.get<ShiftScheduler>();
+    // FIXME: I can safelly remove this code here? I will test it.
     //TODO this contains the bug to have the UI lean to startup.
     // but I don't know why at the moment.
     // we are coming from the login view, and we have no information about the
     // state chose from the user in the setting ui.
+    /*
     if (GetIt.instance.isRegistered<SchedulerRules>()) {
       this._selectedScheduler = GetIt.instance.get<SchedulerRules>();
       this._shiftScheduler!.timeOrders = this._selectedScheduler!.timeOrders;
       this._shiftScheduler!.notify();
-    }
+    } */
   }
 
   @override
