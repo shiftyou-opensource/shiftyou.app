@@ -5,6 +5,7 @@ import 'package:nurse_time/model/scheduler_rules.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/utils/converter.dart';
 import 'package:nurse_time/utils/generic_components.dart';
+import 'package:nurse_time/utils/icon_provider.dart';
 import 'package:nurse_time/view/settings/abstract_indicator_view.dart';
 
 class OptionViewStep extends AbstractIndicatorStep {
@@ -29,18 +30,13 @@ class OptionViewStep extends AbstractIndicatorStep {
   Widget buildView(BuildContext context) {
     return Column(
       children: [
+        _makeChipsArea(context),
         makeVisibleComponent(_makeShiftTimePicker(context),
             !_schedulerRules[_selectedRules].static && !_isManualScheduler(),
             disappear: true),
-        _makeChipsArea(context),
         // TODO: adding view to communicate that the user need to configure the things manual
         // without the helping of shift generator
-        makeVisibleComponent(
-            Text(
-              "Mode not ready YET",
-              style: TextStyle(color: Colors.red, fontSize: 20),
-            ),
-            _isManualScheduler(),
+        makeVisibleComponent(_makeManualView(context), _isManualScheduler(),
             disappear: true),
       ],
     );
@@ -49,39 +45,46 @@ class OptionViewStep extends AbstractIndicatorStep {
   Widget _makeChipsArea(BuildContext context) {
     return makeVisibleComponent(
         Center(
-          child: Container(
-              decoration: BoxDecoration(
-                  color: Theme.of(context).buttonColor,
-                  border: Border.all(
+            child: Container(
+                decoration: BoxDecoration(
                     color: Theme.of(context).buttonColor,
-                  ),
-                  borderRadius: BorderRadius.all(Radius.circular(20))),
-              padding: EdgeInsets.all(4),
-              child: Wrap(
-                children: List<Chip>.generate(
-                    _schedulerRules[_selectedRules].size(),
-                    (index) => Chip(
-                        backgroundColor: Theme.of(context).cardColor,
-                        deleteButtonTooltipMessage: "Remove Shift time",
-                        deleteIcon: Icon(Icons.highlight_remove,
-                            color:
-                                Theme.of(context).textTheme.bodyText1!.color),
-                        autofocus: true,
-                        onDeleted: () => removeChipAt(context, index),
-                        materialTapTargetSize: MaterialTapTargetSize.padded,
-                        padding: EdgeInsets.all(2),
-                        elevation: 0,
-                        avatar: CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          child: Image(
-                              image: AssetImage(
-                                  "assets/images/${Converter.fromShiftTimeToImage(_schedulerRules[_selectedRules].shiftAt(index))}")),
-                        ),
-                        label: Text(_schedulerRules[_selectedRules]
-                            .shiftAtStr(index)))),
-              )),
-        ),
-        _schedulerRules[_selectedRules].size() != 0 && !_isManualScheduler(),
+                    border: Border.all(
+                      color: Theme.of(context).buttonColor,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(20))),
+                padding: EdgeInsets.all(4),
+                child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minWidth: MediaQuery.of(context).size.width,
+                      minHeight: 70,
+                    ),
+                    child: Wrap(
+                      children: List<Chip>.generate(
+                          _schedulerRules[_selectedRules].size(),
+                          (index) => Chip(
+                              backgroundColor: Theme.of(context).cardColor,
+                              deleteButtonTooltipMessage: "Remove Shift time",
+                              deleteIcon: Icon(Icons.highlight_remove,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .color),
+                              autofocus: true,
+                              onDeleted: () => removeChipAt(context, index),
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.padded,
+                              padding: EdgeInsets.all(2),
+                              elevation: 0,
+                              avatar: CircleAvatar(
+                                backgroundColor: Colors.transparent,
+                                child: Image(
+                                    image: AssetImage(
+                                        "assets/images/${Converter.fromShiftTimeToImage(_schedulerRules[_selectedRules].shiftAt(index))}")),
+                              ),
+                              label: Text(_schedulerRules[_selectedRules]
+                                  .shiftAtStr(index)))),
+                    )))),
+        !_isManualScheduler(),
         disappear: true);
   }
 
@@ -122,6 +125,26 @@ class OptionViewStep extends AbstractIndicatorStep {
             child: IconButton(
                 icon: Icon(Icons.add), onPressed: () => {_onAddTime(time)}))
       ],
+    );
+  }
+
+  Widget _makeManualView(BuildContext context) {
+    return Container(
+      height: 200,
+      child: Column(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Image(image: IconProvider.instance.getImage(AppIcon.NICE)),
+          ),
+          Expanded(
+              flex: 2,
+              child: Center(
+                  child: Text(
+                      "Make your own scheduler on the home view with the add button",
+                      style: Theme.of(context).textTheme.bodyText1)))
+        ],
+      ),
     );
   }
 }

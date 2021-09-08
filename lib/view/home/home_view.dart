@@ -185,17 +185,13 @@ class _HomeView extends State<HomeView> {
 
   Widget _buildHomeView(BuildContext context, List<Shift> shifts) {
     return Column(children: [
-      makeVisibleComponent(
-        Expanded(
-            flex: 5,
-            child: Container(
-              color: Theme.of(context).backgroundColor,
-              child:
-                  Center(child: PieChartShift(shifts: _shiftScheduler!.shifts)),
-            )),
-        MediaQuery.of(context).size.height > 900,
-        disappear: true,
-      ),
+      Expanded(
+          flex: MediaQuery.of(context).size.height > 900 ? 5 : 2,
+          child: Container(
+            color: Theme.of(context).backgroundColor,
+            child:
+            Center(child: PieChartShift(shifts: _shiftScheduler!.shifts)),
+          )),
       Expanded(
         flex: 3,
         child: ListView.builder(

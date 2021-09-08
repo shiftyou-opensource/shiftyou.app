@@ -161,13 +161,13 @@ class _SetUpView extends State<SetUpView> {
           indicatorSize: 30,
           altOffset: Offset(10, 10),
           events: [
-            PeriodViewStep(Text("Select the shift period"),
+            PeriodViewStep(Text("Select the shift period", style: Theme.of(context).textTheme.bodyText1!.apply(fontSizeFactor: 1.4)),
                     shiftScheduler: _shiftScheduler,
                     onSave: (timeRange) => setState(
                         () => _shiftScheduler.updateRangeFromRange(timeRange)))
                 .build(context),
             GenerationMethodStep(
-              Text("Set how generate the week shift"),
+              Text("Set how generate the week shift", style: Theme.of(context).textTheme.bodyText1!.apply(fontSizeFactor: 1.4)),
               (value) => setState(() {
                 _selectedRules = value!;
                 widget.onUpdate(_selectedRules);
@@ -176,7 +176,7 @@ class _SetUpView extends State<SetUpView> {
               widget.schedulerRules,
             ).build(context),
             OptionViewStep(
-                Text("Somethings random"),
+                Text("Select Your Week Cadency", style: Theme.of(context).textTheme.bodyText1!.apply(fontSizeFactor: 1.4)),
                 widget.schedulerRules,
                 _selectedRules,
                 (index) => setState(
