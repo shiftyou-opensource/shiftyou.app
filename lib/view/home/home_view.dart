@@ -132,7 +132,6 @@ class _HomeView extends State<HomeView> {
                 _dao.deleteShiftException(_shiftScheduler!).then((value) {
                   // we are modify the shift, this mean that we can delete the
                   // old exception and save the new one
-                  // TODO: We have the necessity to remove the exception in every case?
                   _shiftScheduler!.cleanException().notify();
                   _dao.updateShift(_shiftScheduler!);
                   _pageController.jumpToPage(1);
@@ -155,43 +154,48 @@ class _HomeView extends State<HomeView> {
       {required BuildContext context, bool modify = false, int? index}) {
     showModalBottomSheet<void>(
         context: context,
+        isScrollControlled: true,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(25.0), topRight: Radius.circular(25.0)),
         ),
         builder: (BuildContext context) {
           var _shifts = _shiftScheduler!.shifts;
-          return InsertModifyShiftView(
-            title: modify ? "Modify the Shift" : "Insert a Shift",
-            start: _shifts.isEmpty ? DateTime.now() : _shifts.first.date,
-            shiftScheduler: _shiftScheduler!,
-            shift: index != null ? _shifts[index] : null,
-            onSave: (Shift shift) => {
-              _logger.d("On save called in the bottom dialog"),
-              setState(() => {
-                    _shiftScheduler!.addException(shift),
-                    _dao.updateShift(_shiftScheduler!),
-                    _logger.d("Update shift inside the db"),
-                    showSnackBar(context, "All done 🌈"),
-                  })
-            },
-            onClose: () => Navigator.of(context).pop(),
-            modify: modify,
-          );
+          return Container(
+              height: MediaQuery.of(context).copyWith().size.height * 0.80,
+              child: InsertModifyShiftView(
+                title: modify ? "Modify the Shift" : "Insert a Shift",
+                start: _shifts.isEmpty ? DateTime.now() : _shifts.first.date,
+                shiftScheduler: _shiftScheduler!,
+                shift: index != null ? _shifts[index] : null,
+                onSave: (Shift shift) => {
+                  _logger.d("On save called in the bottom dialog"),
+                  setState(() => {
+                        _shiftScheduler!.addException(shift),
+                        _dao.updateShift(_shiftScheduler!),
+                        _logger.d("Update shift inside the db"),
+                        showSnackBar(context, "All done 🌈"),
+                      })
+                },
+                onClose: () => Navigator.of(context).pop(),
+                modify: modify,
+              ));
         });
   }
 
   Widget _buildHomeView(BuildContext context, List<Shift> shifts) {
     return Column(children: [
-      Expanded(
-          flex: 3,
-          child: Container(
-            width: 150,
-            height: 280,
-            color: Theme.of(context).backgroundColor,
-            child:
-                Center(child: PieChartShift(shifts: _shiftScheduler!.shifts)),
-          )),
+      makeVisibleComponent(
+        Expanded(
+            flex: 5,
+            child: Container(
+              color: Theme.of(context).backgroundColor,
+              child:
+                  Center(child: PieChartShift(shifts: _shiftScheduler!.shifts)),
+            )),
+        MediaQuery.of(context).size.height > 900,
+        disappear: true,
+      ),
       Expanded(
         flex: 3,
         child: ListView.builder(
@@ -237,7 +241,12 @@ class _HomeView extends State<HomeView> {
                     alignment: Alignment.center,
                     child: Text(
                         "${shift.date.day}/${shift.date.month}/${shift.date.year}",
-                        style: TextStyle(fontFamily: 'DsDigit', fontSize: 30)),
+                        style: TextStyle(
+                            fontFamily: 'DsDigit',
+                            fontSize: 25 *
+                                MediaQuery.of(context)
+                                    .copyWith()
+                                    .textScaleFactor)),
                   )),
                 ),
                 Expanded(

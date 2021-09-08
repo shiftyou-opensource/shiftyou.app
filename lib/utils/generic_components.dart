@@ -137,6 +137,7 @@ CustomScrollView makeScrollView(BuildContext context, List<Widget> children) {
 void showSnackBar(BuildContext context, String message,
     {Action? action, String label = "Close"}) {
   var snackBar = SnackBar(
+      behavior: SnackBarBehavior.fixed,
       backgroundColor: Theme.of(context).selectedRowColor,
       content: EmojiText(text: message),
       action: SnackBarAction(
