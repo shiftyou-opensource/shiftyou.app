@@ -48,17 +48,15 @@ class _HomeView extends State<HomeView> {
   void initState() {
     super.initState();
     this._shiftScheduler = GetIt.instance.get<ShiftScheduler>();
-    // FIXME: I can safelly remove this code here? I will test it.
     //TODO this contains the bug to have the UI lean to startup.
     // but I don't know why at the moment.
     // we are coming from the login view, and we have no information about the
     // state chose from the user in the setting ui.
-    /*
     if (GetIt.instance.isRegistered<SchedulerRules>()) {
       this._selectedScheduler = GetIt.instance.get<SchedulerRules>();
       this._shiftScheduler!.timeOrders = this._selectedScheduler!.timeOrders;
       this._shiftScheduler!.notify();
-    } */
+    }
   }
 
   @override
@@ -129,17 +127,15 @@ class _HomeView extends State<HomeView> {
               onPress(context, modify, index);
             } else {
               // Set the new data inside the _shiftScheduler and update the ui.
+              await _dao.deleteShiftException(_shiftScheduler!);
               setState(() {
                 _shiftScheduler!.userId = this._userModel.id;
-                _dao.deleteShiftException(_shiftScheduler!).then((value) {
-                  // we are modify the shift, this mean that we can delete the
-                  // old exception and save the new one
-                  _shiftScheduler!.cleanException().notify();
-                  _dao.updateShift(_shiftScheduler!);
-                  _pageController.jumpToPage(1);
-                  showSnackBar(context, "New Scheduler generated");
-                }).catchError((error) => showSnackBar(
-                    context, "Error with code -1, contact the support"));
+                // we are modify the shift, this mean that we can delete the
+                // old exception and save the new one
+                _shiftScheduler!.cleanException().notify();
+                _dao.updateShift(_shiftScheduler!);
+                _pageController.jumpToPage(1);
+                showSnackBar(context, "New Scheduler generated");
               });
             }
           },
@@ -192,7 +188,7 @@ class _HomeView extends State<HomeView> {
           child: Container(
             color: Theme.of(context).backgroundColor,
             child:
-            Center(child: PieChartShift(shifts: _shiftScheduler!.shifts)),
+                Center(child: PieChartShift(shifts: _shiftScheduler!.shifts)),
           )),
       Expanded(
         flex: 3,
