@@ -129,7 +129,7 @@ class _SetUpView extends State<SetUpView> {
               child: Center(
                 heightFactor: 1,
                 child: CircleAvatar(
-                  backgroundColor: Theme.of(context).colorScheme.primaryVariant,
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
                   radius: 60.0,
                   child: CircleAvatar(
                     radius: 50.0,

@@ -141,7 +141,7 @@ class _HomeView extends State<HomeView> {
             }
           },
           icon: settingView ? Icon(Icons.done) : icon,
-          backgroundColor: Theme.of(context).colorScheme.secondary,
+          backgroundColor: Theme.of(context).colorScheme.primary,
           foregroundColor: Theme.of(context).primaryColor,
           elevation: 5,
           label: settingView ? Text("Save") : Text("Add"),

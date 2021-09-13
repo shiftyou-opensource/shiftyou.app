@@ -105,8 +105,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.dark(
           background: Color.fromARGB(255, 40, 42, 54),
           onPrimary: Color.fromARGB(255, 40, 42, 54),
-          primary: Color.fromARGB(255, 40, 42, 54),
-          secondary: Color.fromARGB(255, 255, 121, 197),
+          primary: Color.fromARGB(255, 255, 121, 197),
+          secondary: Color.fromARGB(255, 40, 42, 54),
           primaryVariant: Color.fromARGB(255, 57, 60, 75),
         ),
         inputDecorationTheme: InputDecorationTheme(
