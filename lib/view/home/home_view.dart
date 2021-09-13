@@ -153,17 +153,14 @@ class _HomeView extends State<HomeView> {
       {required BuildContext context, bool modify = false, int? index}) {
     showModalBottomSheet<void>(
         context: context,
-        isScrollControlled: true,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(25.0), topRight: Radius.circular(25.0)),
         ),
         builder: (BuildContext context) {
           var _shifts = _shiftScheduler!.shifts;
-          return Container(
-              height: MediaQuery.of(context).copyWith().size.height > 900
-                  ? MediaQuery.of(context).copyWith().size.height * 0.5
-                  : MediaQuery.of(context).copyWith().size.height * 0.6,
+          return FractionallySizedBox(
+              heightFactor: 1,
               child: InsertModifyShiftView(
                 title: modify ? "Modify the Shift" : "Insert a Shift",
                 start: _shifts.isEmpty ? DateTime.now() : _shifts.first.date,

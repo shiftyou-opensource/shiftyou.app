@@ -71,6 +71,7 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
 
   Widget _makeInsertView(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         _makeTitleView(context: context, text: widget.title),
         Divider(),
