@@ -1,7 +1,9 @@
 CC=flutter
 FMT=format
 
-default: fmt
+default:
+	$(CC) pub run build_runner build --delete-conflicting-outputs
+	fmt
 
 fmt:
 	$(CC) $(FMT) .

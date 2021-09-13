@@ -27,6 +27,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations: # Add this line
+    sdk: flutter
   firebase_core : ^1.2.1
   firebase_auth: ^1.3.0
   google_sign_in: ^5.0.4
@@ -47,10 +49,14 @@ dependencies:
   flutter_timeline:
     git: https://github.com/softmarshmallow/flutter-timeline
   flutter_holo_date_picker: ^1.0.0-nullsafety.4
+  flutter_translate: ^3.0.1
+  flutter_translate_annotations: ^2.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_translate_gen: ^2.0.0
+  build_runner: ^2.1.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -79,6 +85,7 @@ flutter:
   assets:
       - assets/
       - assets/images/
+      - assets/i18n/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
