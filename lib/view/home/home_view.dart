@@ -83,7 +83,9 @@ class _HomeView extends State<HomeView> {
         controller: _pageController,
         onPageChanged: (index) => setState(() => _selectedView = index),
         children: [
-          SafeArea(child: PieChartShift(shifts: _shiftScheduler!.generateScheduler(complete: true))),
+          SafeArea(
+              child: PieChartShift(
+                  shifts: _shiftScheduler!.generateScheduler(complete: true))),
           SafeArea(child: _buildHomeView(context, _shiftScheduler!.shifts)),
           SafeArea(
               child: SetUpView(
@@ -159,7 +161,9 @@ class _HomeView extends State<HomeView> {
         builder: (BuildContext context) {
           var _shifts = _shiftScheduler!.shifts;
           return Container(
-              height: MediaQuery.of(context).copyWith().size.height * 0.60,
+              height: MediaQuery.of(context).copyWith().size.height > 900
+                  ? MediaQuery.of(context).copyWith().size.height * 0.5
+                  : MediaQuery.of(context).copyWith().size.height * 0.6,
               child: InsertModifyShiftView(
                 title: modify ? "Modify the Shift" : "Insert a Shift",
                 start: _shifts.isEmpty ? DateTime.now() : _shifts.first.date,
@@ -182,7 +186,7 @@ class _HomeView extends State<HomeView> {
   Widget _buildHomeView(BuildContext context, List<Shift> shifts) {
     return Column(children: [
       Expanded(
-          flex: MediaQuery.of(context).size.height > 900 ? 5 : 2,
+          flex: MediaQuery.of(context).size.height > 900 ? 5 : 3,
           child: Container(
             color: Theme.of(context).backgroundColor,
             child:
