@@ -101,7 +101,7 @@ class _SetUpView extends State<SetUpView> {
             }))
           },
           icon: Icon(Icons.done),
-          backgroundColor: Theme.of(context).accentColor,
+          backgroundColor: Theme.of(context).colorScheme.secondary,
           foregroundColor: Theme.of(context).primaryColor,
           elevation: 5,
           label: Text("Save"),
@@ -129,7 +129,7 @@ class _SetUpView extends State<SetUpView> {
               child: Center(
                 heightFactor: 1,
                 child: CircleAvatar(
-                  backgroundColor: Theme.of(context).buttonColor,
+                  backgroundColor: Theme.of(context).colorScheme.primaryVariant,
                   radius: 60.0,
                   child: CircleAvatar(
                     radius: 50.0,

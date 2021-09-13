@@ -5,7 +5,7 @@ import 'package:nurse_time/utils/icon_provider.dart';
 
 Widget buildUserIcon(BuildContext context, String imageUrl) {
   return CircleAvatar(
-    backgroundColor: Theme.of(context).buttonColor,
+    backgroundColor: Theme.of(context).colorScheme.primaryVariant,
     radius: 60.0,
     child: CircleAvatar(
       radius: 50.0,
@@ -25,11 +25,11 @@ BottomNavyBarItem makeItem(BuildContext context, String title, IconData icon,
   return BottomNavyBarItem(
     icon: Icon(icon,
         color: selected
-            ? Theme.of(context).accentColor
+            ? Theme.of(context).colorScheme.secondary
             : Theme.of(context).textTheme.bodyText1!.color!),
     title: Text(title),
     activeColor: selected
-        ? Theme.of(context).accentColor
+        ? Theme.of(context).colorScheme.secondary
         : Theme.of(context).textTheme.bodyText1!.color!,
     textAlign: TextAlign.center,
   );
@@ -68,6 +68,7 @@ Widget makeButton(BuildContext context,
     case ButtonType.NORMAL:
       return ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
+            primary: Theme.of(context).colorScheme.secondary,
             elevation: 3,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),

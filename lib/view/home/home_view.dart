@@ -83,7 +83,7 @@ class _HomeView extends State<HomeView> {
         controller: _pageController,
         onPageChanged: (index) => setState(() => _selectedView = index),
         children: [
-          SafeArea(child: PieChartShift(shifts: _shiftScheduler!.shifts)),
+          SafeArea(child: PieChartShift(shifts: _shiftScheduler!.generateScheduler(complete: true))),
           SafeArea(child: _buildHomeView(context, _shiftScheduler!.shifts)),
           SafeArea(
               child: SetUpView(
@@ -135,12 +135,11 @@ class _HomeView extends State<HomeView> {
                 _shiftScheduler!.cleanException().notify();
                 _dao.updateShift(_shiftScheduler!);
                 _pageController.jumpToPage(1);
-                showSnackBar(context, "New Scheduler generated");
               });
             }
           },
           icon: settingView ? Icon(Icons.done) : icon,
-          backgroundColor: Theme.of(context).accentColor,
+          backgroundColor: Theme.of(context).colorScheme.secondary,
           foregroundColor: Theme.of(context).primaryColor,
           elevation: 5,
           label: settingView ? Text("Save") : Text("Add"),
@@ -160,7 +159,7 @@ class _HomeView extends State<HomeView> {
         builder: (BuildContext context) {
           var _shifts = _shiftScheduler!.shifts;
           return Container(
-              height: MediaQuery.of(context).copyWith().size.height * 0.80,
+              height: MediaQuery.of(context).copyWith().size.height * 0.60,
               child: InsertModifyShiftView(
                 title: modify ? "Modify the Shift" : "Insert a Shift",
                 start: _shifts.isEmpty ? DateTime.now() : _shifts.first.date,
@@ -172,7 +171,6 @@ class _HomeView extends State<HomeView> {
                         _shiftScheduler!.addException(shift),
                         _dao.updateShift(_shiftScheduler!),
                         _logger.d("Update shift inside the db"),
-                        showSnackBar(context, "All done 🌈"),
                       })
                 },
                 onClose: () => Navigator.of(context).pop(),

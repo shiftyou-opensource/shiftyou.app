@@ -92,7 +92,7 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
                 pickerTheme: DateTimePickerTheme(
                   backgroundColor: Theme.of(context).backgroundColor,
                   itemTextStyle: Theme.of(context).textTheme.caption!,
-                  dividerColor: Theme.of(context).accentColor,
+                  dividerColor: Theme.of(context).colorScheme.secondary,
                 ),
               ),
             )),
@@ -190,7 +190,7 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
           },
           options: widget.icons,
           startPosition: Converter.shiftToListPosition(_shiftTime),
-          dividerColor: Theme.of(context).accentColor,
+          dividerColor: Theme.of(context).colorScheme.secondary,
           builder: (image, index) => Column(
             children: [
               Container(

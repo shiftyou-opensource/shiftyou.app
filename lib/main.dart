@@ -96,8 +96,6 @@ class MyApp extends StatelessWidget {
         primaryColor: Color.fromARGB(255, 40, 42, 54),
         backgroundColor: Color.fromARGB(255, 40, 42, 54),
         cardColor: Color.fromARGB(255, 40, 42, 54),
-        accentColor: Color.fromARGB(255, 255, 121, 197),
-        buttonColor: Color.fromARGB(255, 57, 60, 75),
         selectedRowColor: Color.fromARGB(255, 72, 79, 114),
         dialogBackgroundColor: Color.fromARGB(255, 40, 42, 54),
         disabledColor: Color.fromARGB(255, 98, 114, 164),
@@ -107,7 +105,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.dark(
           background: Color.fromARGB(255, 40, 42, 54),
           onPrimary: Color.fromARGB(255, 40, 42, 54),
-          primary: Color.fromARGB(255, 255, 121, 197),
+          primary: Color.fromARGB(255, 40, 42, 54),
+            secondary: Color.fromARGB(255, 255, 121, 197),
+          primaryVariant: Color.fromARGB(255, 57, 60, 75),
         ),
         inputDecorationTheme: InputDecorationTheme(
           enabledBorder: OutlineInputBorder(
