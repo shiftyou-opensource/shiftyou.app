@@ -2,6 +2,7 @@ import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:nurse_time/localization/app_localizzation.dart';
 import 'package:nurse_time/localization/keys.dart';
@@ -246,10 +247,10 @@ class _HomeView extends State<HomeView> {
                     padding: EdgeInsets.all(10),
                     alignment: Alignment.center,
                     child: Text(
-                        "${shift.date.day}/${shift.date.month}/${shift.date.year}",
+                        "${DateFormat("dd/MM/yy", Localizations.localeOf(context).toString()).format(shift.date)}",
                         style: TextStyle(
                             fontFamily: 'DsDigit',
-                            fontSize: 25 *
+                            fontSize: 29 *
                                 MediaQuery.of(context)
                                     .copyWith()
                                     .textScaleFactor)),
