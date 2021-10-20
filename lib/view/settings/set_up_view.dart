@@ -103,14 +103,14 @@ class _SetUpView extends State<SetUpView> {
             }))
           },
           icon: Icon(Icons.done),
-          backgroundColor: Theme.of(context).colorScheme.secondary,
-          foregroundColor: Theme.of(context).primaryColor,
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
           elevation: 5,
           label: Text(AppLocalization.getWithKey(Keys.Words_Word_Save)),
         ),
         appBar: AppBar(
           elevation: 0,
-          title: const Text("Setting Scheduler"),
+          title: Text(AppLocalization.getWithKey(Keys.Titles_Setting_Scheduler)),
           leading: Container(),
         ),
         body: SafeArea(child: makeBody(context)),
