@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:logger/logger.dart';
+import 'package:nurse_time/localization/app_localizzation.dart';
+import 'package:nurse_time/localization/keys.dart';
 import 'package:nurse_time/model/shift.dart';
 
 class Converter {
@@ -44,15 +46,15 @@ class Converter {
   static String fromShiftTimeToString(ShiftTime shiftTime) {
     switch (shiftTime) {
       case ShiftTime.MORNING:
-        return "Morning";
+        return AppLocalization.getWithKey(Keys.Shifts_Name_Morning);
       case ShiftTime.AFTERNOON:
-        return "Afternoon";
+        return AppLocalization.getWithKey(Keys.Shifts_Name_Afternoon);
       case ShiftTime.NIGHT:
-        return "Night";
+        return AppLocalization.getWithKey(Keys.Shifts_Name_Night);
       case ShiftTime.FREE:
-        return "Free";
+        return AppLocalization.getWithKey(Keys.Shifts_Name_Free);
       case ShiftTime.STOP_WORK:
-        return "Stop Work";
+        return AppLocalization.getWithKey(Keys.Shifts_Name_Stop_Work);
       default:
         throw Exception("Shift time not recognized");
     }
