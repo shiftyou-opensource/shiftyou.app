@@ -110,7 +110,8 @@ class _SetUpView extends State<SetUpView> {
         ),
         appBar: AppBar(
           elevation: 0,
-          title: Text(AppLocalization.getWithKey(Keys.Titles_Setting_Scheduler)),
+          title:
+              Text(AppLocalization.getWithKey(Keys.Titles_Setting_Scheduler)),
           leading: Container(),
         ),
         body: SafeArea(child: makeBody(context)),
@@ -162,17 +163,19 @@ class _SetUpView extends State<SetUpView> {
           altOffset: Offset(10, 10),
           events: [
             PeriodViewStep(
-                    Text(AppLocalization.getWithKey(Keys.Settings_Steps_Select_Date),
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1!
-                            .apply(fontSizeFactor: 1.4)),
-                    shiftScheduler: _shiftScheduler,
-                    onSave: (timeRange) => setState(
-                        () => _shiftScheduler.updateRangeFromRange(timeRange)))
-                .build(context),
+                Text(
+                    AppLocalization.getWithKey(Keys.Settings_Steps_Select_Date),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyText1!
+                        .apply(fontSizeFactor: 1.4)),
+                shiftScheduler: _shiftScheduler,
+                onSave: (timeRange) => setState(() => _shiftScheduler
+                    .updateRangeFromRange(timeRange))).build(context),
             GenerationMethodStep(
-              Text(AppLocalization.getWithKey(Keys.Settings_Steps_Generate_Method),
+              Text(
+                  AppLocalization.getWithKey(
+                      Keys.Settings_Steps_Generate_Method),
                   style: Theme.of(context)
                       .textTheme
                       .bodyText1!

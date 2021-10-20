@@ -39,7 +39,10 @@ class _LoginView extends State<LoginView> {
         var message = await AppPreferences.instance
             .valueWithKey(PreferenceKey.DIALOG_MESSAGE) as String;
         showAppDialog(
-            context: context, title: AppLocalization.getWithKey(Keys.Generic_Messages_Upgrade_Info), message: message);
+            context: context,
+            title:
+                AppLocalization.getWithKey(Keys.Generic_Messages_Upgrade_Info),
+            message: message);
       }
     });
     return Scaffold(
