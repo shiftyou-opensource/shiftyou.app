@@ -4,6 +4,8 @@ import 'package:flutter_holo_date_picker/date_picker_theme.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
+import 'package:nurse_time/localization/app_localizzation.dart';
+import 'package:nurse_time/localization/keys.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/utils/generic_components.dart';
@@ -110,7 +112,7 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
         Divider(),
         Flexible(
             child: Text(
-              "You are modify the Shift of day ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}",
+              "${AppLocalization.getWithKey(Keys.Generic_Messages_Modify_Daily_Shift)} ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}",
               style: Theme.of(context)
                   .textTheme
                   .bodyText1!

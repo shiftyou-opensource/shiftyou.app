@@ -25,11 +25,11 @@ BottomNavyBarItem makeItem(BuildContext context, String title, IconData icon,
   return BottomNavyBarItem(
     icon: Icon(icon,
         color: selected
-            ? Theme.of(context).colorScheme.secondary
+            ? Theme.of(context).colorScheme.primary
             : Theme.of(context).textTheme.bodyText1!.color!),
     title: Text(title),
     activeColor: selected
-        ? Theme.of(context).colorScheme.secondary
+        ? Theme.of(context).colorScheme.primary
         : Theme.of(context).textTheme.bodyText1!.color!,
     textAlign: TextAlign.center,
   );
@@ -68,7 +68,7 @@ Widget makeButton(BuildContext context,
     case ButtonType.NORMAL:
       return ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
-            primary: Theme.of(context).colorScheme.secondary,
+            primary: Theme.of(context).colorScheme.primary,
             elevation: 3,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),

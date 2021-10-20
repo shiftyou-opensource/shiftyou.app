@@ -53,12 +53,11 @@ class _PieChartShift extends State<PieChartShift> {
   Widget build(BuildContext context) {
     return PieChart(
       PieChartData(
-          pieTouchData: PieTouchData(touchCallback: (pieTouchResponse) {
+          pieTouchData: PieTouchData(
+              touchCallback: (FlTouchEvent event, pieTouchResponse) {
             setState(() {
-              final desiredTouch =
-                  pieTouchResponse.touchInput is! PointerExitEvent &&
-                      pieTouchResponse.touchInput is! PointerUpEvent;
-              if (desiredTouch && pieTouchResponse.touchedSection != null) {
+              final desiredTouch = event.isInterestedForInteractions;
+              if (desiredTouch && pieTouchResponse!.touchedSection != null) {
                 _touchedIndex =
                     pieTouchResponse.touchedSection!.touchedSectionIndex;
               } else {

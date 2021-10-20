@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_timeline/indicator_position.dart';
+import 'package:nurse_time/localization/app_localizzation.dart';
+import 'package:nurse_time/localization/keys.dart';
 import 'package:nurse_time/model/scheduler_rules.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
@@ -101,14 +103,15 @@ class _SetUpView extends State<SetUpView> {
             }))
           },
           icon: Icon(Icons.done),
-          backgroundColor: Theme.of(context).colorScheme.secondary,
-          foregroundColor: Theme.of(context).primaryColor,
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
           elevation: 5,
-          label: Text("Save"),
+          label: Text(AppLocalization.getWithKey(Keys.Words_Word_Save)),
         ),
         appBar: AppBar(
           elevation: 0,
-          title: const Text("Setting Scheduler"),
+          title:
+              Text(AppLocalization.getWithKey(Keys.Titles_Setting_Scheduler)),
           leading: Container(),
         ),
         body: SafeArea(child: makeBody(context)),
@@ -129,7 +132,7 @@ class _SetUpView extends State<SetUpView> {
               child: Center(
                 heightFactor: 1,
                 child: CircleAvatar(
-                  backgroundColor: Theme.of(context).colorScheme.primaryVariant,
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
                   radius: 60.0,
                   child: CircleAvatar(
                     radius: 50.0,
@@ -160,17 +163,19 @@ class _SetUpView extends State<SetUpView> {
           altOffset: Offset(10, 10),
           events: [
             PeriodViewStep(
-                    Text("Select the shift period",
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1!
-                            .apply(fontSizeFactor: 1.4)),
-                    shiftScheduler: _shiftScheduler,
-                    onSave: (timeRange) => setState(
-                        () => _shiftScheduler.updateRangeFromRange(timeRange)))
-                .build(context),
+                Text(
+                    AppLocalization.getWithKey(Keys.Settings_Steps_Select_Date),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyText1!
+                        .apply(fontSizeFactor: 1.4)),
+                shiftScheduler: _shiftScheduler,
+                onSave: (timeRange) => setState(() => _shiftScheduler
+                    .updateRangeFromRange(timeRange))).build(context),
             GenerationMethodStep(
-              Text("Set how generate the week shift",
+              Text(
+                  AppLocalization.getWithKey(
+                      Keys.Settings_Steps_Generate_Method),
                   style: Theme.of(context)
                       .textTheme
                       .bodyText1!
@@ -183,7 +188,7 @@ class _SetUpView extends State<SetUpView> {
               widget.schedulerRules,
             ).build(context),
             OptionViewStep(
-                Text("Select Your Week Cadency",
+                Text(AppLocalization.getWithKey(Keys.Settings_Steps_Cadency),
                     style: Theme.of(context)
                         .textTheme
                         .bodyText1!
