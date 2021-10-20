@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:nurse_time/localization/app_localizzation.dart';
+import 'package:nurse_time/localization/keys.dart';
 import 'package:nurse_time/model/user_model.dart';
 import 'package:nurse_time/persistence/dao_database.dart';
 import 'package:nurse_time/actions/google_sign_in.dart';
@@ -37,7 +39,7 @@ class _LoginView extends State<LoginView> {
         var message = await AppPreferences.instance
             .valueWithKey(PreferenceKey.DIALOG_MESSAGE) as String;
         showAppDialog(
-            context: context, title: "Upgrade info", message: message);
+            context: context, title: AppLocalization.getWithKey(Keys.Generic_Messages_Upgrade_Info), message: message);
       }
     });
     return Scaffold(
@@ -93,7 +95,7 @@ class _LoginView extends State<LoginView> {
             Padding(
               padding: const EdgeInsets.only(left: 10),
               child: Text(
-                'Sign in with Google',
+                AppLocalization.getWithKey(Keys.Generic_Messages_Login_Google),
                 style: TextStyle(
                   fontSize: 20,
                   color: Colors.grey,

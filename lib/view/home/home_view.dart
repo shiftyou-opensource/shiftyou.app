@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
+import 'package:nurse_time/localization/app_localizzation.dart';
+import 'package:nurse_time/localization/keys.dart';
 import 'package:nurse_time/model/scheduler_rules.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
@@ -69,7 +71,7 @@ class _HomeView extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Your Shift"),
+        title: Text(AppLocalization.getWithKey(Keys.App_Bar_Title)),
         primary: true,
         elevation: 0,
         leading: Container(),
@@ -107,9 +109,16 @@ class _HomeView extends State<HomeView> {
         itemCornerRadius: 24,
         onItemSelected: (index) => _pageController.jumpToPage(index),
         items: <BottomNavyBarItem>[
-          makeItem(context, 'Statistics', Icons.timeline, 0, _selectedView),
-          makeItem(context, 'Home', Icons.home, 1, _selectedView),
-          makeItem(context, 'Settings', Icons.settings, 2, _selectedView),
+          makeItem(
+              context,
+              AppLocalization.getWithKey(Keys.Bottomnav_Statistic),
+              Icons.timeline,
+              0,
+              _selectedView),
+          makeItem(context, AppLocalization.getWithKey(Keys.Bottomnav_Home),
+              Icons.home, 1, _selectedView),
+          makeItem(context, AppLocalization.getWithKey(Keys.Bottomnav_Settings),
+              Icons.settings, 2, _selectedView),
         ],
       ),
     );
@@ -144,7 +153,9 @@ class _HomeView extends State<HomeView> {
           backgroundColor: Theme.of(context).colorScheme.primary,
           foregroundColor: Theme.of(context).primaryColor,
           elevation: 5,
-          label: settingView ? Text("Save") : Text("Add"),
+          label: settingView
+              ? Text(AppLocalization.getWithKey(Keys.Floatingbutton_Save))
+              : Text(AppLocalization.getWithKey(Keys.Floatingbutton_Add)),
         ),
         (_selectedView == 1 || _selectedView == 2));
   }
@@ -162,7 +173,9 @@ class _HomeView extends State<HomeView> {
           return FractionallySizedBox(
               heightFactor: 1,
               child: InsertModifyShiftView(
-                title: modify ? "Modify the Shift" : "Insert a Shift",
+                title: modify
+                    ? AppLocalization.getWithKey(Keys.Bottomdialog_Modify_Shift)
+                    : AppLocalization.getWithKey(Keys.Bottomdialog_Add_Shift),
                 start: _shifts.isEmpty ? DateTime.now() : _shifts.first.date,
                 shiftScheduler: _shiftScheduler!,
                 shift: index != null ? _shifts[index] : null,

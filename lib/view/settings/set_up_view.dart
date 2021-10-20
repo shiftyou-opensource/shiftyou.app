@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_timeline/indicator_position.dart';
+import 'package:nurse_time/localization/app_localizzation.dart';
+import 'package:nurse_time/localization/keys.dart';
 import 'package:nurse_time/model/scheduler_rules.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
@@ -104,7 +106,7 @@ class _SetUpView extends State<SetUpView> {
           backgroundColor: Theme.of(context).colorScheme.secondary,
           foregroundColor: Theme.of(context).primaryColor,
           elevation: 5,
-          label: Text("Save"),
+          label: Text(AppLocalization.getWithKey(Keys.Words_Word_Save)),
         ),
         appBar: AppBar(
           elevation: 0,
@@ -160,7 +162,7 @@ class _SetUpView extends State<SetUpView> {
           altOffset: Offset(10, 10),
           events: [
             PeriodViewStep(
-                    Text("Select the shift period",
+                    Text(AppLocalization.getWithKey(Keys.Settings_Steps_Select_Date),
                         style: Theme.of(context)
                             .textTheme
                             .bodyText1!
@@ -170,7 +172,7 @@ class _SetUpView extends State<SetUpView> {
                         () => _shiftScheduler.updateRangeFromRange(timeRange)))
                 .build(context),
             GenerationMethodStep(
-              Text("Set how generate the week shift",
+              Text(AppLocalization.getWithKey(Keys.Settings_Steps_Generate_Method),
                   style: Theme.of(context)
                       .textTheme
                       .bodyText1!
@@ -183,7 +185,7 @@ class _SetUpView extends State<SetUpView> {
               widget.schedulerRules,
             ).build(context),
             OptionViewStep(
-                Text("Select Your Week Cadency",
+                Text(AppLocalization.getWithKey(Keys.Settings_Steps_Cadency),
                     style: Theme.of(context)
                         .textTheme
                         .bodyText1!

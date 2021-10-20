@@ -95,80 +95,81 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var localizationDelegate = LocalizedApp.of(context).delegate;
-    return  LocalizationProvider(
+    return LocalizationProvider(
         state: LocalizationProvider.of(context).state,
-    child: MaterialApp(
-      title: AppLocalization.getWithKey(Keys.App_Bar_Title),
-      debugShowCheckedModeBanner: false,
-      localizationsDelegates: [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        localizationDelegate
-      ],
-      supportedLocales: localizationDelegate.supportedLocales,
-      themeMode: ThemeMode.dark,
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: Color.fromARGB(255, 40, 42, 54),
-        backgroundColor: Color.fromARGB(255, 40, 42, 54),
-        cardColor: Color.fromARGB(255, 40, 42, 54),
-        selectedRowColor: Color.fromARGB(255, 72, 79, 114),
-        dialogBackgroundColor: Color.fromARGB(255, 40, 42, 54),
-        disabledColor: Color.fromARGB(255, 98, 114, 164),
-        canvasColor: Color.fromARGB(255, 40, 42, 54),
-        toggleableActiveColor: Color.fromARGB(255, 255, 121, 197),
-        unselectedWidgetColor: Color.fromARGB(255, 98, 114, 164),
-        colorScheme: ColorScheme.dark(
-          background: Color.fromARGB(255, 40, 42, 54),
-          onPrimary: Color.fromARGB(255, 40, 42, 54),
-          primary: Color.fromARGB(255, 255, 121, 197),
-          secondary: Color.fromARGB(255, 40, 42, 54),
-          primaryVariant: Color.fromARGB(255, 57, 60, 75),
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Color.fromARGB(255, 98, 114, 164))),
-          focusedBorder: OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: Color.fromARGB(255, 255, 121, 197))),
-          labelStyle: TextStyle(color: Color.fromARGB(255, 98, 114, 164)),
-        ),
-        textTheme: TextTheme(
-          bodyText1: TextStyle(),
-          bodyText2: TextStyle(),
-          headline5: TextStyle(fontWeight: FontWeight.bold),
-          caption: TextStyle(fontStyle: FontStyle.normal, fontSize: 13),
-        ).apply(
-          bodyColor: Color.fromARGB(255, 98, 114, 164),
-          decorationColor: Color.fromARGB(255, 98, 114, 164),
-        ),
-        iconTheme: Theme.of(context).iconTheme.copyWith(
-              color: Color.fromARGB(255, 98, 114, 164),
+        child: MaterialApp(
+          title: AppLocalization.getWithKey(Keys.App_Bar_Title),
+          debugShowCheckedModeBanner: false,
+          localizationsDelegates: [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            localizationDelegate
+          ],
+          supportedLocales: localizationDelegate.supportedLocales,
+          themeMode: ThemeMode.dark,
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            primaryColor: Color.fromARGB(255, 40, 42, 54),
+            backgroundColor: Color.fromARGB(255, 40, 42, 54),
+            cardColor: Color.fromARGB(255, 40, 42, 54),
+            selectedRowColor: Color.fromARGB(255, 72, 79, 114),
+            dialogBackgroundColor: Color.fromARGB(255, 40, 42, 54),
+            disabledColor: Color.fromARGB(255, 98, 114, 164),
+            canvasColor: Color.fromARGB(255, 40, 42, 54),
+            toggleableActiveColor: Color.fromARGB(255, 255, 121, 197),
+            unselectedWidgetColor: Color.fromARGB(255, 98, 114, 164),
+            colorScheme: ColorScheme.dark(
+              background: Color.fromARGB(255, 40, 42, 54),
+              onPrimary: Color.fromARGB(255, 40, 42, 54),
+              primary: Color.fromARGB(255, 255, 121, 197),
+              secondary: Color.fromARGB(255, 40, 42, 54),
+              primaryVariant: Color.fromARGB(255, 57, 60, 75),
             ),
-        appBarTheme: AppBarTheme(
-          color: Color.fromARGB(255, 40, 42, 54),
-        ),
-        //visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      routes: {
-        "/home": (context) => HomeView(),
-        "/setting": (context) => SetUpView(
-            schedulerRules: GetIt.instance.get<List<SchedulerRules>>(),
-            onUpdate: (index) {
-              if (!GetIt.instance.isRegistered<SchedulerRules>())
-                GetIt.instance.registerSingleton<SchedulerRules>(
-                    GetIt.instance.get<List<SchedulerRules>>()[index]);
-            })
-      },
-      home: FutureBuilder<bool>(
-        future: checkUser(context),
-        builder: (context, result) {
-          if (result.data == true) {
-            return HomeView();
-          }
-          return LoginView();
-        },
-      ),
-    ));
+            inputDecorationTheme: InputDecorationTheme(
+              enabledBorder: OutlineInputBorder(
+                  borderSide:
+                      BorderSide(color: Color.fromARGB(255, 98, 114, 164))),
+              focusedBorder: OutlineInputBorder(
+                  borderSide:
+                      BorderSide(color: Color.fromARGB(255, 255, 121, 197))),
+              labelStyle: TextStyle(color: Color.fromARGB(255, 98, 114, 164)),
+            ),
+            textTheme: TextTheme(
+              bodyText1: TextStyle(),
+              bodyText2: TextStyle(),
+              headline5: TextStyle(fontWeight: FontWeight.bold),
+              caption: TextStyle(fontStyle: FontStyle.normal, fontSize: 13),
+            ).apply(
+              bodyColor: Color.fromARGB(255, 98, 114, 164),
+              decorationColor: Color.fromARGB(255, 98, 114, 164),
+            ),
+            iconTheme: Theme.of(context).iconTheme.copyWith(
+                  color: Color.fromARGB(255, 98, 114, 164),
+                ),
+            appBarTheme: AppBarTheme(
+              color: Color.fromARGB(255, 40, 42, 54),
+            ),
+            //visualDensity: VisualDensity.adaptivePlatformDensity,
+          ),
+          routes: {
+            "/home": (context) => HomeView(),
+            "/setting": (context) => SetUpView(
+                schedulerRules: GetIt.instance.get<List<SchedulerRules>>(),
+                onUpdate: (index) {
+                  if (!GetIt.instance.isRegistered<SchedulerRules>())
+                    GetIt.instance.registerSingleton<SchedulerRules>(
+                        GetIt.instance.get<List<SchedulerRules>>()[index]);
+                })
+          },
+          home: FutureBuilder<bool>(
+            future: checkUser(context),
+            builder: (context, result) {
+              if (result.data == true) {
+                return HomeView();
+              }
+              return LoginView();
+            },
+          ),
+        ));
   }
 }

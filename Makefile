@@ -5,8 +5,7 @@ default:
 	$(CC) pub run build_runner build --delete-conflicting-outputs
 	fmt
 
-fmt:
-	$(CC) $(FMT) .
+fmt: $(CC) $(FMT) .
 	$(CC) analyze .
 
 check:

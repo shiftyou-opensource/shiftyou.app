@@ -1,0 +1,48 @@
+{
+  "app_bar": {
+    "title": "Shift You"
+  },
+  "bottomNav": {
+    "home": "Home",
+    "statistic": "Statistic",
+    "settings": "Settings"
+  },
+  "floatingButton": {
+    "save": "Save",
+    "add": "Add"
+  },
+  "bottomDialog": {
+    "modify_shift": "Modify the Shift",
+    "add_shift": "Insert a Shift"
+  },
+  "generic_messages": {
+    "modify_daily_shift": "You are modify the Shift of day",
+    "upgrade_info": "Upgrade info",
+    "login_google": "Sign in with Google",
+    "remove_shift": "Remove Shift time",
+    "no_remove_shift": "You can't remove this shift",
+    "message_custom_shift": "Make your own scheduler on the home view with the add button",
+    "select_period_shift": "Please select a period of your shift",
+    "invalid_date": "Please enter a valid date",
+    "setting_scheduler": "Setting Scheduler"
+  },
+  "settings_steps": {
+    "select_date": "Select the shift period",
+    "generate_method": "Set how generate the week shift",
+    "cadency": "Select Your Week Cadency"
+  },
+  "shifts_name": {
+    "morning": "Morning",
+    "afternoon": "Afternoon",
+    "night": "Night",
+    "free": "Free",
+    "stop_work": "Stop Work"
+  },
+  "words": {
+    "word_select": "Select",
+    "word_save": "Salve"
+  },
+  "errors": {
+    "db_errors": "Error with the Database"
+  }
+}
