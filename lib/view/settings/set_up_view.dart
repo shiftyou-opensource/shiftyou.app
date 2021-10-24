@@ -63,6 +63,7 @@ class _SetUpView extends State<SetUpView> {
     } else
       this._shiftScheduler = widget.shiftScheduler!;
 
+    // FIXME: The manual mode it is not longer available
     if (this._shiftScheduler.isManual()) {
       this._selectedRules = 1;
       widget.schedulerRules[this._selectedRules].timeOrders =
