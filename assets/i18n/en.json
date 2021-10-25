@@ -47,7 +47,9 @@
   },
   "words": {
     "word_select": "Select",
-    "word_save": "Salve"
+    "word_save": "Salve",
+    "select": "Select",
+    "cancel": "Cancel"
   },
   "errors": {
     "db_errors": "Error with the Database"

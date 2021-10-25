@@ -172,13 +172,23 @@ class _HomeView extends State<HomeView> {
         ),
         builder: (BuildContext context) {
           var _shifts = _shiftScheduler!.shifts;
+          var startTime = DateTime.now();
+          if (_shifts.isEmpty) {
+            // if it is empty the mode it is manual, so
+            // we decide where that the first date it is the
+            // fist available date.
+            if (_shiftScheduler?.start != null)
+              startTime = _shiftScheduler!.start;
+          } else {
+            startTime = _shifts.last.date;
+          }
           return Container(
               height: MediaQuery.of(context).size.height * 0.75,
               child: InsertModifyShiftView(
                 title: modify
                     ? AppLocalization.getWithKey(Keys.Bottomdialog_Modify_Shift)
                     : AppLocalization.getWithKey(Keys.Bottomdialog_Add_Shift),
-                start: _shifts.isEmpty ? DateTime.now() : _shifts.first.date,
+                start: startTime,
                 shiftScheduler: _shiftScheduler!,
                 shift: index != null ? _shifts[index] : null,
                 onSave: (Shift shift) => {

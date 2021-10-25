@@ -78,5 +78,9 @@ class Keys {
 
   static const String Words_Word_Save = 'words.word_save';
 
+  static const String Words_Select = 'words.select';
+
+  static const String Words_Cancel = 'words.cancel';
+
   static const String Errors_Db_Errors = 'errors.db_errors';
 }

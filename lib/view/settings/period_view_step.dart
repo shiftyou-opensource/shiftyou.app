@@ -27,11 +27,23 @@ class PeriodViewStep extends AbstractIndicatorStep {
   Widget _settingProprieties(BuildContext context) {
     return DateRangeField(
         enabled: true,
-        confirmText: "Select",
+        confirmText: AppLocalization.getWithKey(Keys.Words_Word_Select),
+        cancelText: AppLocalization.getWithKey(Keys.Words_Cancel),
+        saveText: AppLocalization.getWithKey(Keys.Words_Word_Save),
+        helpText: AppLocalization.getWithKey(
+            Keys.Generic_Messages_Select_Period_Shift),
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.date_range,
               color: Theme.of(context).textTheme.bodyText1!.color),
-          hintText: AppLocalization.getWithKey(Keys.Generic_Messages_Select_Period_Shift),
+          hintText: AppLocalization.getWithKey(
+              Keys.Generic_Messages_Select_Period_Shift),
+          hintStyle: Theme.of(context).textTheme.bodyText1!,
+          labelStyle: Theme.of(context).textTheme.bodyText1!,
+          floatingLabelStyle: Theme.of(context).textTheme.bodyText1!,
+          counterStyle: Theme.of(context).textTheme.bodyText1!,
+          suffixStyle: Theme.of(context).textTheme.bodyText1!,
+          helperStyle: Theme.of(context).textTheme.bodyText1!,
+          prefixStyle: Theme.of(context).textTheme.bodyText1!,
           border: OutlineInputBorder(),
         ),
         initialValue: DateTimeRange(
@@ -43,7 +55,8 @@ class PeriodViewStep extends AbstractIndicatorStep {
                 : shiftScheduler.end),
         validator: (value) {
           if (value!.start.isBefore(DateTime.now())) {
-            return AppLocalization.getWithKey(Keys.Generic_Messages_Invalid_Date);
+            return AppLocalization.getWithKey(
+                Keys.Generic_Messages_Invalid_Date);
           }
           return null;
         },
