@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
+import 'package:nurse_time/localization/app_localizzation.dart';
+import 'package:nurse_time/localization/keys.dart';
 import 'package:nurse_time/model/scheduler_rules.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/utils/converter.dart';
@@ -141,7 +143,8 @@ class OptionViewStep extends AbstractIndicatorStep {
               flex: 2,
               child: Center(
                   child: Text(
-                      "Make your own scheduler on the home view with the add button",
+                      AppLocalization.getWithKey(
+                          Keys.Generic_Messages_Message_Custom_Shift),
                       style: Theme.of(context).textTheme.bodyText1)))
         ],
       ),
