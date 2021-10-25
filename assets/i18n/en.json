@@ -41,6 +41,10 @@
     "free": "Free",
     "stop_work": "Stop Work"
   },
+  "scheduler_name": {
+    "up_to_you": "Up to you",
+    "weekly_cadence": "Weekly Cadence"
+  },
   "words": {
     "word_select": "Select",
     "word_save": "Salve"

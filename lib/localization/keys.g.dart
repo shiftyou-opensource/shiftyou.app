@@ -69,6 +69,11 @@ class Keys {
 
   static const String Shifts_Name_Stop_Work = 'shifts_name.stop_work';
 
+  static const String Scheduler_Name_Up_To_You = 'scheduler_name.up_to_you';
+
+  static const String Scheduler_Name_Weekly_Cadence =
+      'scheduler_name.weekly_cadence';
+
   static const String Words_Word_Select = 'words.word_select';
 
   static const String Words_Word_Save = 'words.word_save';
