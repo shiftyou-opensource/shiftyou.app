@@ -40,7 +40,9 @@
   },
   "words": {
     "word_select": "Seleziona",
-    "word_save": "Salva"
+    "word_save": "Salva",
+    "select": "Seleziona",
+    "cancel": "Annulla"
   },
   "errors": {
     "db_errors": "Errore con il Database"
