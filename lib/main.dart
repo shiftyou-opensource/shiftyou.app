@@ -46,9 +46,11 @@ Future<void> setUpInjector() async {
       () => ShiftScheduler(-1, DateTime.now(), DateTime.now()));
 
   List<SchedulerRules> schedulerRules = List.empty(growable: true);
-  var custom = SchedulerRules("Weekly Cadence", false);
+  var custom = SchedulerRules(
+      AppLocalization.getWithKey(Keys.Scheduler_Name_Weekly_Cadence), false);
   schedulerRules.add(custom);
-  var manual = SchedulerRules("Up to you", false);
+  var manual = SchedulerRules(
+      AppLocalization.getWithKey(Keys.Scheduler_Name_Up_To_You), false);
   manual.manual = true;
   schedulerRules.add(manual);
   GetIt.instance.registerSingleton<List<SchedulerRules>>(schedulerRules);

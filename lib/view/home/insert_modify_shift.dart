@@ -52,14 +52,15 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
 
   @override
   void initState() {
-    if (widget.start != null) this._selectedDate = widget.start!;
-
     if (widget.shift != null) {
       this._shiftTime = widget.shift!.time;
       // assume that the shift is null only when the modify it is enabled
       widget.logger
           .d("Widget open in modify mode? ${widget.modify ? "Yes" : "no"}");
       this._selectedDate = widget.shift!.date;
+    } else {
+      this._selectedDate =
+          (widget.start != null ? widget.start : this._selectedDate)!;
     }
     super.initState();
   }
@@ -86,7 +87,7 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
               child: DatePickerWidget(
                 looping: false,
                 // default is not looping
-                firstDate: this._selectedDate,
+                initialDate: this._selectedDate,
                 //DateTime(1960),
                 dateFormat: "dd-MMMM-yyyy",
                 onChange: (DateTime newDate, _) {
@@ -99,8 +100,9 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
                 ),
               ),
             )),
-        _makeButton(context),
+        Divider(),
         Spacer(),
+        _makeButton(context),
       ],
     );
   }
