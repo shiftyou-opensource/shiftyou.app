@@ -73,6 +73,7 @@ class _HomeView extends State<HomeView> {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalization.getWithKey(Keys.App_Bar_Title)),
+        centerTitle: false,
         primary: true,
         elevation: 0,
         leading: Container(),

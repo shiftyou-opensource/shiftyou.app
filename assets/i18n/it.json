@@ -4,45 +4,47 @@
   },
   "bottomNav": {
     "home": "Home",
-    "statistic": "Statistic",
-    "settings": "Settings"
+    "statistic": "Statistiche",
+    "settings": "Impostazioni"
   },
   "floatingButton": {
-    "save": "Save",
-    "add": "Add"
+    "save": "Salva",
+    "add": "Aggiungi"
   },
   "bottomDialog": {
-    "modify_shift": "Modify the Shift",
-    "add_shift": "Insert a Shift"
+    "modify_shift": "Modifica il turno",
+    "add_shift": "Inserisci il turno"
   },
   "generic_messages": {
-    "modify_daily_shift": "You are modify the Shift of day",
-    "upgrade_info": "Upgrade info",
-    "login_google": "Sign in with Google",
-    "remove_shift": "Remove Shift time",
-    "no_remove_shift": "You can't remove this shift",
-    "message_custom_shift": "Make your own scheduler on the home view with the add button",
-    "select_period_shift": "Please select a period of your shift",
-    "invalid_date": "Please enter a valid date",
+    "modify_daily_shift": "Modifica il turno giornaliero",
+    "upgrade_info": "Informazione importante",
+    "login_google": "Accedi con Google",
+    "remove_shift": "Rimuovi il turno",
+    "no_remove_shift": "Non puoi eliminare questo turno",
+    "message_custom_shift": "Imposta il tuo turno dalla schermata home usando il bottone Aggiungi",
+    "select_period_shift": "Seleziona il periodo del turno ",
+    "invalid_date": "Inserisci la data",
     "setting_scheduler": "Setting Scheduler"
   },
   "settings_steps": {
-    "select_date": "Select the shift period",
-    "generate_method": "Set how generate the week shift",
-    "cadency": "Select Your Week Cadency"
+    "select_date": "Seleziona il periodo del turno",
+    "generate_method": "Imposta il turno settimanale",
+    "cadency": "Imposta la cadenza settimanale"
   },
   "shifts_name": {
-    "morning": "Morning",
-    "afternoon": "Afternoon",
-    "night": "Night",
-    "free": "Free",
-    "stop_work": "Stop Work"
+    "morning": "Mattina",
+    "afternoon": "Pomeriggio",
+    "night": "Notte",
+    "free": "Riposo",
+    "stop_work": "Smonto"
   },
   "words": {
-    "word_select": "Select",
-    "word_save": "Salve"
+    "word_select": "Seleziona",
+    "word_save": "Salva",
+    "select": "Seleziona",
+    "cancel": "Annulla"
   },
   "errors": {
-    "db_errors": "Error with the Database"
+    "db_errors": "Errore con il Database"
   }
 }

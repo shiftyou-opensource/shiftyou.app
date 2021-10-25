@@ -110,6 +110,7 @@ class _SetUpView extends State<SetUpView> {
           label: Text(AppLocalization.getWithKey(Keys.Words_Word_Save)),
         ),
         appBar: AppBar(
+          centerTitle: false,
           elevation: 0,
           title:
               Text(AppLocalization.getWithKey(Keys.Titles_Setting_Scheduler)),

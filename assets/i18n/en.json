@@ -19,27 +19,27 @@
     "setting_scheduler": "Setting Scheduler"
   },
   "generic_messages": {
-    "modify_daily_shift": "You are modify the Shift of day",
-    "upgrade_info": "Upgrade info",
+    "modify_daily_shift": "Modify the Shift of day",
+    "upgrade_info": "Important info",
     "login_google": "Sign in with Google",
-    "remove_shift": "Remove Shift time",
+    "remove_shift": "Remove the Shift",
     "no_remove_shift": "You can't remove this shift",
-    "message_custom_shift": "Make your own scheduler on the home view with the add button",
-    "select_period_shift": "Please select a period of your shift",
+    "message_custom_shift": "Set your own scheduler on the home view using the add button",
+    "select_period_shift": "Please select the period of your shift",
     "invalid_date": "Please enter a valid date",
     "setting_scheduler": "Setting Scheduler"
   },
   "settings_steps": {
     "select_date": "Select the shift period",
-    "generate_method": "Set how generate the week shift",
+    "generate_method": "Set the week shift",
     "cadency": "Select Your Week Cadency"
   },
   "shifts_name": {
     "morning": "Morning",
     "afternoon": "Afternoon",
     "night": "Night",
-    "free": "Free",
-    "stop_work": "Stop Work"
+    "free": "Day off",
+    "stop_work": "Rest day"
   },
   "scheduler_name": {
     "up_to_you": "Up to you",
@@ -47,7 +47,7 @@
   },
   "words": {
     "word_select": "Select",
-    "word_save": "Salve",
+    "word_save": "Save",
     "select": "Select",
     "cancel": "Cancel"
   },

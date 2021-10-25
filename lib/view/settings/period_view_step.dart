@@ -39,7 +39,6 @@ class PeriodViewStep extends AbstractIndicatorStep {
               Keys.Generic_Messages_Select_Period_Shift),
           hintStyle: Theme.of(context).textTheme.bodyText1!,
           labelStyle: Theme.of(context).textTheme.bodyText1!,
-          floatingLabelStyle: Theme.of(context).textTheme.bodyText1!,
           counterStyle: Theme.of(context).textTheme.bodyText1!,
           suffixStyle: Theme.of(context).textTheme.bodyText1!,
           helperStyle: Theme.of(context).textTheme.bodyText1!,
