@@ -47,6 +47,7 @@ class _LoginView extends State<LoginView> {
     });
     return Scaffold(
       appBar: AppBar(
+        centerTitle: false,
         elevation: 0,
         backgroundColor: Theme.of(context).backgroundColor,
       ),
