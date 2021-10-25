@@ -38,6 +38,10 @@
     "free": "Riposo",
     "stop_work": "Smonto"
   },
+  "scheduler_name": {
+    "up_to_you": "A tua scelta",
+    "weekly_cadence": "Cadenza settimanale"
+  },
   "words": {
     "word_select": "Seleziona",
     "word_save": "Salva",
