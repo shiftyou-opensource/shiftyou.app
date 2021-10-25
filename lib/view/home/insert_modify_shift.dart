@@ -100,8 +100,9 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
                 ),
               ),
             )),
-        _makeButton(context),
+        Divider(),
         Spacer(),
+        _makeButton(context),
       ],
     );
   }
