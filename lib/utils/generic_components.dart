@@ -1,6 +1,8 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nurse_time/localization/app_localizzation.dart';
+import 'package:nurse_time/localization/keys.dart';
 import 'package:nurse_time/utils/icon_provider.dart';
 
 Widget buildUserIcon(BuildContext context, String imageUrl) {
@@ -75,7 +77,7 @@ Widget makeButton(BuildContext context,
           ),
           onPressed: () => onPress(),
           icon: Icon(Icons.done),
-          label: Text("Save"));
+          label: Text(AppLocalization.getWithKey(Keys.Words_Word_Save)));
   }
 }
 
