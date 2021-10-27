@@ -33,7 +33,6 @@ class PeriodViewStep extends AbstractIndicatorStep {
         saveText: AppLocalization.getWithKey(Keys.Words_Word_Save),
         helpText: AppLocalization.getWithKey(
             Keys.Generic_Messages_Select_Period_Shift),
-
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.date_range,
               color: Theme.of(context).textTheme.bodyText1!.color),
@@ -55,7 +54,8 @@ class PeriodViewStep extends AbstractIndicatorStep {
             end: shiftScheduler.end.isBefore(DateTime.now())
                 ? DateTime.now()
                 : shiftScheduler.end),
-        dateFormat: DateFormat("dd/MM/yy", Localizations.localeOf(context).toString()),
+        dateFormat:
+            DateFormat("dd/MM/yy", Localizations.localeOf(context).toString()),
         validator: (value) {
           if (value!.start.isBefore(DateTime.now())) {
             return AppLocalization.getWithKey(
