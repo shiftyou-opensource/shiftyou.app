@@ -2,6 +2,7 @@ import 'package:date_range_form_field/date_range_form_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:nurse_time/localization/app_localizzation.dart';
 import 'package:nurse_time/localization/keys.dart';
@@ -32,6 +33,7 @@ class PeriodViewStep extends AbstractIndicatorStep {
         saveText: AppLocalization.getWithKey(Keys.Words_Word_Save),
         helpText: AppLocalization.getWithKey(
             Keys.Generic_Messages_Select_Period_Shift),
+
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.date_range,
               color: Theme.of(context).textTheme.bodyText1!.color),
@@ -43,6 +45,7 @@ class PeriodViewStep extends AbstractIndicatorStep {
           suffixStyle: Theme.of(context).textTheme.bodyText1!,
           helperStyle: Theme.of(context).textTheme.bodyText1!,
           prefixStyle: Theme.of(context).textTheme.bodyText1!,
+          floatingLabelStyle: Theme.of(context).textTheme.bodyText1!,
           border: OutlineInputBorder(),
         ),
         initialValue: DateTimeRange(
@@ -52,6 +55,7 @@ class PeriodViewStep extends AbstractIndicatorStep {
             end: shiftScheduler.end.isBefore(DateTime.now())
                 ? DateTime.now()
                 : shiftScheduler.end),
+        dateFormat: DateFormat("dd/MM/yy", Localizations.localeOf(context).toString()),
         validator: (value) {
           if (value!.start.isBefore(DateTime.now())) {
             return AppLocalization.getWithKey(

@@ -140,6 +140,8 @@ class MyApp extends StatelessWidget {
                   borderSide:
                       BorderSide(color: Color.fromARGB(255, 255, 121, 197))),
               labelStyle: TextStyle(color: Color.fromARGB(255, 98, 114, 164)),
+              prefixStyle: TextStyle(color: Color.fromARGB(255, 98, 114, 164)),
+              suffixStyle: TextStyle(color: Color.fromARGB(255, 98, 114, 164)),
             ),
             textTheme: TextTheme(
               bodyText1: TextStyle(),
