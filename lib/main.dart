@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
+import 'package:nurse_time/actions/auth/apple_sign_in.dart';
 import 'package:nurse_time/actions/auth/google_sign_in.dart';
 import 'package:nurse_time/localization/app_localizzation.dart';
 import 'package:nurse_time/model/scheduler_rules.dart';
@@ -40,6 +41,8 @@ Future<void> main() async {
 Future<void> setUpInjector() async {
   GetIt.instance.registerLazySingleton<GoogleManagerUserLogin>(
       () => GoogleManagerUserLogin());
+  GetIt.instance.registerLazySingleton<AppleManageUserLogin>(
+      () => AppleManageUserLogin());
   var db = DAODatabase();
   await db.init();
   GetIt.instance.registerSingleton<DAODatabase>(db);

@@ -7,7 +7,6 @@ import 'package:nurse_time/actions/auth/sign_in_interface.dart';
 import 'package:nurse_time/model/user_model.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-
 class AppleManageUserLogin extends AbstractManagerUserLogin {
   late User _currentUser;
 
@@ -27,6 +26,7 @@ class AppleManageUserLogin extends AbstractManagerUserLogin {
     final nonce = sha256ofString(rawNonce);
 
     // Request credential for the currently signed in Apple account.
+    //TODO support also the web to support android https://stackoverflow.com/a/63515753/10854225
     final appleCredential = await SignInWithApple.getAppleIDCredential(
       scopes: [
         AppleIDAuthorizationScopes.email,
@@ -34,8 +34,6 @@ class AppleManageUserLogin extends AbstractManagerUserLogin {
       ],
       nonce: nonce,
     );
-
-    print(appleCredential.authorizationCode);
 
     // Create an `OAuthCredential` from the credential returned by Apple.
     final oauthCredential = OAuthProvider("apple.com").credential(
