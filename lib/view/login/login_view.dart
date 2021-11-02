@@ -6,7 +6,7 @@ import 'package:nurse_time/localization/app_localizzation.dart';
 import 'package:nurse_time/localization/keys.dart';
 import 'package:nurse_time/model/user_model.dart';
 import 'package:nurse_time/persistence/dao_database.dart';
-import 'package:nurse_time/actions/google_sign_in.dart';
+import 'package:nurse_time/actions/auth/google_sign_in.dart';
 import 'package:nurse_time/utils/app_preferences.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:get_it/get_it.dart';

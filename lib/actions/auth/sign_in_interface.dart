@@ -4,4 +4,5 @@ abstract class AbstractManagerUserLogin {
   Future<void> signIn();
   Future<void> signOut();
   User getCurrentUser();
+  bool available();
 }

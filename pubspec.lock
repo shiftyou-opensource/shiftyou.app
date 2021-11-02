@@ -170,7 +170,7 @@ packages:
     source: hosted
     version: "3.0.1"
   crypto:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: crypto
       url: "https://pub.dartlang.org"
@@ -646,6 +646,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
+  sign_in_with_apple:
+    dependency: "direct main"
+    description:
+      name: sign_in_with_apple
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.2.0"
   sky_engine:
     dependency: transitive
     description: flutter

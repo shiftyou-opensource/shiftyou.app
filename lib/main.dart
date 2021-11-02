@@ -8,7 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
-import 'package:nurse_time/actions/google_sign_in.dart';
+import 'package:nurse_time/actions/auth/google_sign_in.dart';
 import 'package:nurse_time/localization/app_localizzation.dart';
 import 'package:nurse_time/model/scheduler_rules.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
