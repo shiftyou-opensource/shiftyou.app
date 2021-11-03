@@ -17,7 +17,7 @@ Widget buildUserIcon(BuildContext context, String imageUrl) {
   );
 }
 
-Widget buildAppLogo(BuildContext context, double dimesntion) {
+Widget buildAppLogo(BuildContext context, double dimemsion) {
   return Image.asset("ic_launcher");
 }
 

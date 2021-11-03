@@ -15,7 +15,8 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # Read more about Android versioning at https://developer.android.com/studio/publish/versioning
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
-version: 1.0.1+10
+# https://developer.pple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+version: 1.0.1+13
 
 flutter_launcher_name:
   name: "Shift You"
@@ -40,6 +41,9 @@ dependencies:
   intl: ^0.17.0
   fl_chart: ^0.40.2
   shared_preferences: ^2.0.7
+  sign_in_with_apple: ^3.2.0
+  flutter_signin_button: ^2.0.0
+  crypto: ^3.0.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

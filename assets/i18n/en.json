@@ -22,6 +22,7 @@
     "modify_daily_shift": "Modify the Shift of day",
     "upgrade_info": "Important info",
     "login_google": "Sign in with Google",
+    "login_apple": "Sign in with Apple",
     "remove_shift": "Remove the Shift",
     "no_remove_shift": "You can't remove this shift",
     "message_custom_shift": "Set your own scheduler on the home view using the add button",
@@ -52,6 +53,7 @@
     "cancel": "Cancel"
   },
   "errors": {
-    "db_errors": "Error with the Database"
+    "db_errors": "Error with the Database",
+    "login": "Error with the login"
   }
 }

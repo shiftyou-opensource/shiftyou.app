@@ -6,12 +6,10 @@ import 'package:nurse_time/model/user_model.dart';
 import 'sign_in_interface.dart';
 
 class GoogleManagerUserLogin extends AbstractManagerUserLogin {
-  late FirebaseAuth _auth;
   late GoogleSignIn _googleSignIn;
   late User _currentUser;
 
   GoogleManagerUserLogin() {
-    this._auth = FirebaseAuth.instance;
     this._googleSignIn = GoogleSignIn();
   }
 
@@ -23,6 +21,7 @@ class GoogleManagerUserLogin extends AbstractManagerUserLogin {
   @override
   Future<UserModel> signIn() async {
     // Trigger the authentication flow
+    var auth = FirebaseAuth.instance;
     var logger = GetIt.instance.get<Logger>();
     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
@@ -38,13 +37,12 @@ class GoogleManagerUserLogin extends AbstractManagerUserLogin {
 
     // Once signed in, return the UserCredential
     final UserCredential authResult =
-        await _auth.signInWithCredential(credential);
+        await auth.signInWithCredential(credential);
     this._currentUser = authResult.user!;
 
     var userId = await this._currentUser.getIdToken();
     logger.d("User is anonymous ${this._currentUser.isAnonymous}");
-    logger.d("User with google token $userId");
-    final User? currentUser = _auth.currentUser;
+    final User? currentUser = auth.currentUser;
     return UserModel(
         id: userId.hashCode,
         name: currentUser!.displayName!,
@@ -55,5 +53,10 @@ class GoogleManagerUserLogin extends AbstractManagerUserLogin {
   @override
   Future<void> signOut() async {
     await _googleSignIn.signOut();
+  }
+
+  @override
+  bool available() {
+    return true;
   }
 }
