@@ -34,6 +34,9 @@ class Keys {
   static const String Generic_Messages_Login_Google =
       'generic_messages.login_google';
 
+  static const String Generic_Messages_Login_Apple =
+      'generic_messages.login_apple';
+
   static const String Generic_Messages_Remove_Shift =
       'generic_messages.remove_shift';
 
@@ -83,4 +86,6 @@ class Keys {
   static const String Words_Cancel = 'words.cancel';
 
   static const String Errors_Db_Errors = 'errors.db_errors';
+
+  static const String Errors_Login = 'errors.login';
 }

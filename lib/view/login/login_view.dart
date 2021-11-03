@@ -78,26 +78,35 @@ class _LoginView extends State<LoginView> {
                       this._userModel.bing(userModel);
                       _dao.insertUser(userModel).then((_) {
                         Navigator.pushNamed(context, "/setting");
-                      }).catchError((error, stacktrace) =>
-                          _handleError(error, stacktrace));
-                    }).catchError(
-                        (error, stacktrace) => _handleError(error, stacktrace));
+                      }).catchError((error, stacktrace) => _handleError(
+                          error, stacktrace,
+                          userMessage:
+                              AppLocalization.getWithKey(Keys.Errors_Login)));
+                    }).catchError((error, stacktrace) => _handleError(
+                        error, stacktrace,
+                        userMessage:
+                            AppLocalization.getWithKey(Keys.Errors_Login)));
                   }),
               makeVisibleComponent(
-                  Divider(), Theme.of(context).platform == TargetPlatform.iOS),
+                  Divider(color: Theme.of(context).backgroundColor),
+                  Theme.of(context).platform == TargetPlatform.iOS),
               makeVisibleComponent(
                   _signInButton(
                       buttonsType: Buttons.AppleDark,
-                      buttonText: "Login with apple",
+                      buttonText: AppLocalization.getWithKey(Keys.Generic_Messages_Login_Apple),
                       onPressed: () {
                         _appleLogin.signIn().then((userModel) {
                           this._userModel.bing(userModel);
                           _dao.insertUser(userModel).then((_) {
                             Navigator.pushNamed(context, "/setting");
-                          }).catchError((error, stacktrace) =>
-                              _handleError(error, stacktrace));
-                        }).catchError((error, stacktrace) =>
-                            _handleError(error, stacktrace));
+                          }).catchError((error, stacktrace) => _handleError(
+                              error, stacktrace,
+                              userMessage: AppLocalization.getWithKey(
+                                  Keys.Errors_Login)));
+                        }).catchError((error, stacktrace) => _handleError(
+                            error, stacktrace,
+                            userMessage:
+                                AppLocalization.getWithKey(Keys.Errors_Login)));
                       }),
                   Theme.of(context).platform == TargetPlatform.iOS),
               Spacer()
@@ -108,10 +117,13 @@ class _LoginView extends State<LoginView> {
     );
   }
 
-  FutureOr<Null> _handleError(dynamic error, dynamic stacktrace) async {
+  FutureOr<Null> _handleError(dynamic error, dynamic stacktrace,
+      {String? userMessage}) async {
     _logger.e(error);
     _logger.e(stacktrace);
-    showSnackBar(context, error.toString());
+    if (userMessage != null) {
+      showSnackBar(context, userMessage);
+    }
   }
 
   Widget _signInButton(

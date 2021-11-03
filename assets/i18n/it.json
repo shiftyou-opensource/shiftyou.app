@@ -19,6 +19,7 @@
     "modify_daily_shift": "Modifica il turno giornaliero",
     "upgrade_info": "Informazione importante",
     "login_google": "Accedi con Google",
+    "login_apple": "Accedi con Apple",
     "remove_shift": "Rimuovi il turno",
     "no_remove_shift": "Non puoi eliminare questo turno",
     "message_custom_shift": "Imposta il tuo turno dalla schermata home usando il bottone Aggiungi",
@@ -42,6 +43,9 @@
     "up_to_you": "A tua scelta",
     "weekly_cadence": "Cadenza settimanale"
   },
+  "titles": {
+    "setting_scheduler": "Imposta lo Scheduler"
+  },
   "words": {
     "word_select": "Seleziona",
     "word_save": "Salva",
@@ -49,6 +53,7 @@
     "cancel": "Annulla"
   },
   "errors": {
-    "db_errors": "Errore con il Database"
+    "db_errors": "Errore con il Database",
+    "login": "Errore con il login"
   }
 }
