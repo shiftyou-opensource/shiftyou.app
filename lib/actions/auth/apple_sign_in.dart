@@ -27,8 +27,7 @@ class AppleManageUserLogin extends AbstractManagerUserLogin {
 
     // Request credential for the currently signed in Apple account.
     //TODO support also the web to support android https://stackoverflow.com/a/63515753/10854225
-    //var redirectURL =
-    "https://nursetime-625d3.firebaseapp.com/__/auth/handler";
+    //var redirectURL = "https://nursetime-625d3.firebaseapp.com/__/auth/handler";
     //var clientID = "io.github.vincenzopalazzo.shiftyou";
     final appleCredential = await SignInWithApple.getAppleIDCredential(
       scopes: [
