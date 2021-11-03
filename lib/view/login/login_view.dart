@@ -93,7 +93,8 @@ class _LoginView extends State<LoginView> {
               makeVisibleComponent(
                   _signInButton(
                       buttonsType: Buttons.AppleDark,
-                      buttonText: AppLocalization.getWithKey(Keys.Generic_Messages_Login_Apple),
+                      buttonText: AppLocalization.getWithKey(
+                          Keys.Generic_Messages_Login_Apple),
                       onPressed: () {
                         _appleLogin.signIn().then((userModel) {
                           this._userModel.bing(userModel);

@@ -44,7 +44,6 @@ class PeriodViewStep extends AbstractIndicatorStep {
           suffixStyle: Theme.of(context).textTheme.bodyText1!,
           helperStyle: Theme.of(context).textTheme.bodyText1!,
           prefixStyle: Theme.of(context).textTheme.bodyText1!,
-          floatingLabelStyle: Theme.of(context).textTheme.bodyText1!,
           border: OutlineInputBorder(),
         ),
         initialValue: DateTimeRange(
