@@ -78,21 +78,28 @@ class _LoginView extends State<LoginView> {
                       this._userModel.bing(userModel);
                       _dao.insertUser(userModel).then((_) {
                         Navigator.pushNamed(context, "/setting");
-                      }).catchError((error) => _handleError(error));
-                    }).catchError((error) => _handleError(error));
+                      }).catchError((error, stacktrace) =>
+                          _handleError(error, stacktrace));
+                    }).catchError(
+                        (error, stacktrace) => _handleError(error, stacktrace));
                   }),
-              Divider(),
-              _signInButton(
-                  buttonsType: Buttons.AppleDark,
-                  buttonText: "Login with apple",
-                  onPressed: () {
-                    _appleLogin.signIn().then((userModel) {
-                      this._userModel.bing(userModel);
-                      _dao.insertUser(userModel).then((_) {
-                        Navigator.pushNamed(context, "/setting");
-                      }).catchError((error) => _handleError(error));
-                    }).catchError((error) => _handleError(error));
-                  }),
+              makeVisibleComponent(
+                  Divider(), Theme.of(context).platform == TargetPlatform.iOS),
+              makeVisibleComponent(
+                  _signInButton(
+                      buttonsType: Buttons.AppleDark,
+                      buttonText: "Login with apple",
+                      onPressed: () {
+                        _appleLogin.signIn().then((userModel) {
+                          this._userModel.bing(userModel);
+                          _dao.insertUser(userModel).then((_) {
+                            Navigator.pushNamed(context, "/setting");
+                          }).catchError((error, stacktrace) =>
+                              _handleError(error, stacktrace));
+                        }).catchError((error, stacktrace) =>
+                            _handleError(error, stacktrace));
+                      }),
+                  Theme.of(context).platform == TargetPlatform.iOS),
               Spacer()
             ],
           ),
@@ -101,8 +108,9 @@ class _LoginView extends State<LoginView> {
     );
   }
 
-  FutureOr<Null> _handleError(dynamic error) async {
+  FutureOr<Null> _handleError(dynamic error, dynamic stacktrace) async {
     _logger.e(error);
+    _logger.e(stacktrace);
     showSnackBar(context, error.toString());
   }
 

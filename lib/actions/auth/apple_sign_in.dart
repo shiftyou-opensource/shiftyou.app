@@ -27,24 +27,28 @@ class AppleManageUserLogin extends AbstractManagerUserLogin {
 
     // Request credential for the currently signed in Apple account.
     //TODO support also the web to support android https://stackoverflow.com/a/63515753/10854225
+    var redirectURL =
+        "https://now.bruce.bublina.eu.org/callbacks/sign_in_with_apple";
+    var clientID = "io.github.vincenzopalazzo.shiftyou";
     final appleCredential = await SignInWithApple.getAppleIDCredential(
       scopes: [
         AppleIDAuthorizationScopes.email,
         AppleIDAuthorizationScopes.fullName,
       ],
+      webAuthenticationOptions: WebAuthenticationOptions(
+          clientId: clientID, redirectUri: Uri.parse(redirectURL)),
       nonce: nonce,
     );
 
     // Create an `OAuthCredential` from the credential returned by Apple.
     final oauthCredential = OAuthProvider("apple.com").credential(
-      idToken: appleCredential.identityToken,
+      accessToken: appleCredential.authorizationCode,
       rawNonce: rawNonce,
     );
 
     // Sign in the user with Firebase. If the nonce we generated earlier does
     // not match the nonce in `appleCredential.identityToken`, sign in will fail.
-    final authResult = await auth.signInWithCredential(oauthCredential);
-    _currentUser = authResult.user!;
+    _currentUser = (await auth.signInWithCredential(oauthCredential)).user!;
 
     var userId = _currentUser.getIdToken().hashCode;
     return UserModel(
@@ -54,7 +58,7 @@ class AppleManageUserLogin extends AbstractManagerUserLogin {
         initialized: true);
   }
 
-  // Generates a cryptographically secure random nonce, to be included in a
+  /// Generates a cryptographically secure random nonce, to be included in a
   /// credential request.
   String generateNonce([int length = 32]) {
     final charset =
