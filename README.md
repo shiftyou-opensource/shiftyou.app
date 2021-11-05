@@ -11,7 +11,7 @@
   </p>
 
   <h4>
-    <a href="https://github.com/OpenLNMetrics">Project Homepage</a>
+    <a href="https://github.com/shiftyou-opensource">Project Homepage</a>
   </h4>
 </div>
 
@@ -24,13 +24,14 @@
 ## Introduction
 
 🇬🇧 Your Shift in a fashion way!
+
 🇮🇹 Il tuo turno ospedaliero in modo facile e intuitivo!
 
 🛍 Android Store: http://shorturl.at/jnBHL
 🛍 Apple Store:  http://shorturl.at/otCQ5
 
-❤️‍🩹 Telegram Support: https://t.me/joinchat/Km4uiE4e78NlODc8
 📸 Instagram: https://www.instagram.com/shiftyou.social/
+Telegram Support: https://t.me/joinchat/Km4uiE4e78NlODc8
 
 ## Work With us
 
@@ -42,7 +43,7 @@ Please for the moment write an email to shiftyou.team@protonmail.com to contribu
   <img src="https://opensource.org/files/osi_keyhole_300X300_90ppi_0.png" width="150" height="150"/>
 </div>
 
-    Your Shift in a fashion way!
+    Shift You it is a mobile app for hospitals workers.
     Copyright (c) 2021 Vincenzo Palazzo vincenzopalazzodev@gmail.com
 
     This program is free software: you can redistribute it and/or modify
