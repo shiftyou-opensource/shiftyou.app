@@ -27,8 +27,11 @@
 
 🇮🇹 Il tuo turno ospedaliero in modo facile e intuitivo!
 
+
 🛍 Android Store: http://shorturl.at/jnBHL
+
 🛍 Apple Store:  http://shorturl.at/otCQ5
+
 
 📸 Instagram: https://www.instagram.com/shiftyou.social/
 Telegram Support: https://t.me/joinchat/Km4uiE4e78NlODc8
