@@ -38,6 +38,9 @@ class GoogleManagerUserLogin extends AbstractManagerUserLogin {
     // Once signed in, return the UserCredential
     final UserCredential authResult =
         await auth.signInWithCredential(credential);
+    if (authResult.user == null) {
+      throw Exception("User credential are a null object");
+    }
     this._currentUser = authResult.user!;
 
     var userId = await this._currentUser.getIdToken();
