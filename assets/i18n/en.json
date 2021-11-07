@@ -50,7 +50,8 @@
     "word_select": "Select",
     "word_save": "Save",
     "select": "Select",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "anonymous": "Anonymous"
   },
   "errors": {
     "db_errors": "Error with the Database",

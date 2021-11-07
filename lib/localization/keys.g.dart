@@ -85,6 +85,8 @@ class Keys {
 
   static const String Words_Cancel = 'words.cancel';
 
+  static const String Words_Anonymous = 'words.anonymous';
+
   static const String Errors_Db_Errors = 'errors.db_errors';
 
   static const String Errors_Login = 'errors.login';
