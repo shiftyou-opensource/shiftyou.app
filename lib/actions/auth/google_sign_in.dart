@@ -1,7 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logger/logger.dart';
+import 'package:nurse_time/localization/app_localizzation.dart';
+import 'package:nurse_time/localization/keys.dart';
 import 'package:nurse_time/model/user_model.dart';
 import 'sign_in_interface.dart';
 
@@ -46,9 +49,11 @@ class GoogleManagerUserLogin extends AbstractManagerUserLogin {
     var userId = await this._currentUser.getIdToken();
     logger.d("User is anonymous ${this._currentUser.isAnonymous}");
     final User? currentUser = auth.currentUser;
+
     return UserModel(
         id: userId.hashCode,
-        name: currentUser!.displayName!,
+        name: currentUser!.displayName ??
+            AppLocalization.getWithKey(Keys.Words_Anonymous),
         logged: true,
         initialized: true);
   }
@@ -59,7 +64,24 @@ class GoogleManagerUserLogin extends AbstractManagerUserLogin {
   }
 
   @override
-  bool available() {
+  bool available({TargetPlatform? platform}) {
     return true;
+  }
+
+  @override
+  Future<void> updateUserInfo(
+      {String? name,
+      String? email,
+      String? urlPhoto,
+      String? phoneNumber}) async {
+    if (name == null && email == null) {
+      return;
+    }
+    if (name != null) {
+      _currentUser.updateDisplayName(name);
+    }
+    if (email != null) {
+      _currentUser.updateEmail(email);
+    }
   }
 }

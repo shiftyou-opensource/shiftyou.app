@@ -89,7 +89,7 @@ class _LoginView extends State<LoginView> {
                   }),
               makeVisibleComponent(
                   Divider(color: Theme.of(context).backgroundColor),
-                  Theme.of(context).platform == TargetPlatform.iOS),
+                  _appleLogin.available(platform: Theme.of(context).platform)),
               makeVisibleComponent(
                   _signInButton(
                       buttonsType: Buttons.AppleDark,
@@ -109,7 +109,7 @@ class _LoginView extends State<LoginView> {
                             userMessage:
                                 AppLocalization.getWithKey(Keys.Errors_Login)));
                       }),
-                  Theme.of(context).platform == TargetPlatform.iOS),
+                  _appleLogin.available(platform: Theme.of(context).platform)),
               Spacer()
             ],
           ),

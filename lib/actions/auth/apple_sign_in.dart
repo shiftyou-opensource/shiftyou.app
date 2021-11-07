@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'package:nurse_time/actions/auth/sign_in_interface.dart';
 import 'package:nurse_time/localization/app_localizzation.dart';
@@ -63,9 +64,13 @@ class AppleManageUserLogin extends AbstractManagerUserLogin {
     // apple appleCredential otherwise we set it to null.
     var userName = AppLocalization.getWithKey(Keys.Words_Anonymous);
     if (_currentUser.displayName == null) {
-      if (appleCredential.givenName != null)
+      _logger.d("Authentication return a displayName null");
+      if (appleCredential.givenName != null) {
         userName = appleCredential.givenName!;
+        updateUserInfo(name: userName);
+      }
     } else {
+      _logger.d("We have an authentication name as info");
       userName = _currentUser.displayName!;
     }
     _logger.d("User name it is $userName");
@@ -96,7 +101,24 @@ class AppleManageUserLogin extends AbstractManagerUserLogin {
   }
 
   @override
-  bool available() {
-    return true;
+  bool available({TargetPlatform? platform}) {
+    return platform! == TargetPlatform.iOS;
+  }
+
+  @override
+  Future<void> updateUserInfo(
+      {String? name,
+      String? email,
+      String? urlPhoto,
+      String? phoneNumber}) async {
+    if (name != null) {
+      _currentUser.updateDisplayName(name);
+    }
+    if (email != null) {
+      _currentUser.updateEmail(email);
+    }
+    if (urlPhoto != null) {
+      _currentUser.updatePhotoURL(urlPhoto);
+    }
   }
 }
