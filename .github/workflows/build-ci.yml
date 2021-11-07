@@ -2,13 +2,7 @@ name: Build Action
 
 # This workflow is triggered on pushes to the repository.
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: [push, pull_request]
 
 jobs:
   build:
