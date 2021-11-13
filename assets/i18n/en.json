@@ -33,7 +33,7 @@
   "settings_steps": {
     "select_date": "Select the shift period",
     "generate_method": "Set the week shift",
-    "cadency": "Select Your Week Cadency"
+    "cadency": "Select Your Week Pattern"
   },
   "shifts_name": {
     "morning": "Morning",
@@ -44,7 +44,7 @@
   },
   "scheduler_name": {
     "up_to_you": "Up to you",
-    "weekly_cadence": "Weekly Cadence"
+    "weekly_cadence": "Weekly Pattern"
   },
   "words": {
     "word_select": "Select",

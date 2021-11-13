@@ -21,7 +21,7 @@ import 'package:nurse_time/view/settings/set_up_view.dart';
 
 import 'view/login/login_view.dart';
 import 'model/user_model.dart';
-import 'localization//keys.dart';
+import 'localization/keys.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
