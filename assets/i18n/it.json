@@ -5,11 +5,13 @@
   "bottomNav": {
     "home": "Home",
     "statistic": "Statistiche",
-    "settings": "Impostazioni"
+    "settings": "Impostazioni",
+    "profile": "Profilo"
   },
   "floatingButton": {
     "save": "Salva",
-    "add": "Aggiungi"
+    "add": "Aggiungi",
+    "logout": "Logout"
   },
   "bottomDialog": {
     "modify_shift": "Modifica il turno",

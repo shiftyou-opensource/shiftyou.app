@@ -129,21 +129,8 @@ class _SetUpView extends State<SetUpView> {
       [
         Column(
           children: [
-            Container(
-              color: Theme.of(context).backgroundColor,
-              child: Center(
-                heightFactor: 1,
-                child: CircleAvatar(
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  radius: 60.0,
-                  child: CircleAvatar(
-                    radius: 50.0,
-                    child: Image.asset("assets/ic_launcher.png"),
-                    backgroundColor: Colors.transparent,
-                  ),
-                ),
-              ),
-            ),
+            makeIconProfile(
+                context: context, image: Image.asset("assets/ic_launcher.png")),
             Text("Hey ${this._userModel.name.split(" ")[0]}",
                 style: TextStyle(fontSize: 18)),
             _buildTimeline(context),

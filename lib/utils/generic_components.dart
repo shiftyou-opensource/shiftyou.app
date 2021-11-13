@@ -1,8 +1,6 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:nurse_time/localization/app_localizzation.dart';
-import 'package:nurse_time/localization/keys.dart';
 import 'package:nurse_time/utils/icon_provider.dart';
 
 Widget buildUserIcon(BuildContext context, String imageUrl) {
@@ -64,6 +62,8 @@ enum ButtonType { NORMAL }
 
 Widget makeButton(BuildContext context,
     {required Function onPress,
+    Icon icon = const Icon(Icons.done),
+    required String text,
     ButtonType type = ButtonType.NORMAL,
     ButtonStyle? style}) {
   switch (type) {
@@ -76,8 +76,8 @@ Widget makeButton(BuildContext context,
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           ),
           onPressed: () => onPress(),
-          icon: Icon(Icons.done),
-          label: Text(AppLocalization.getWithKey(Keys.Words_Word_Save)));
+          icon: icon,
+          label: Text(text));
   }
 }
 
@@ -125,6 +125,7 @@ Widget makeTitleDivider(String titleString) {
   );
 }
 
+// Todo use the convention wiht the {required Type Name}
 CustomScrollView makeScrollView(BuildContext context, List<Widget> children) {
   return CustomScrollView(
     slivers: List<SliverList>.generate(
@@ -133,6 +134,25 @@ CustomScrollView makeScrollView(BuildContext context, List<Widget> children) {
           delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) => children[index],
               childCount: children.length)),
+    ),
+  );
+}
+
+// TODO adding method to customize the app
+Widget makeIconProfile({required BuildContext context, required Image image}) {
+  return Container(
+    color: Theme.of(context).backgroundColor,
+    child: Center(
+      heightFactor: 1,
+      child: CircleAvatar(
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        radius: 60.0,
+        child: CircleAvatar(
+          radius: 50.0,
+          child: image,
+          backgroundColor: Colors.transparent,
+        ),
+      ),
     ),
   );
 }

@@ -144,6 +144,7 @@ class _InsertModifyShiftView extends State<InsertModifyShiftView> {
           width: 120,
           height: 50,
           child: makeButton(context,
+              text: AppLocalization.getWithKey(Keys.Words_Word_Save),
               onPress: () => {
                     widget.onSave(Shift(_selectedDate, _shiftTime)),
                     widget.onClose()

@@ -15,9 +15,13 @@ class Keys {
 
   static const String Bottomnav_Settings = 'bottomNav.settings';
 
+  static const String Bottomnav_Profile = 'bottomNav.profile';
+
   static const String Floatingbutton_Save = 'floatingButton.save';
 
   static const String Floatingbutton_Add = 'floatingButton.add';
+
+  static const String Floatingbutton_Logout = 'floatingButton.logout';
 
   static const String Bottomdialog_Modify_Shift = 'bottomDialog.modify_shift';
 

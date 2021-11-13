@@ -16,6 +16,7 @@ import 'package:nurse_time/utils/converter.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:nurse_time/view/charts/pie_chart.dart';
 import 'package:nurse_time/view/home/insert_modify_shift.dart';
+import 'package:nurse_time/view/profile/profile_view.dart';
 import 'package:nurse_time/view/settings/set_up_view.dart';
 
 class HomeView extends StatefulWidget {
@@ -87,10 +88,11 @@ class _HomeView extends State<HomeView> {
         controller: _pageController,
         onPageChanged: (index) => setState(() => _selectedView = index),
         children: [
-          SafeArea(
+          // Statistic View
+          /*SafeArea(
               child: PieChartShift(
-                  shifts: _shiftScheduler!.generateScheduler(complete: true))),
-          SafeArea(child: _buildHomeView(context, _shiftScheduler!.shifts)),
+                  shifts: _shiftScheduler!.generateScheduler(complete: true))), */
+          // Setting View
           SafeArea(
               child: SetUpView(
                   schedulerRules: _schedulerRules,
@@ -102,6 +104,10 @@ class _HomeView extends State<HomeView> {
                   },
                   ownView: false,
                   shiftScheduler: this._shiftScheduler)),
+          // Home view
+          SafeArea(child: _buildHomeView(context, _shiftScheduler!.shifts)),
+          // Profile View
+          SafeArea(child: ProfileView(userModel: _userModel)),
         ],
       ),
       bottomNavigationBar: BottomNavyBar(
@@ -111,16 +117,18 @@ class _HomeView extends State<HomeView> {
         itemCornerRadius: 24,
         onItemSelected: (index) => _pageController.jumpToPage(index),
         items: <BottomNavyBarItem>[
-          makeItem(
+          /*makeItem(
               context,
               AppLocalization.getWithKey(Keys.Bottomnav_Statistic),
               Icons.timeline,
               0,
-              _selectedView),
+              _selectedView), */
+          makeItem(context, AppLocalization.getWithKey(Keys.Bottomnav_Settings),
+              Icons.settings, 0, _selectedView),
           makeItem(context, AppLocalization.getWithKey(Keys.Bottomnav_Home),
               Icons.home, 1, _selectedView),
-          makeItem(context, AppLocalization.getWithKey(Keys.Bottomnav_Settings),
-              Icons.settings, 2, _selectedView),
+          makeItem(context, AppLocalization.getWithKey(Keys.Bottomnav_Profile),
+              Icons.account_circle, 2, _selectedView)
         ],
       ),
     );
