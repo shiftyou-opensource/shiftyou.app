@@ -1,32 +1,49 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_timeline/event_item.dart';
-import 'package:flutter_timeline/indicator_position.dart';
+import 'package:nurse_time/utils/generic_components.dart';
+import 'package:nurse_time/utils/icon_provider.dart';
 
 abstract class AbstractIndicatorStep {
   final Widget _title;
-  final Widget indicator;
+  final String messageTips;
 
-  AbstractIndicatorStep(this._title,
-      {this.indicator = const Icon(Icons.donut_large)});
+  AbstractIndicatorStep(this._title, {required this.messageTips});
 
   Widget get title => _title;
 
-  TimelineEventDisplay build(BuildContext context) {
-    return TimelineEventDisplay(
-        anchor: IndicatorPosition.top,
-        indicatorOffset: Offset(0, 35),
-        child: Card(
-          elevation: 3,
-          child: TimelineEventCard(
-              title: title,
-              content: Expanded(
-                flex: 5,
-                child: this.buildView(context),
-              )),
-        ),
-        indicatorSize: 25,
-        indicator: indicator);
+  Card build(BuildContext context) {
+    return Card(
+        elevation: 3,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0))),
+        child: Column(children: [
+          Container(
+            margin: EdgeInsets.all(5),
+            child: Row(
+              children: [
+                Expanded(
+                    child: Container(
+                      margin: EdgeInsets.only(left: 10),
+                      child: _title,
+                    ),
+                    flex: 6),
+                Expanded(
+                    child: IconButton(
+                      icon: Icon(Icons.contact_support_rounded),
+                      onPressed: () => showAppDialog(
+                        context: context,
+                        title: "Tips",
+                        message: messageTips,
+                        imageProvided:
+                            IconProvider.instance.getImage(AppIcon.TIP),
+                      ),
+                    ),
+                    flex: 1)
+              ],
+            ),
+          ),
+          this.buildView(context)
+        ]));
   }
 
   Widget buildView(BuildContext context);

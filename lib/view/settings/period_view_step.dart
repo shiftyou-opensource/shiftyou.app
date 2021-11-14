@@ -18,7 +18,7 @@ class PeriodViewStep extends AbstractIndicatorStep {
 
   PeriodViewStep(Widget title,
       {required this.onSave, required this.shiftScheduler})
-      : super(title);
+      : super(title, messageTips: "Some tips");
 
   @override
   Widget buildView(BuildContext context) {

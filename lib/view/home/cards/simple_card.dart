@@ -23,6 +23,8 @@ class SimpleCard extends StatelessWidget {
   Widget _makeContent({required BuildContext context}) {
     return Card(
       elevation: elevation,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20.0))),
       child: Container(
         child: InkWell(
             onTap: () => onPress(),

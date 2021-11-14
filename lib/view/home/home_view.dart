@@ -241,6 +241,8 @@ class _HomeView extends State<HomeView> {
     return Card(
         elevation: 10.0,
         margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0))),
         child: Center(
           child: Container(
             padding: EdgeInsets.all(15),

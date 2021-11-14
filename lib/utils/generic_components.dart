@@ -1,7 +1,6 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:nurse_time/utils/icon_provider.dart';
 
 Widget buildUserIcon(BuildContext context, String imageUrl) {
   return CircleAvatar(
@@ -177,8 +176,8 @@ void showSnackBar(BuildContext context, String message,
 void showAppDialog(
     {required BuildContext context,
     required String title,
-    required String message}) {
-  print("Show message dialog");
+    required String message,
+    required ImageProvider imageProvided}) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -193,10 +192,7 @@ void showAppDialog(
             width: 400,
             child: Column(
               children: [
-                Expanded(
-                    flex: 6,
-                    child: Image(
-                        image: IconProvider.instance.getImage(AppIcon.SORRY))),
+                Expanded(flex: 6, child: Image(image: imageProvided)),
                 Spacer(),
                 Expanded(flex: 5, child: Text(message))
               ],

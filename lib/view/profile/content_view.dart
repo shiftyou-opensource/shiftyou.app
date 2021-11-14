@@ -34,6 +34,7 @@ class _ContentView extends State<ContentView> {
   Widget _makeContent({required BuildContext context}) {
     return Column(
       children: [
+        /*
         Expanded(
             flex: 2,
             child: SimpleCard(
@@ -43,7 +44,7 @@ class _ContentView extends State<ContentView> {
               onPress: () {
                 showSnackBar(context, "We are working in progress");
               },
-            )),
+            )), */
         Expanded(
             flex: 2,
             child: SimpleCard(

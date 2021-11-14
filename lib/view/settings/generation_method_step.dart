@@ -11,7 +11,7 @@ class GenerationMethodStep extends AbstractIndicatorStep {
 
   GenerationMethodStep(
       Widget title, this._onChanged, this._selectedIndex, this._schedulerRules)
-      : super(title);
+      : super(title, messageTips: "Some tips");
 
   @override
   Widget buildView(BuildContext context) {

@@ -12,6 +12,7 @@ import 'package:nurse_time/utils/app_preferences.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:nurse_time/utils/icon_provider.dart';
 
 class LoginView extends StatefulWidget {
   @override
@@ -43,10 +44,11 @@ class _LoginView extends State<LoginView> {
         var message = await AppPreferences.instance
             .valueWithKey(PreferenceKey.DIALOG_MESSAGE) as String;
         showAppDialog(
-            context: context,
-            title:
-                AppLocalization.getWithKey(Keys.Generic_Messages_Upgrade_Info),
-            message: message);
+          context: context,
+          title: AppLocalization.getWithKey(Keys.Generic_Messages_Upgrade_Info),
+          message: message,
+          imageProvided: IconProvider.instance.getImage(AppIcon.SORRY),
+        );
       }
     });
     return Scaffold(

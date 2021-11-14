@@ -331,15 +331,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_timeline:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: HEAD
-      resolved-ref: e2cb4c0a91959a67602c39e81bfe8b77919063bd
-      url: "https://github.com/softmarshmallow/flutter-timeline"
-    source: git
-    version: "0.2.0+14"
   flutter_translate:
     dependency: "direct main"
     description:

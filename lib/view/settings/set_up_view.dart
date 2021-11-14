@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:flutter_timeline/indicator_position.dart';
 import 'package:nurse_time/localization/app_localizzation.dart';
 import 'package:nurse_time/localization/keys.dart';
 import 'package:nurse_time/model/scheduler_rules.dart';
@@ -11,7 +10,6 @@ import 'package:nurse_time/persistence/abstract_dao.dart';
 import 'package:nurse_time/persistence/dao_database.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:get_it/get_it.dart';
-import 'package:flutter_timeline/flutter_timeline.dart';
 import 'package:nurse_time/view/home/home_view.dart';
 import 'package:nurse_time/view/settings/generation_method_step.dart';
 import 'package:nurse_time/view/settings/optional_view_step.dart';
@@ -141,42 +139,38 @@ class _SetUpView extends State<SetUpView> {
   }
 
   Widget _buildTimeline(BuildContext context) {
-    return TimelineTheme(
-        data: TimelineThemeData(
-            lineColor: Theme.of(context).textTheme.bodyText1!.color!,
-            itemGap: 20,
-            lineGap: 20),
-        child: Timeline(
-          anchor: IndicatorPosition.center,
-          indicatorSize: 30,
-          altOffset: Offset(10, 10),
-          events: [
-            PeriodViewStep(
-                Text(
-                    AppLocalization.getWithKey(Keys.Settings_Steps_Select_Date),
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1!
-                        .apply(fontSizeFactor: 1.4)),
-                shiftScheduler: _shiftScheduler,
-                onSave: (timeRange) => setState(() => _shiftScheduler
-                    .updateRangeFromRange(timeRange))).build(context),
-            GenerationMethodStep(
-              Text(
-                  AppLocalization.getWithKey(
-                      Keys.Settings_Steps_Generate_Method),
+    return Column(children: [
+      Container(
+          margin: EdgeInsets.all(14),
+          child: PeriodViewStep(
+              Text(AppLocalization.getWithKey(Keys.Settings_Steps_Select_Date),
                   style: Theme.of(context)
                       .textTheme
                       .bodyText1!
                       .apply(fontSizeFactor: 1.4)),
-              (value) => setState(() {
-                _selectedRules = value!;
-                widget.onUpdate(_selectedRules);
-              }),
-              _selectedRules,
-              widget.schedulerRules,
-            ).build(context),
-            OptionViewStep(
+              shiftScheduler: _shiftScheduler,
+              onSave: (timeRange) => setState(
+                  () => _shiftScheduler.updateRangeFromRange(timeRange))).build(
+              context)),
+      Container(
+          margin: EdgeInsets.all(14),
+          child: GenerationMethodStep(
+            Text(
+                AppLocalization.getWithKey(Keys.Settings_Steps_Generate_Method),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1!
+                    .apply(fontSizeFactor: 1.4)),
+            (value) => setState(() {
+              _selectedRules = value!;
+              widget.onUpdate(_selectedRules);
+            }),
+            _selectedRules,
+            widget.schedulerRules,
+          ).build(context)),
+      Container(
+        margin: EdgeInsets.all(14),
+        child: OptionViewStep(
                 Text(AppLocalization.getWithKey(Keys.Settings_Steps_Cadency),
                     style: Theme.of(context)
                         .textTheme
@@ -187,9 +181,10 @@ class _SetUpView extends State<SetUpView> {
                 (index) => setState(
                     () => widget.schedulerRules[_selectedRules].removed(index)),
                 _shiftTimePicker,
-                (time) => setState(() => widget.schedulerRules[_selectedRules]
-                    .addTime(time))).build(context),
-          ],
-        ));
+                (time) => setState(
+                    () => widget.schedulerRules[_selectedRules].addTime(time)))
+            .build(context),
+      )
+    ]);
   }
 }
