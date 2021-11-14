@@ -2,12 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:nurse_time/actions/auth/apple_sign_in.dart';
+import 'package:nurse_time/actions/auth/auth_provider.dart';
 import 'package:nurse_time/localization/app_localizzation.dart';
 import 'package:nurse_time/localization/keys.dart';
 import 'package:nurse_time/model/user_model.dart';
 import 'package:nurse_time/persistence/dao_database.dart';
-import 'package:nurse_time/actions/auth/google_sign_in.dart';
 import 'package:nurse_time/utils/app_preferences.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:get_it/get_it.dart';
@@ -21,16 +20,13 @@ class LoginView extends StatefulWidget {
 class _LoginView extends State<LoginView> {
   // TODO implementing a builder, that create the single instance
   // of a login managed and put this builder in GetIt
-  late GoogleManagerUserLogin _googleLogin;
-  late AppleManageUserLogin _appleLogin;
+  late AuthProvider _authProvider;
   late DAODatabase _dao;
   late UserModel _userModel;
   late Logger _logger;
 
   _LoginView() {
     this._logger = GetIt.instance<Logger>();
-    this._googleLogin = GetIt.instance.get<GoogleManagerUserLogin>();
-    this._appleLogin = GetIt.instance.get<AppleManageUserLogin>();
     this._dao = GetIt.instance.get<DAODatabase>();
     this._userModel = GetIt.instance.get<UserModel>();
   }
@@ -74,7 +70,11 @@ class _LoginView extends State<LoginView> {
                   buttonText: AppLocalization.getWithKey(
                       Keys.Generic_Messages_Login_Google),
                   onPressed: () {
-                    _googleLogin.signIn().then((userModel) {
+                    _authProvider =
+                        AuthProvider.build(provider: AuthProvider.GOOGLE);
+                    GetIt.instance
+                        .registerSingleton<AuthProvider>(_authProvider);
+                    _authProvider.login().then((userModel) {
                       this._userModel.bing(userModel);
                       _dao.insertUser(userModel).then((_) {
                         Navigator.pushNamed(context, "/setting");
@@ -89,14 +89,19 @@ class _LoginView extends State<LoginView> {
                   }),
               makeVisibleComponent(
                   Divider(color: Theme.of(context).backgroundColor),
-                  _appleLogin.available(platform: Theme.of(context).platform)),
+                  _authProvider.available(
+                      platform: Theme.of(context).platform)),
               makeVisibleComponent(
                   _signInButton(
                       buttonsType: Buttons.AppleDark,
                       buttonText: AppLocalization.getWithKey(
                           Keys.Generic_Messages_Login_Apple),
                       onPressed: () {
-                        _appleLogin.signIn().then((userModel) {
+                        _authProvider =
+                            AuthProvider.build(provider: AuthProvider.APPLE);
+                        GetIt.instance
+                            .registerSingleton<AuthProvider>(_authProvider);
+                        _authProvider.login().then((userModel) {
                           this._userModel.bing(userModel);
                           _dao.insertUser(userModel).then((_) {
                             Navigator.pushNamed(context, "/setting");
@@ -109,7 +114,8 @@ class _LoginView extends State<LoginView> {
                             userMessage:
                                 AppLocalization.getWithKey(Keys.Errors_Login)));
                       }),
-                  _appleLogin.available(platform: Theme.of(context).platform)),
+                  _authProvider.available(
+                      platform: Theme.of(context).platform)),
               Spacer()
             ],
           ),

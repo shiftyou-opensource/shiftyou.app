@@ -15,6 +15,8 @@ class ProfileView extends StatelessWidget {
     return Expanded(
         child: makeScrollView(context, [
       Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           makeIconProfile(
               context: context, image: Image.asset("assets/ic_launcher.png")),
