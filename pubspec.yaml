@@ -54,6 +54,8 @@ dependencies:
   flutter_holo_date_picker: ^1.0.0-nullsafety.4
   flutter_translate: ^3.0.1
   flutter_translate_annotations: ^2.0.0
+  in_app_review: ^2.0.3
+  url_launcher: ^6.0.12
 
 dev_dependencies:
   flutter_test:

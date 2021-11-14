@@ -81,7 +81,7 @@ class _HomeView extends State<HomeView> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       floatingActionButton: _makeFloatingButton(context,
-          settingView: _selectedView == 2,
+          settingView: _selectedView == 0,
           onPress: (context, modify, index) => _makeBottomDialog(
               context: context, modify: modify, index: index)),
       body: PageView(
@@ -167,7 +167,7 @@ class _HomeView extends State<HomeView> {
               ? Text(AppLocalization.getWithKey(Keys.Floatingbutton_Save))
               : Text(AppLocalization.getWithKey(Keys.Floatingbutton_Add)),
         ),
-        (_selectedView == 1 || _selectedView == 2));
+        (_selectedView == 0 || _selectedView == 1));
   }
 
   void _makeBottomDialog(

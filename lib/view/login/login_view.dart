@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -20,7 +21,7 @@ class LoginView extends StatefulWidget {
 class _LoginView extends State<LoginView> {
   // TODO implementing a builder, that create the single instance
   // of a login managed and put this builder in GetIt
-  late AuthProvider _authProvider;
+  AuthProvider? _authProvider;
   late DAODatabase _dao;
   late UserModel _userModel;
   late Logger _logger;
@@ -73,8 +74,8 @@ class _LoginView extends State<LoginView> {
                     _authProvider =
                         AuthProvider.build(provider: AuthProvider.GOOGLE);
                     GetIt.instance
-                        .registerSingleton<AuthProvider>(_authProvider);
-                    _authProvider.login().then((userModel) {
+                        .registerSingleton<AuthProvider>(_authProvider!);
+                    _authProvider?.login().then((userModel) {
                       this._userModel.bing(userModel);
                       _dao.insertUser(userModel).then((_) {
                         Navigator.pushNamed(context, "/setting");
@@ -89,8 +90,7 @@ class _LoginView extends State<LoginView> {
                   }),
               makeVisibleComponent(
                   Divider(color: Theme.of(context).backgroundColor),
-                  _authProvider.available(
-                      platform: Theme.of(context).platform)),
+                  Platform.isIOS),
               makeVisibleComponent(
                   _signInButton(
                       buttonsType: Buttons.AppleDark,
@@ -100,8 +100,8 @@ class _LoginView extends State<LoginView> {
                         _authProvider =
                             AuthProvider.build(provider: AuthProvider.APPLE);
                         GetIt.instance
-                            .registerSingleton<AuthProvider>(_authProvider);
-                        _authProvider.login().then((userModel) {
+                            .registerSingleton<AuthProvider>(_authProvider!);
+                        _authProvider?.login().then((userModel) {
                           this._userModel.bing(userModel);
                           _dao.insertUser(userModel).then((_) {
                             Navigator.pushNamed(context, "/setting");
@@ -114,8 +114,7 @@ class _LoginView extends State<LoginView> {
                             userMessage:
                                 AppLocalization.getWithKey(Keys.Errors_Login)));
                       }),
-                  _authProvider.available(
-                      platform: Theme.of(context).platform)),
+                  Platform.isIOS),
               Spacer()
             ],
           ),

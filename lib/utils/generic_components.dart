@@ -64,18 +64,21 @@ Widget makeButton(BuildContext context,
     {required Function onPress,
     Icon icon = const Icon(Icons.done),
     required String text,
+    bool disabled = false,
     ButtonType type = ButtonType.NORMAL,
     ButtonStyle? style}) {
   switch (type) {
     case ButtonType.NORMAL:
       return ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
-            primary: Theme.of(context).colorScheme.primary,
+            primary: !disabled
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).disabledColor,
             elevation: 3,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           ),
-          onPressed: () => onPress(),
+          onPressed: () => disabled ? () {} : onPress(),
           icon: icon,
           label: Text(text));
   }
