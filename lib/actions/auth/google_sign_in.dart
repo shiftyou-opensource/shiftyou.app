@@ -54,6 +54,8 @@ class GoogleManagerUserLogin extends AbstractManagerUserLogin {
         id: userId.hashCode,
         name: currentUser!.displayName ??
             AppLocalization.getWithKey(Keys.Words_Anonymous),
+        email: currentUser.email ??
+            AppLocalization.getWithKey(Keys.Words_Anonymous),
         logged: true,
         initialized: true);
   }

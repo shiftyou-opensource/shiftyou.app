@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nurse_time/localization/app_localizzation.dart';
+import 'package:nurse_time/localization/keys.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:nurse_time/utils/icon_provider.dart';
 
@@ -32,8 +34,10 @@ abstract class AbstractIndicatorStep {
                       icon: Icon(Icons.contact_support_rounded),
                       onPressed: () => showAppDialog(
                         context: context,
-                        title: "Tips",
+                        title: AppLocalization.getWithKey(
+                            Keys.Floatingbutton_Tips),
                         message: messageTips,
+                        withIcon: false,
                         imageProvided:
                             IconProvider.instance.getImage(AppIcon.TIP),
                       ),

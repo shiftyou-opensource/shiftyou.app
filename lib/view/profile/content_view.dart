@@ -63,7 +63,7 @@ class _ContentView extends State<ContentView> {
               text: "Instagram",
               onPress: () {
                 _launchURL(
-                    context, "https://www.instagram.com/shiftyou.social/");
+                    context, "https://www.instagram.com/shiftyou.social");
               },
             )),
         Expanded(

@@ -11,7 +11,8 @@
   "floatingButton": {
     "save": "Salva",
     "add": "Aggiungi",
-    "logout": "Logout"
+    "logout": "Logout",
+    "tips": "Tips"
   },
   "bottomDialog": {
     "modify_shift": "Modifica il turno",
@@ -48,15 +49,24 @@
   "titles": {
     "setting_scheduler": "Imposta lo Scheduler"
   },
+  "help_message": {
+    "period": "Select Your Period. An Example can be ",
+    "gen_method": "WEEKLY PATTERN: Provide a pattern for your shift, and the app will generate it for you for the period provided\n\nUP TO YOU: Manual mode. From the period chosen, you will start from a empty schedule, and use the add button in the home screen.",
+    "pattern": "Specify the part of the day for all the patter in the correct order. An example can be \"afternoon\", \"morning\" and the period. The app will generate for you all the correct schedule."
+  },
   "words": {
     "word_select": "Seleziona",
     "word_save": "Salva",
     "select": "Seleziona",
     "cancel": "Annulla",
-    "anonymous": "Anonimo"
+    "anonymous": "Anonimo",
+    "close": "Chiudi",
+    "to": "da",
+    "from": "a"
   },
   "errors": {
     "db_errors": "Errore con il Database",
-    "login": "Errore con il login"
+    "login": "Errore con il login",
+    "no_logout": "Error durante il logout!"
   }
 }

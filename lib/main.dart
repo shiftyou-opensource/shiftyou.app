@@ -42,8 +42,8 @@ Future<void> setUpInjector() async {
   GetIt.instance.registerSingleton<DAODatabase>(db);
   GetIt.instance.registerLazySingleton<Logger>(() => Logger());
   //TODO Review the database rules here
-  GetIt.instance.registerLazySingleton<UserModel>(
-      () => UserModel(id: -1, name: "", logged: false, initialized: false));
+  GetIt.instance.registerLazySingleton<UserModel>(() => UserModel(
+      id: -1, name: "", email: "", logged: false, initialized: false));
   GetIt.instance.registerLazySingleton<ShiftScheduler>(
       () => ShiftScheduler(-1, DateTime.now(), DateTime.now()));
 

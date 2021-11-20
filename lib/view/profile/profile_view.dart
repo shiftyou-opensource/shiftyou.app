@@ -1,8 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:logger/logger.dart';
+import 'package:nurse_time/actions/auth/auth_provider.dart';
 import 'package:nurse_time/localization/app_localizzation.dart';
 import 'package:nurse_time/localization/keys.dart';
 import 'package:nurse_time/model/user_model.dart';
+import 'package:nurse_time/persistence/abstract_dao.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:nurse_time/view/profile/content_view.dart';
 
@@ -11,17 +17,15 @@ class ProfileView extends StatelessWidget {
 
   final UserModel userModel;
 
-  /*
-  TODO adding as utils function
   FutureOr<Null> _handleError(dynamic error, dynamic stacktrace,
       {String? userMessage, required BuildContext context}) async {
+    var _logger = GetIt.instance.get<Logger>();
     _logger.e(error);
     _logger.e(stacktrace);
     if (userMessage != null) {
       showSnackBar(context, userMessage);
     }
   }
-  */
 
   @override
   Widget build(BuildContext context) {
@@ -45,14 +49,19 @@ class ProfileView extends StatelessWidget {
                   icon: Icon(Icons.logout),
                   // TODO we need a provider here because we have two type of login
                   onPress: () {
-                showSnackBar(context, "No supported");
-                /*
-                      TODO: Need to alterate the table in the db and
-                      var _authProvider = GetIt.instance.get<AuthProvider>();
-                      _authProvider.logOut()
-                          .then((value) => )
-                          .catchError((error, stacktrace) => _handleError(error, stacktrace, context: context));
-                       */
+                var _authProvider = GetIt.instance.get<AuthProvider>();
+                _authProvider.logOut().then((value) async {
+                  if (value) {
+                    userModel.logged = false;
+                    await GetIt.instance
+                        .get<AbstractDAO>()
+                        .updateUser(userModel);
+                  } else {
+                    showSnackBar(context,
+                        AppLocalization.getWithKey(Keys.Errors_No_Logout));
+                  }
+                }).catchError((error, stacktrace) =>
+                    _handleError(error, stacktrace, context: context));
               }),
             ))
       ],

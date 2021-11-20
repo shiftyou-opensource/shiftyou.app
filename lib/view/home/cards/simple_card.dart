@@ -31,7 +31,15 @@ class SimpleCard extends StatelessWidget {
             child: Row(
               children: [
                 Expanded(flex: 1, child: icon),
-                Expanded(flex: 5, child: Text(this.text)),
+                Expanded(
+                    flex: 5,
+                    child: Text(
+                      this.text,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1!
+                          .apply(fontSizeFactor: 1.2),
+                    )),
               ],
             )),
       ),

@@ -11,7 +11,8 @@
   "floatingButton": {
     "save": "Save",
     "add": "Add",
-    "logout": "Logout"
+    "logout": "Logout",
+    "tips": "Tips"
   },
   "bottomDialog": {
     "modify_shift": "Modify the Shift",
@@ -19,6 +20,11 @@
   },
   "titles": {
     "setting_scheduler": "Setting Scheduler"
+  },
+  "help_message": {
+    "period": "Select Your Period.\nAn Example can be from November 1 2020 to December 1 2020",
+    "gen_method": "WEEKLY PATTERN: Provide a pattern for your shift, and the app will generate it for you for the period provided\n\nUP TO YOU: Manual mode. From the period chosen, you will start from a empty schedule, and use the add button in the home screen.",
+    "pattern": "Specify the part of the day for all the patter in the correct order. An example can be \"afternoon\", \"morning\" and the period. The app will generate for you all the correct schedule."
   },
   "generic_messages": {
     "modify_daily_shift": "Modify the Shift of day",
@@ -53,10 +59,14 @@
     "word_save": "Save",
     "select": "Select",
     "cancel": "Cancel",
-    "anonymous": "Anonymous"
+    "anonymous": "Anonymous",
+    "close": "Close",
+    "to": "to",
+    "from": "from"
   },
   "errors": {
     "db_errors": "Error with the Database",
-    "login": "Error with the login"
+    "login": "Error with the login",
+    "no_logout": "Error during the logout"
   }
 }

@@ -75,7 +75,12 @@ class AppleManageUserLogin extends AbstractManagerUserLogin {
     }
     _logger.d("User name it is $userName");
     return UserModel(
-        id: userId, name: userName, logged: true, initialized: true);
+        id: userId,
+        name: userName,
+        email: _currentUser.email ??
+            AppLocalization.getWithKey(Keys.Words_Anonymous),
+        logged: true,
+        initialized: true);
   }
 
   /// Generates a cryptographically secure random nonce, to be included in a

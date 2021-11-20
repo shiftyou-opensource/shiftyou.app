@@ -20,8 +20,6 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginView extends State<LoginView> {
-  // TODO implementing a builder, that create the single instance
-  // of a login managed and put this builder in GetIt
   AuthProvider? _authProvider;
   late DAODatabase _dao;
   late UserModel _userModel;
@@ -78,7 +76,7 @@ class _LoginView extends State<LoginView> {
                     GetIt.instance
                         .registerSingleton<AuthProvider>(_authProvider!);
                     _authProvider?.login().then((userModel) {
-                      this._userModel.bing(userModel);
+                      this._userModel.bind(userModel);
                       _dao.insertUser(userModel).then((_) {
                         Navigator.pushNamed(context, "/setting");
                       }).catchError((error, stacktrace) => _handleError(
@@ -104,7 +102,7 @@ class _LoginView extends State<LoginView> {
                         GetIt.instance
                             .registerSingleton<AuthProvider>(_authProvider!);
                         _authProvider?.login().then((userModel) {
-                          this._userModel.bing(userModel);
+                          this._userModel.bind(userModel);
                           _dao.insertUser(userModel).then((_) {
                             Navigator.pushNamed(context, "/setting");
                           }).catchError((error, stacktrace) => _handleError(

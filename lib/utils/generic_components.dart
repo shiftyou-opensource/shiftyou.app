@@ -1,6 +1,8 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nurse_time/localization/app_localizzation.dart';
+import 'package:nurse_time/localization/keys.dart';
 
 Widget buildUserIcon(BuildContext context, String imageUrl) {
   return CircleAvatar(
@@ -173,11 +175,60 @@ void showSnackBar(BuildContext context, String message,
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
 
+Widget _appDialogContentWithImage(
+    {required BuildContext context,
+    required String message,
+    required ImageProvider imageProvided}) {
+  return Column(
+    children: [
+      Expanded(
+          flex: 2,
+          child: Center(
+            child: Image(
+              image: imageProvided,
+            ),
+          )),
+      Spacer(),
+      Expanded(
+          flex: message.length > 100 ? 4 : 2,
+          child: Center(
+              child: SingleChildScrollView(
+                  child: Text(
+            message,
+            style: Theme.of(context).textTheme.bodyText1!.apply(
+                  fontSizeFactor: 1.2,
+                ),
+          ))))
+    ],
+  );
+}
+
+Widget _appDialogContentWithoutImage(
+    {required BuildContext context,
+    required String message,
+    required ImageProvider imageProvided}) {
+  return Column(
+    children: [
+      Expanded(
+          flex: 2,
+          child: Center(
+              child: SingleChildScrollView(
+                  child: Text(
+            message,
+            style: Theme.of(context).textTheme.bodyText1!.apply(
+                  fontSizeFactor: 1.2,
+                ),
+          ))))
+    ],
+  );
+}
+
 void showAppDialog(
     {required BuildContext context,
     required String title,
     required String message,
-    required ImageProvider imageProvided}) {
+    required ImageProvider imageProvided,
+    bool withIcon = true}) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -186,20 +237,28 @@ void showAppDialog(
         elevation: 2,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(20.0))),
-        title: new Text(title),
+        title: new Text(title,
+            style: Theme.of(context).textTheme.bodyText1!.apply(
+                  fontSizeFactor: 1.6,
+                )),
         content: SizedBox(
-            height: 200,
-            width: 400,
-            child: Column(
-              children: [
-                Expanded(flex: 6, child: Image(image: imageProvided)),
-                Spacer(),
-                Expanded(flex: 5, child: Text(message))
-              ],
-            )),
+          height: MediaQuery.of(context).size.height *
+              0.25 *
+              (message.length > 150 && withIcon ? 1.8 : 1),
+          width: MediaQuery.of(context).size.width * 0.6 * (withIcon ? 1.2 : 1),
+          child: withIcon
+              ? _appDialogContentWithImage(
+                  context: context,
+                  message: message,
+                  imageProvided: imageProvided)
+              : _appDialogContentWithoutImage(
+                  context: context,
+                  message: message,
+                  imageProvided: imageProvided),
+        ),
         actions: <Widget>[
           new TextButton(
-            child: new Text("Close"),
+            child: new Text(AppLocalization.getWithKey(Keys.Words_Close)),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],

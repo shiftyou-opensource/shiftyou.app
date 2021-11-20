@@ -20,11 +20,16 @@ class DAOUser extends AbstractDAOModel<UserModel> {
     if (maps.isEmpty) {
       return null;
     }
+    var init = true;
+    if (maps[0]['init'] != null) {
+      init = maps[0]['init'] > 0;
+    }
     return UserModel(
       id: maps[0]['id'],
       name: maps[0]['name'],
+      email: maps[0]['email'] ?? "unknown",
       logged: false,
-      initialized: true,
+      initialized: init,
     );
   }
 
@@ -36,11 +41,16 @@ class DAOUser extends AbstractDAOModel<UserModel> {
       return List.empty();
     }
     return List.generate(maps.length, (i) {
+      var init = true;
+      if (maps[0]['init'] != null) {
+        init = maps[0]['init'] > 0;
+      }
       return UserModel(
         id: maps[i]['id'],
         name: maps[i]['name'],
+        email: maps[i]['email'] ?? "unknown",
         logged: false,
-        initialized: true,
+        initialized: init,
       );
     });
   }

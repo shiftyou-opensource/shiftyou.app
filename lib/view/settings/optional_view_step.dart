@@ -20,7 +20,9 @@ class OptionViewStep extends AbstractIndicatorStep {
 
   OptionViewStep(Widget title, this._schedulerRules, this._selectedRules,
       this._onDelete, this._shiftTimePicker, this._onAddTime)
-      : super(title, messageTips: "Some tips") {
+      : super(title,
+            messageTips:
+                AppLocalization.getWithKey(Keys.Help_Message_Gen_Method)) {
     this._logger = GetIt.instance<Logger>();
   }
 
