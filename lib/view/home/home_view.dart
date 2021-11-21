@@ -150,7 +150,7 @@ class _HomeView extends State<HomeView> {
               // Set the new data inside the _shiftScheduler and update the ui.
               await _dao.deleteShiftException(_shiftScheduler!);
               setState(() {
-                _shiftScheduler!.userId = this._userModel.id;
+                _shiftScheduler!.userId = this._userModel.id!;
                 // we are modify the shift, this mean that we can delete the
                 // old exception and save the new one
                 _shiftScheduler!.cleanException().notify();

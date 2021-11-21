@@ -6,6 +6,7 @@ import 'package:logger/logger.dart';
 import 'package:nurse_time/actions/auth/auth_provider.dart';
 import 'package:nurse_time/localization/app_localizzation.dart';
 import 'package:nurse_time/localization/keys.dart';
+import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/model/user_model.dart';
 import 'package:nurse_time/persistence/dao_database.dart';
 import 'package:nurse_time/utils/app_preferences.dart';
@@ -23,12 +24,14 @@ class _LoginView extends State<LoginView> {
   AuthProvider? _authProvider;
   late DAODatabase _dao;
   late UserModel _userModel;
+  late ShiftScheduler _scheduler;
   late Logger _logger;
 
   _LoginView() {
     this._logger = GetIt.instance<Logger>();
     this._dao = GetIt.instance.get<DAODatabase>();
     this._userModel = GetIt.instance.get<UserModel>();
+    this._scheduler = GetIt.instance.get<ShiftScheduler>();
   }
 
   @override
@@ -49,6 +52,7 @@ class _LoginView extends State<LoginView> {
         );
       }
     });
+    this._userModel = GetIt.instance.get<UserModel>();
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -73,11 +77,32 @@ class _LoginView extends State<LoginView> {
                   onPressed: () {
                     _authProvider =
                         AuthProvider.build(provider: AuthProvider.GOOGLE);
-                    GetIt.instance
-                        .registerSingleton<AuthProvider>(_authProvider!);
+                    if (!GetIt.instance.isRegistered<AuthProvider>()) {
+                      GetIt.instance
+                          .registerSingleton<AuthProvider>(_authProvider!);
+                    }
+                    AppPreferences.instance.putValue(
+                        PreferenceKey.LOGIN_PROVIDER, AuthProvider.GOOGLE);
                     _authProvider?.login().then((userModel) {
                       this._userModel.bind(userModel);
-                      _dao.insertUser(userModel).then((_) {
+                      _logger.d("Login view with use mode $_userModel");
+                      _logger.d(
+                          "Received from GetIt the following scheduler $_scheduler");
+                      if (this._scheduler.isOwner(_userModel)) {
+                        _logger.d(
+                            "After login the user is logged -> ${_userModel.logged}");
+                        _dao
+                            .updateUser(_userModel)
+                            .then((_) => Navigator.pushNamed(context, "/home"))
+                            .catchError((error, stacktrace) => _handleError(
+                                error, stacktrace,
+                                userMessage: AppLocalization.getWithKey(
+                                    Keys.Errors_Login)));
+                        return;
+                      }
+                      _dao.insertUser(userModel).then((id) {
+                        // bind the address to the user model.
+                        _userModel.id = id;
                         Navigator.pushNamed(context, "/setting");
                       }).catchError((error, stacktrace) => _handleError(
                           error, stacktrace,
@@ -99,8 +124,12 @@ class _LoginView extends State<LoginView> {
                       onPressed: () {
                         _authProvider =
                             AuthProvider.build(provider: AuthProvider.APPLE);
-                        GetIt.instance
-                            .registerSingleton<AuthProvider>(_authProvider!);
+                        if (!GetIt.instance.isRegistered<AuthProvider>()) {
+                          GetIt.instance
+                              .registerSingleton<AuthProvider>(_authProvider!);
+                        }
+                        AppPreferences.instance.putValue(
+                            PreferenceKey.LOGIN_PROVIDER, AuthProvider.APPLE);
                         _authProvider?.login().then((userModel) {
                           this._userModel.bind(userModel);
                           _dao.insertUser(userModel).then((_) {

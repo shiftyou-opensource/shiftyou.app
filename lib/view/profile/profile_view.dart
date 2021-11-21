@@ -8,7 +8,7 @@ import 'package:nurse_time/actions/auth/auth_provider.dart';
 import 'package:nurse_time/localization/app_localizzation.dart';
 import 'package:nurse_time/localization/keys.dart';
 import 'package:nurse_time/model/user_model.dart';
-import 'package:nurse_time/persistence/abstract_dao.dart';
+import 'package:nurse_time/persistence/dao_database.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:nurse_time/view/profile/content_view.dart';
 
@@ -45,7 +45,6 @@ class ProfileView extends StatelessWidget {
               margin: EdgeInsets.fromLTRB(100, 20, 100, 20),
               child: makeButton(context,
                   text: AppLocalization.getWithKey(Keys.Floatingbutton_Logout),
-                  disabled: true,
                   icon: Icon(Icons.logout),
                   // TODO we need a provider here because we have two type of login
                   onPress: () {
@@ -53,9 +52,11 @@ class ProfileView extends StatelessWidget {
                 _authProvider.logOut().then((value) async {
                   if (value) {
                     userModel.logged = false;
-                    await GetIt.instance
-                        .get<AbstractDAO>()
-                        .updateUser(userModel);
+                    GetIt.instance
+                        .get<DAODatabase>()
+                        .updateUser(userModel)
+                        .then((value) => Navigator.pushNamedAndRemoveUntil(
+                            context, "/login", (r) => false));
                   } else {
                     showSnackBar(context,
                         AppLocalization.getWithKey(Keys.Errors_No_Logout));

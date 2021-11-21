@@ -36,15 +36,15 @@ class DAOShift extends AbstractDAOModel<ShiftScheduler> {
     }
 
     ShiftScheduler scheduler = ShiftScheduler.fromDatabase(
-      maps[0]['id'],
-      maps[0]['start'],
-      maps[0]['end'],
-      schedulerRule,
-      manual,
+      id: maps[0]['id'],
+      timeStart: maps[0]['start'],
+      timeEnd: maps[0]['end'],
+      schedulerRules: schedulerRule,
+      manual: manual,
+      userId: options["user_id"],
     );
 
     List<Shift> exceptions = await _daoShiftException.getAll(dao);
-    _logger.i(exceptions.toString());
     scheduler.setExceptions(exceptions);
     return scheduler;
   }
@@ -69,12 +69,12 @@ class DAOShift extends AbstractDAOModel<ShiftScheduler> {
       }
 
       return ShiftScheduler.fromDatabase(
-        maps[i]['id'],
-        maps[i]['start'],
-        maps[i]['end'],
-        schedulerRule,
-        manual,
-      );
+          id: maps[i]['id'],
+          timeStart: maps[i]['start'],
+          timeEnd: maps[i]['end'],
+          schedulerRules: schedulerRule,
+          manual: manual,
+          userId: maps[i]['user_id']);
     });
   }
 

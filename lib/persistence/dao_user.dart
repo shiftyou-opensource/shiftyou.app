@@ -20,16 +20,16 @@ class DAOUser extends AbstractDAOModel<UserModel> {
     if (maps.isEmpty) {
       return null;
     }
-    var init = true;
-    if (maps[0]['init'] != null) {
-      init = maps[0]['init'] > 0;
+    var logged = true;
+    if (maps[0]['logged'] != null) {
+      logged = maps[0]['logged'] > 0;
     }
     return UserModel(
       id: maps[0]['id'],
       name: maps[0]['name'],
       email: maps[0]['email'] ?? "unknown",
-      logged: false,
-      initialized: init,
+      logged: logged,
+      initialized: true,
     );
   }
 
@@ -41,16 +41,16 @@ class DAOUser extends AbstractDAOModel<UserModel> {
       return List.empty();
     }
     return List.generate(maps.length, (i) {
-      var init = true;
-      if (maps[0]['init'] != null) {
-        init = maps[0]['init'] > 0;
+      var logged = true;
+      if (maps[0]['logged'] != null) {
+        logged = maps[0]['logged'] > 0;
       }
       return UserModel(
         id: maps[i]['id'],
         name: maps[i]['name'],
         email: maps[i]['email'] ?? "unknown",
-        logged: false,
-        initialized: init,
+        logged: logged,
+        initialized: true,
       );
     });
   }
@@ -63,6 +63,7 @@ class DAOUser extends AbstractDAOModel<UserModel> {
 
   @override
   Future<void> update(AbstractDAO dao, UserModel user) async {
-    return await dao.getInstance.update(super.tableName, user.toMap());
+    return await dao.getInstance.update(super.tableName, user.toMap(),
+        where: "id = ?", whereArgs: [user.id]);
   }
 }

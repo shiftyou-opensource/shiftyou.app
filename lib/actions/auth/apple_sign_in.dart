@@ -58,7 +58,6 @@ class AppleManageUserLogin extends AbstractManagerUserLogin {
     }
     _currentUser = userCredential.user!;
 
-    var userId = _currentUser.getIdToken().hashCode;
     // Apple doesn't required that the name need to be inside the request token,
     // this bring us to have a name null, we try to check if it is present in the
     // apple appleCredential otherwise we set it to null.
@@ -75,7 +74,6 @@ class AppleManageUserLogin extends AbstractManagerUserLogin {
     }
     _logger.d("User name it is $userName");
     return UserModel(
-        id: userId,
         name: userName,
         email: _currentUser.email ??
             AppLocalization.getWithKey(Keys.Words_Anonymous),

@@ -49,7 +49,7 @@ class _ContentView extends State<ContentView> {
             flex: 2,
             child: SimpleCard(
               elevation: 4,
-              icon: Icon(FontAwesomeIcons.mailchimp),
+              icon: Icon(FontAwesomeIcons.envelope),
               text: "Support by Email",
               onPress: () {
                 _launchURL(context, "mailto:shiftyou.team@protonmail.com");

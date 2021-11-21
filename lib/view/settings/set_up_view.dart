@@ -89,7 +89,7 @@ class _SetUpView extends State<SetUpView> {
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () => {
             setState(() {
-              _shiftScheduler.userId = this._userModel.id;
+              _shiftScheduler.userId = this._userModel.id!;
               _shiftScheduler.timeOrders =
                   widget.schedulerRules[_selectedRules].timeOrders;
               _shiftScheduler.manual =

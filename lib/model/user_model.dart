@@ -1,6 +1,6 @@
 class UserModel {
   // DB id
-  int id;
+  int? id;
   // the name of the user.
   String name;
   // Email of the user
@@ -12,26 +12,34 @@ class UserModel {
   bool initialized;
 
   UserModel(
-      {required this.id,
+      {this.id,
       required this.name,
       required this.email,
       required this.logged,
       required this.initialized});
 
   void bind(UserModel userModel) {
-    this.id = userModel.id;
+    if (userModel.id != null) this.id = userModel.id;
     this.name = userModel.name;
     this.email = userModel.email;
     this.initialized = userModel.initialized;
     this.logged = userModel.logged;
   }
 
-  Map<String, dynamic> toMap() {
-    return {
-      "id": id,
+  Map<String, dynamic> toMap({bool update = false}) {
+    var mapEncoding = {
       "name": name,
       "email": email,
-      "logged": logged,
+      "logged": logged == true ? 1 : 0,
     };
+    if (id != null && !update) {
+      mapEncoding["id"] = id!;
+    }
+    return mapEncoding;
+  }
+
+  @override
+  String toString() {
+    return 'UserModel{id: $id, name: $name, email: $email, logged: $logged, initialized: $initialized}';
   }
 }

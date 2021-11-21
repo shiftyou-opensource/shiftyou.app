@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
+import 'package:nurse_time/actions/auth/auth_provider.dart';
 import 'package:nurse_time/localization/app_localizzation.dart';
 import 'package:nurse_time/model/scheduler_rules.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
@@ -42,8 +43,8 @@ Future<void> setUpInjector() async {
   GetIt.instance.registerSingleton<DAODatabase>(db);
   GetIt.instance.registerLazySingleton<Logger>(() => Logger());
   //TODO Review the database rules here
-  GetIt.instance.registerLazySingleton<UserModel>(() => UserModel(
-      id: -1, name: "", email: "", logged: false, initialized: false));
+  GetIt.instance.registerLazySingleton<UserModel>(
+      () => UserModel(name: "", email: "", logged: false, initialized: false));
   GetIt.instance.registerLazySingleton<ShiftScheduler>(
       () => ShiftScheduler(-1, DateTime.now(), DateTime.now()));
 
@@ -56,6 +57,13 @@ Future<void> setUpInjector() async {
   manual.manual = true;
   schedulerRules.add(manual);
   GetIt.instance.registerSingleton<List<SchedulerRules>>(schedulerRules);
+
+  if (await AppPreferences.instance.containsKey(PreferenceKey.LOGIN_PROVIDER)) {
+    var provider = await AppPreferences.instance
+        .valueWithKey(PreferenceKey.LOGIN_PROVIDER) as String;
+    var authProvider = AuthProvider.build(provider: provider);
+    GetIt.instance.registerSingleton<AuthProvider>(authProvider);
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -69,15 +77,13 @@ class MyApp extends StatelessWidget {
         return false;
       }
       var userModel = GetIt.instance.get<UserModel>();
-      logger.d("User in database ${userModel.toString()}");
-      userModel.initialized = user.initialized;
-      userModel.logged = true;
-      userModel.name = user.name;
-      userModel.id = user.id;
-      var shift = await dao.getShift(user.id);
-      logger.d("Shift from database is ${shift.toString()}");
+      logger.w("User in database first startup $user");
+      userModel.bind(user);
+      logger.w("UserModel after binding $user");
+      var shift = await dao.getShift(user.id!);
+      logger.i("Shift from database is $shift");
       var shiftInstance = GetIt.instance.get<ShiftScheduler>();
-      shiftInstance.userId = user.id;
+      shiftInstance.userId = user.id!;
       if (shift != null) {
         logger.d("The user has a Shift stored in the database");
         shiftInstance.fromShift(shift).notify();
@@ -87,7 +93,9 @@ class MyApp extends StatelessWidget {
         shiftInstance.notify();
         shiftInstance.id = await dao.insertShift(shiftInstance);
       }
-      return true;
+      logger.d("User is logged -> ${userModel.logged}");
+      logger.d("ShiftScheduler have following payload -> $shiftInstance");
+      return userModel.logged;
     } catch (e, stacktrace) {
       showSnackBar(context, AppLocalization.getWithKey(Keys.Errors_Db_Errors));
       logger.e(e);
@@ -158,6 +166,7 @@ class MyApp extends StatelessWidget {
             //visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
           routes: {
+            "/login": (context) => LoginView(),
             "/home": (context) => HomeView(),
             "/setting": (context) => SetUpView(
                 schedulerRules: GetIt.instance.get<List<SchedulerRules>>(),

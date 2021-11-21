@@ -46,12 +46,10 @@ class GoogleManagerUserLogin extends AbstractManagerUserLogin {
     }
     this._currentUser = authResult.user!;
 
-    var userId = await this._currentUser.getIdToken();
     logger.d("User is anonymous ${this._currentUser.isAnonymous}");
     final User? currentUser = auth.currentUser;
 
     return UserModel(
-        id: userId.hashCode,
         name: currentUser!.displayName ??
             AppLocalization.getWithKey(Keys.Words_Anonymous),
         email: currentUser.email ??

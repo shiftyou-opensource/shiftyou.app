@@ -20,7 +20,7 @@ class DAODatabase extends AbstractDAO<Database> {
   late Logger _logger;
 
   static const String CREATE_USERS_TABLE_QUERY =
-      "CREATE TABLE Users(id INTEGER PRIMARY KEY, name TEXT, init INTEGER, email TEXT)";
+      "CREATE TABLE Users(id INTEGER PRIMARY KEY, name TEXT, logged INTEGER, email TEXT)";
 
   static const String CREATE_SHIFT_TABLE_QUERY = "CREATE TABLE "
       "Shifts(id INTEGER PRIMARY KEY autoincrement, start INTEGER, "
@@ -35,7 +35,7 @@ class DAODatabase extends AbstractDAO<Database> {
   // Used to store the QUERY to migrate the database
   // it is useful to add or remove row in the db table.
   Map<int, String> _migrationScripts = {
-    13: 'ALTER TABLE Users ADD init INTEGER; ALTER TABLE Users ADD email TEXT;',
+    13: 'ALTER TABLE Users ADD logged INTEGER; ALTER TABLE Users ADD email TEXT;',
   };
 
   DAODatabase() {
