@@ -6,14 +6,18 @@ class SimpleCard extends StatelessWidget {
   final String text;
   final Icon icon;
   final Function onPress;
+  final EdgeInsets? padding;
+  final EdgeInsets? margin;
 
-  const SimpleCard(
-      {Key? key,
-      required this.icon,
-      required this.elevation,
-      required this.text,
-      required this.onPress})
-      : super(key: key);
+  const SimpleCard({
+    Key? key,
+    required this.icon,
+    required this.elevation,
+    required this.text,
+    required this.onPress,
+    this.padding,
+    this.margin,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +30,8 @@ class SimpleCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20.0))),
       child: Container(
+        padding: padding ?? EdgeInsets.all(10),
+        margin: margin ?? EdgeInsets.all(10),
         child: InkWell(
             onTap: () => onPress(),
             child: Row(

@@ -217,7 +217,7 @@ class _HomeView extends State<HomeView> {
   Widget _buildHomeView(BuildContext context, List<Shift> shifts) {
     return Column(children: [
       Expanded(
-          flex: MediaQuery.of(context).size.height > 900 ? 5 : 3,
+          flex: MediaQuery.of(context).size.height > 900 ? 4 : 3,
           child: Container(
             color: Theme.of(context).backgroundColor,
             child:

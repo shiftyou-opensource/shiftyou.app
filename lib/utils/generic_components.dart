@@ -129,7 +129,7 @@ Widget makeTitleDivider(String titleString) {
   );
 }
 
-// Todo use the convention wiht the {required Type Name}
+// Todo use the convention with the {required Type Name}
 CustomScrollView makeScrollView(BuildContext context, List<Widget> children) {
   return CustomScrollView(
     slivers: List<SliverList>.generate(

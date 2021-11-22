@@ -95,7 +95,7 @@ class MyApp extends StatelessWidget {
       }
       logger.d("User is logged -> ${userModel.logged}");
       logger.d("ShiftScheduler have following payload -> $shiftInstance");
-      return userModel.logged;
+      return userModel.logged && GetIt.instance.isRegistered<AuthProvider>();
     } catch (e, stacktrace) {
       showSnackBar(context, AppLocalization.getWithKey(Keys.Errors_Db_Errors));
       logger.e(e);
