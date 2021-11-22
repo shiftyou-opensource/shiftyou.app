@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.pple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.1+14
+version: 1.0.1+15
 
 flutter_launcher_name:
   name: "Shift You"
@@ -49,11 +49,11 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.3
   bottom_navy_bar: ^6.0.0
-  flutter_timeline:
-    git: https://github.com/softmarshmallow/flutter-timeline
   flutter_holo_date_picker: ^1.0.0-nullsafety.4
   flutter_translate: ^3.0.1
   flutter_translate_annotations: ^2.0.0
+  in_app_review: ^2.0.3
+  url_launcher: ^6.0.12
 
 dev_dependencies:
   flutter_test:

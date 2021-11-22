@@ -20,7 +20,9 @@ class OptionViewStep extends AbstractIndicatorStep {
 
   OptionViewStep(Widget title, this._schedulerRules, this._selectedRules,
       this._onDelete, this._shiftTimePicker, this._onAddTime)
-      : super(title) {
+      : super(title,
+            messageTips:
+                AppLocalization.getWithKey(Keys.Help_Message_Gen_Method)) {
     this._logger = GetIt.instance<Logger>();
   }
 
@@ -30,17 +32,20 @@ class OptionViewStep extends AbstractIndicatorStep {
 
   @override
   Widget buildView(BuildContext context) {
-    return Column(
-      children: [
-        _makeChipsArea(context),
-        makeVisibleComponent(_makeShiftTimePicker(context),
-            !_schedulerRules[_selectedRules].static && !_isManualScheduler(),
-            disappear: true),
-        // TODO: adding view to communicate that the user need to configure the things manual
-        // without the helping of shift generator
-        makeVisibleComponent(_makeManualView(context), _isManualScheduler(),
-            disappear: true),
-      ],
+    return Container(
+      margin: EdgeInsets.all(15),
+      child: Column(
+        children: [
+          _makeChipsArea(context),
+          makeVisibleComponent(_makeShiftTimePicker(context),
+              !_schedulerRules[_selectedRules].static && !_isManualScheduler(),
+              disappear: true),
+          // TODO: adding view to communicate that the user need to configure the things manual
+          // without the helping of shift generator
+          makeVisibleComponent(_makeManualView(context), _isManualScheduler(),
+              disappear: true),
+        ],
+      ),
     );
   }
 

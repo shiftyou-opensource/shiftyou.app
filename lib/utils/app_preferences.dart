@@ -5,6 +5,7 @@ enum PreferenceKey {
   BRUTE_MIGRATION_DB,
   DIALOG_MESSAGE,
   DIALOG_SHOWS,
+  LOGIN_PROVIDER
 }
 
 class AppPreferences {
@@ -26,6 +27,11 @@ class AppPreferences {
       throw ErrorDescription("Value with key $key not present");
     await this.putValue(key, defValue);
     return _prefs.get(localKey)!;
+  }
+
+  Future<bool> containsKey(PreferenceKey key) async {
+    var _prefs = await _prefsFuture;
+    return _prefs.containsKey(key.toString());
   }
 
   Future<void> putValue(PreferenceKey key, dynamic value,

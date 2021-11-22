@@ -16,6 +16,7 @@ import 'package:nurse_time/utils/converter.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:nurse_time/view/charts/pie_chart.dart';
 import 'package:nurse_time/view/home/insert_modify_shift.dart';
+import 'package:nurse_time/view/profile/profile_view.dart';
 import 'package:nurse_time/view/settings/set_up_view.dart';
 
 class HomeView extends StatefulWidget {
@@ -80,17 +81,18 @@ class _HomeView extends State<HomeView> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       floatingActionButton: _makeFloatingButton(context,
-          settingView: _selectedView == 2,
+          settingView: _selectedView == 0,
           onPress: (context, modify, index) => _makeBottomDialog(
               context: context, modify: modify, index: index)),
       body: PageView(
         controller: _pageController,
         onPageChanged: (index) => setState(() => _selectedView = index),
         children: [
-          SafeArea(
+          // Statistic View
+          /*SafeArea(
               child: PieChartShift(
-                  shifts: _shiftScheduler!.generateScheduler(complete: true))),
-          SafeArea(child: _buildHomeView(context, _shiftScheduler!.shifts)),
+                  shifts: _shiftScheduler!.generateScheduler(complete: true))), */
+          // Setting View
           SafeArea(
               child: SetUpView(
                   schedulerRules: _schedulerRules,
@@ -102,6 +104,10 @@ class _HomeView extends State<HomeView> {
                   },
                   ownView: false,
                   shiftScheduler: this._shiftScheduler)),
+          // Home view
+          SafeArea(child: _buildHomeView(context, _shiftScheduler!.shifts)),
+          // Profile View
+          SafeArea(child: ProfileView(userModel: _userModel)),
         ],
       ),
       bottomNavigationBar: BottomNavyBar(
@@ -111,16 +117,18 @@ class _HomeView extends State<HomeView> {
         itemCornerRadius: 24,
         onItemSelected: (index) => _pageController.jumpToPage(index),
         items: <BottomNavyBarItem>[
-          makeItem(
+          /*makeItem(
               context,
               AppLocalization.getWithKey(Keys.Bottomnav_Statistic),
               Icons.timeline,
               0,
-              _selectedView),
+              _selectedView), */
+          makeItem(context, AppLocalization.getWithKey(Keys.Bottomnav_Settings),
+              Icons.settings, 0, _selectedView),
           makeItem(context, AppLocalization.getWithKey(Keys.Bottomnav_Home),
               Icons.home, 1, _selectedView),
-          makeItem(context, AppLocalization.getWithKey(Keys.Bottomnav_Settings),
-              Icons.settings, 2, _selectedView),
+          makeItem(context, AppLocalization.getWithKey(Keys.Bottomnav_Profile),
+              Icons.account_circle, 2, _selectedView)
         ],
       ),
     );
@@ -142,7 +150,7 @@ class _HomeView extends State<HomeView> {
               // Set the new data inside the _shiftScheduler and update the ui.
               await _dao.deleteShiftException(_shiftScheduler!);
               setState(() {
-                _shiftScheduler!.userId = this._userModel.id;
+                _shiftScheduler!.userId = this._userModel.id!;
                 // we are modify the shift, this mean that we can delete the
                 // old exception and save the new one
                 _shiftScheduler!.cleanException().notify();
@@ -159,7 +167,7 @@ class _HomeView extends State<HomeView> {
               ? Text(AppLocalization.getWithKey(Keys.Floatingbutton_Save))
               : Text(AppLocalization.getWithKey(Keys.Floatingbutton_Add)),
         ),
-        (_selectedView == 1 || _selectedView == 2));
+        (_selectedView == 0 || _selectedView == 1));
   }
 
   void _makeBottomDialog(
@@ -209,7 +217,7 @@ class _HomeView extends State<HomeView> {
   Widget _buildHomeView(BuildContext context, List<Shift> shifts) {
     return Column(children: [
       Expanded(
-          flex: MediaQuery.of(context).size.height > 900 ? 5 : 3,
+          flex: MediaQuery.of(context).size.height > 900 ? 4 : 3,
           child: Container(
             color: Theme.of(context).backgroundColor,
             child:
@@ -233,6 +241,8 @@ class _HomeView extends State<HomeView> {
     return Card(
         elevation: 10.0,
         margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0))),
         child: Center(
           child: Container(
             padding: EdgeInsets.all(15),

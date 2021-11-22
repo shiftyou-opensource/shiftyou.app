@@ -20,7 +20,7 @@ class DAODatabase extends AbstractDAO<Database> {
   late Logger _logger;
 
   static const String CREATE_USERS_TABLE_QUERY =
-      "CREATE TABLE Users(id INTEGER PRIMARY KEY, name TEXT)";
+      "CREATE TABLE Users(id INTEGER PRIMARY KEY, name TEXT, logged INTEGER, email TEXT)";
 
   static const String CREATE_SHIFT_TABLE_QUERY = "CREATE TABLE "
       "Shifts(id INTEGER PRIMARY KEY autoincrement, start INTEGER, "
@@ -34,7 +34,9 @@ class DAODatabase extends AbstractDAO<Database> {
 
   // Used to store the QUERY to migrate the database
   // it is useful to add or remove row in the db table.
-  Map<int, String> _migrationScripts = {};
+  Map<int, String> _migrationScripts = {
+    13: 'ALTER TABLE Users ADD logged INTEGER; ALTER TABLE Users ADD email TEXT;',
+  };
 
   DAODatabase() {
     _logger = Logger();
@@ -78,7 +80,7 @@ class DAODatabase extends AbstractDAO<Database> {
           await db.execute(_migrationScripts[i]!);
         }
       }
-    }, version: 12);
+    }, version: 13);
 
     this._daoUser = DAOUser();
     this._daoShift = DAOShift();
@@ -98,6 +100,11 @@ class DAODatabase extends AbstractDAO<Database> {
   @override
   Future<int> insertUser(UserModel user) async {
     return await this._daoUser.insert(this, user);
+  }
+
+  @override
+  Future<void> updateUser(UserModel userModel) async {
+    return await this._daoUser.update(this, userModel);
   }
 
   @override

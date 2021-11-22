@@ -21,8 +21,6 @@ class DAOShiftException extends AbstractDAOModel<Shift> {
   Future<List<Shift>> getAll(AbstractDAO dao) async {
     List<Map<String, dynamic>> exceptionsMap =
         await dao.getInstance.query(super.tableName);
-    _logger.d(
-        "Get all exception inside the db return the following result ${exceptionsMap.toString()}");
     List<Shift> exceptions = List.empty(growable: true);
     exceptionsMap.forEach((element) {
       var shift = Shift.fromDatabase(element);

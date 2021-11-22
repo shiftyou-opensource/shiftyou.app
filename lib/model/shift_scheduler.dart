@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:nurse_time/model/scheduler_rules.dart';
 import 'package:nurse_time/model/shift.dart';
+import 'package:nurse_time/model/user_model.dart';
 import 'package:nurse_time/utils/converter.dart';
 
 /// @author https://github.com/vincenzopalazzo
@@ -41,9 +42,14 @@ class ShiftScheduler {
 
   // TODO: Move this list of parameters to a accept a single map of params.
   static ShiftScheduler fromDatabase(
-      int id, int timeStart, int timeEnd, String schedulerRules, bool manual) {
+      {required int id,
+      required int timeStart,
+      required int timeEnd,
+      required String schedulerRules,
+      required bool manual,
+      int userId = -1}) {
     var shift = ShiftScheduler(
-        -1,
+        userId,
         DateTime.fromMillisecondsSinceEpoch(timeStart),
         DateTime.fromMillisecondsSinceEpoch(timeEnd));
     shift._id = id;
@@ -106,6 +112,15 @@ class ShiftScheduler {
 
   set end(DateTime dateTime) {
     this._end = dateTime;
+  }
+
+  bool isOwner(UserModel user) {
+    return user.id == _userId;
+  }
+
+  @override
+  String toString() {
+    return 'ShiftScheduler{_id: $_id, _userId: $_userId, _start: $_start, _end: $_end, _logger: $_logger, _timeOrders: $_timeOrders, _manual: $_manual, _rules: $_rules}';
   }
 
   void setExceptions(List<Shift> exceptions) {
@@ -244,7 +259,6 @@ class ShiftScheduler {
 
   void _generateScheduler({bool complete = true}) {
     this._shifts = this.generateScheduler(complete: complete);
-    _logger.d("Scheduler generated is ${_shifts.toString()}");
   }
 
   ShiftScheduler notify() {

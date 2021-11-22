@@ -18,7 +18,9 @@ class PeriodViewStep extends AbstractIndicatorStep {
 
   PeriodViewStep(Widget title,
       {required this.onSave, required this.shiftScheduler})
-      : super(title);
+      : super(title,
+            messageTips:
+                "${AppLocalization.getWithKey(Keys.Help_Message_Period)}");
 
   @override
   Widget buildView(BuildContext context) {

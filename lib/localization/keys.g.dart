@@ -15,15 +15,27 @@ class Keys {
 
   static const String Bottomnav_Settings = 'bottomNav.settings';
 
+  static const String Bottomnav_Profile = 'bottomNav.profile';
+
   static const String Floatingbutton_Save = 'floatingButton.save';
 
   static const String Floatingbutton_Add = 'floatingButton.add';
+
+  static const String Floatingbutton_Logout = 'floatingButton.logout';
+
+  static const String Floatingbutton_Tips = 'floatingButton.tips';
 
   static const String Bottomdialog_Modify_Shift = 'bottomDialog.modify_shift';
 
   static const String Bottomdialog_Add_Shift = 'bottomDialog.add_shift';
 
   static const String Titles_Setting_Scheduler = 'titles.setting_scheduler';
+
+  static const String Help_Message_Period = 'help_message.period';
+
+  static const String Help_Message_Gen_Method = 'help_message.gen_method';
+
+  static const String Help_Message_Pattern = 'help_message.pattern';
 
   static const String Generic_Messages_Modify_Daily_Shift =
       'generic_messages.modify_daily_shift';
@@ -87,7 +99,15 @@ class Keys {
 
   static const String Words_Anonymous = 'words.anonymous';
 
+  static const String Words_Close = 'words.close';
+
+  static const String Words_To = 'words.to';
+
+  static const String Words_From = 'words.from';
+
   static const String Errors_Db_Errors = 'errors.db_errors';
 
   static const String Errors_Login = 'errors.login';
+
+  static const String Errors_No_Logout = 'errors.no_logout';
 }

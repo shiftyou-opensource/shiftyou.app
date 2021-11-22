@@ -1,17 +1,19 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:nurse_time/actions/auth/apple_sign_in.dart';
+import 'package:nurse_time/actions/auth/auth_provider.dart';
 import 'package:nurse_time/localization/app_localizzation.dart';
 import 'package:nurse_time/localization/keys.dart';
+import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/model/user_model.dart';
 import 'package:nurse_time/persistence/dao_database.dart';
-import 'package:nurse_time/actions/auth/google_sign_in.dart';
 import 'package:nurse_time/utils/app_preferences.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:nurse_time/utils/icon_provider.dart';
 
 class LoginView extends StatefulWidget {
   @override
@@ -19,20 +21,17 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginView extends State<LoginView> {
-  // TODO implementing a builder, that create the single instance
-  // of a login managed and put this builder in GetIt
-  late GoogleManagerUserLogin _googleLogin;
-  late AppleManageUserLogin _appleLogin;
+  AuthProvider? _authProvider;
   late DAODatabase _dao;
   late UserModel _userModel;
+  late ShiftScheduler _scheduler;
   late Logger _logger;
 
   _LoginView() {
     this._logger = GetIt.instance<Logger>();
-    this._googleLogin = GetIt.instance.get<GoogleManagerUserLogin>();
-    this._appleLogin = GetIt.instance.get<AppleManageUserLogin>();
     this._dao = GetIt.instance.get<DAODatabase>();
     this._userModel = GetIt.instance.get<UserModel>();
+    this._scheduler = GetIt.instance.get<ShiftScheduler>();
   }
 
   @override
@@ -46,12 +45,14 @@ class _LoginView extends State<LoginView> {
         var message = await AppPreferences.instance
             .valueWithKey(PreferenceKey.DIALOG_MESSAGE) as String;
         showAppDialog(
-            context: context,
-            title:
-                AppLocalization.getWithKey(Keys.Generic_Messages_Upgrade_Info),
-            message: message);
+          context: context,
+          title: AppLocalization.getWithKey(Keys.Generic_Messages_Upgrade_Info),
+          message: message,
+          imageProvided: IconProvider.instance.getImage(AppIcon.SORRY),
+        );
       }
     });
+    this._userModel = GetIt.instance.get<UserModel>();
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -74,9 +75,34 @@ class _LoginView extends State<LoginView> {
                   buttonText: AppLocalization.getWithKey(
                       Keys.Generic_Messages_Login_Google),
                   onPressed: () {
-                    _googleLogin.signIn().then((userModel) {
-                      this._userModel.bing(userModel);
-                      _dao.insertUser(userModel).then((_) {
+                    _authProvider =
+                        AuthProvider.build(provider: AuthProvider.GOOGLE);
+                    if (!GetIt.instance.isRegistered<AuthProvider>()) {
+                      GetIt.instance
+                          .registerSingleton<AuthProvider>(_authProvider!);
+                    }
+                    AppPreferences.instance.putValue(
+                        PreferenceKey.LOGIN_PROVIDER, AuthProvider.GOOGLE);
+                    _authProvider?.login().then((userModel) {
+                      this._userModel.bind(userModel);
+                      _logger.d("Login view with use mode $_userModel");
+                      _logger.d(
+                          "Received from GetIt the following scheduler $_scheduler");
+                      if (this._scheduler.isOwner(_userModel)) {
+                        _logger.d(
+                            "After login the user is logged -> ${_userModel.logged}");
+                        _dao
+                            .updateUser(_userModel)
+                            .then((_) => Navigator.pushNamed(context, "/home"))
+                            .catchError((error, stacktrace) => _handleError(
+                                error, stacktrace,
+                                userMessage: AppLocalization.getWithKey(
+                                    Keys.Errors_Login)));
+                        return;
+                      }
+                      _dao.insertUser(userModel).then((id) {
+                        // bind the address to the user model.
+                        _userModel.id = id;
                         Navigator.pushNamed(context, "/setting");
                       }).catchError((error, stacktrace) => _handleError(
                           error, stacktrace,
@@ -89,15 +115,23 @@ class _LoginView extends State<LoginView> {
                   }),
               makeVisibleComponent(
                   Divider(color: Theme.of(context).backgroundColor),
-                  _appleLogin.available(platform: Theme.of(context).platform)),
+                  Platform.isIOS),
               makeVisibleComponent(
                   _signInButton(
                       buttonsType: Buttons.AppleDark,
                       buttonText: AppLocalization.getWithKey(
                           Keys.Generic_Messages_Login_Apple),
                       onPressed: () {
-                        _appleLogin.signIn().then((userModel) {
-                          this._userModel.bing(userModel);
+                        _authProvider =
+                            AuthProvider.build(provider: AuthProvider.APPLE);
+                        if (!GetIt.instance.isRegistered<AuthProvider>()) {
+                          GetIt.instance
+                              .registerSingleton<AuthProvider>(_authProvider!);
+                        }
+                        AppPreferences.instance.putValue(
+                            PreferenceKey.LOGIN_PROVIDER, AuthProvider.APPLE);
+                        _authProvider?.login().then((userModel) {
+                          this._userModel.bind(userModel);
                           _dao.insertUser(userModel).then((_) {
                             Navigator.pushNamed(context, "/setting");
                           }).catchError((error, stacktrace) => _handleError(
@@ -109,7 +143,7 @@ class _LoginView extends State<LoginView> {
                             userMessage:
                                 AppLocalization.getWithKey(Keys.Errors_Login)));
                       }),
-                  _appleLogin.available(platform: Theme.of(context).platform)),
+                  Platform.isIOS),
               Spacer()
             ],
           ),

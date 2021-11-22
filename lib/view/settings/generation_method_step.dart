@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nurse_time/localization/app_localizzation.dart';
+import 'package:nurse_time/localization/keys.dart';
 import 'package:nurse_time/model/scheduler_rules.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 
@@ -11,7 +13,8 @@ class GenerationMethodStep extends AbstractIndicatorStep {
 
   GenerationMethodStep(
       Widget title, this._onChanged, this._selectedIndex, this._schedulerRules)
-      : super(title);
+      : super(title,
+            messageTips: AppLocalization.getWithKey(Keys.Help_Message_Pattern));
 
   @override
   Widget buildView(BuildContext context) {

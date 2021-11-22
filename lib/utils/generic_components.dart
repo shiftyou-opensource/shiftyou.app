@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nurse_time/localization/app_localizzation.dart';
 import 'package:nurse_time/localization/keys.dart';
-import 'package:nurse_time/utils/icon_provider.dart';
 
 Widget buildUserIcon(BuildContext context, String imageUrl) {
   return CircleAvatar(
@@ -64,20 +63,25 @@ enum ButtonType { NORMAL }
 
 Widget makeButton(BuildContext context,
     {required Function onPress,
+    Icon icon = const Icon(Icons.done),
+    required String text,
+    bool disabled = false,
     ButtonType type = ButtonType.NORMAL,
     ButtonStyle? style}) {
   switch (type) {
     case ButtonType.NORMAL:
       return ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
-            primary: Theme.of(context).colorScheme.primary,
+            primary: !disabled
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).disabledColor,
             elevation: 3,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           ),
-          onPressed: () => onPress(),
-          icon: Icon(Icons.done),
-          label: Text(AppLocalization.getWithKey(Keys.Words_Word_Save)));
+          onPressed: () => disabled ? () {} : onPress(),
+          icon: icon,
+          label: Text(text));
   }
 }
 
@@ -125,6 +129,7 @@ Widget makeTitleDivider(String titleString) {
   );
 }
 
+// Todo use the convention with the {required Type Name}
 CustomScrollView makeScrollView(BuildContext context, List<Widget> children) {
   return CustomScrollView(
     slivers: List<SliverList>.generate(
@@ -133,6 +138,25 @@ CustomScrollView makeScrollView(BuildContext context, List<Widget> children) {
           delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) => children[index],
               childCount: children.length)),
+    ),
+  );
+}
+
+// TODO adding method to customize the app
+Widget makeIconProfile({required BuildContext context, required Image image}) {
+  return Container(
+    color: Theme.of(context).backgroundColor,
+    child: Center(
+      heightFactor: 1,
+      child: CircleAvatar(
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        radius: 60.0,
+        child: CircleAvatar(
+          radius: 50.0,
+          child: image,
+          backgroundColor: Colors.transparent,
+        ),
+      ),
     ),
   );
 }
@@ -151,11 +175,60 @@ void showSnackBar(BuildContext context, String message,
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
 
+Widget _appDialogContentWithImage(
+    {required BuildContext context,
+    required String message,
+    required ImageProvider imageProvided}) {
+  return Column(
+    children: [
+      Expanded(
+          flex: 2,
+          child: Center(
+            child: Image(
+              image: imageProvided,
+            ),
+          )),
+      Spacer(),
+      Expanded(
+          flex: message.length > 100 ? 4 : 2,
+          child: Center(
+              child: SingleChildScrollView(
+                  child: Text(
+            message,
+            style: Theme.of(context).textTheme.bodyText1!.apply(
+                  fontSizeFactor: 1.2,
+                ),
+          ))))
+    ],
+  );
+}
+
+Widget _appDialogContentWithoutImage(
+    {required BuildContext context,
+    required String message,
+    required ImageProvider imageProvided}) {
+  return Column(
+    children: [
+      Expanded(
+          flex: 2,
+          child: Center(
+              child: SingleChildScrollView(
+                  child: Text(
+            message,
+            style: Theme.of(context).textTheme.bodyText1!.apply(
+                  fontSizeFactor: 1.2,
+                ),
+          ))))
+    ],
+  );
+}
+
 void showAppDialog(
     {required BuildContext context,
     required String title,
-    required String message}) {
-  print("Show message dialog");
+    required String message,
+    required ImageProvider imageProvided,
+    bool withIcon = true}) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -164,23 +237,28 @@ void showAppDialog(
         elevation: 2,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(20.0))),
-        title: new Text(title),
+        title: new Text(title,
+            style: Theme.of(context).textTheme.bodyText1!.apply(
+                  fontSizeFactor: 1.6,
+                )),
         content: SizedBox(
-            height: 200,
-            width: 400,
-            child: Column(
-              children: [
-                Expanded(
-                    flex: 6,
-                    child: Image(
-                        image: IconProvider.instance.getImage(AppIcon.SORRY))),
-                Spacer(),
-                Expanded(flex: 5, child: Text(message))
-              ],
-            )),
+          height: MediaQuery.of(context).size.height *
+              0.25 *
+              (message.length > 150 && withIcon ? 1.8 : 1),
+          width: MediaQuery.of(context).size.width * 0.6 * (withIcon ? 1.2 : 1),
+          child: withIcon
+              ? _appDialogContentWithImage(
+                  context: context,
+                  message: message,
+                  imageProvided: imageProvided)
+              : _appDialogContentWithoutImage(
+                  context: context,
+                  message: message,
+                  imageProvided: imageProvided),
+        ),
         actions: <Widget>[
           new TextButton(
-            child: new Text("Close"),
+            child: new Text(AppLocalization.getWithKey(Keys.Words_Close)),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],

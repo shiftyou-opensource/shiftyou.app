@@ -1,12 +1,20 @@
 CC=flutter
 FMT=format
 
-default:
-	$(CC) pub run build_runner build --delete-conflicting-outputs
-	fmt
+default: get generate check fmt
 
-fmt: $(CC) $(FMT) .
+get:
+	$(CC) pub get
+
+generate:
+	$(CC) pub run build_runner build --delete-conflicting-outputs;
+
+fmt:
+	$(CC) $(FMT) .
 	$(CC) analyze .
 
 check:
 	$(CC) test
+
+clean:
+	$(CC) clean
