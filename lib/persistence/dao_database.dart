@@ -35,7 +35,12 @@ class DAODatabase extends AbstractDAO<Database> {
   // Used to store the QUERY to migrate the database
   // it is useful to add or remove row in the db table.
   Map<int, String> _migrationScripts = {
-    13: 'ALTER TABLE Users ADD logged INTEGER; ALTER TABLE Users ADD email TEXT;',
+    13: """
+        BEGIN TRANSACTION;
+        ALTER TABLE Users ADD logged INTEGER;
+        ALTER TABLE Users ADD email TEXT;
+        COMMIT
+        """,
   };
 
   DAODatabase() {
