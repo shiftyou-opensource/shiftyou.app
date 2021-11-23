@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:logger/logger.dart';
+import 'package:nurse_time/localization/app_localizzation.dart';
+import 'package:nurse_time/localization/keys.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/model/user_model.dart';
 import 'package:nurse_time/persistence/abstract_dao.dart';
@@ -59,7 +61,7 @@ class DAODatabase extends AbstractDAO<Database> {
       await deleteDatabase(path);
       await AppPreferences.instance.putValue(PreferenceKey.DIALOG_SHOWS, true);
       await AppPreferences.instance.putValue(PreferenceKey.DIALOG_MESSAGE,
-          "The app is update to the new version, and your data for the moment are over. We are working hard to provide a solution for the next updates");
+          AppLocalization.getWithKey(Keys.Alert_Erase_Db));
     }
 
     this._database = await openDatabase(
@@ -83,7 +85,8 @@ class DAODatabase extends AbstractDAO<Database> {
         if (_migrationScripts.containsKey(i)) {
           var batch = db.batch();
           for (var query in _migrationScripts[i]!) {
-            _logger.i("Migrate statement $i of ${_migrationScripts[i]!.length}: $query");
+            _logger.i(
+                "Migrate statement $i of ${_migrationScripts[i]!.length}: $query");
             batch.execute(query);
           }
           var listChanges = await batch.commit(noResult: false);
