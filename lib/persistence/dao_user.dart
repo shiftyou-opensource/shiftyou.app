@@ -63,7 +63,7 @@ class DAOUser extends AbstractDAOModel<UserModel> {
 
   @override
   Future<void> update(AbstractDAO dao, UserModel user) async {
-    return await dao.getInstance.update(super.tableName, user.toMap(),
+    return await dao.getInstance.update(super.tableName, user.toMap(update: true),
         where: "id = ?", whereArgs: [user.id]);
   }
 }

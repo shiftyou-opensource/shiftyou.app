@@ -40,7 +40,7 @@ class DAODatabase extends AbstractDAO<Database> {
         ALTER TABLE Users ADD logged INTEGER;
         ALTER TABLE Users ADD email TEXT;
         COMMIT
-        """,
+        """.trim(),
   };
 
   DAODatabase() {
@@ -70,6 +70,8 @@ class DAODatabase extends AbstractDAO<Database> {
         // constructed for each platform.
         path, onConfigure: (db) async {
       await db.execute('PRAGMA foreign_keys = ON');
+      var result = await db.rawQuery('PRAGMA table_info(Users);');
+      _logger.d("PRAGMA table_info() -> $result");
     }, onCreate: (db, version) async {
       await db.execute(CREATE_USERS_TABLE_QUERY);
       await db.execute(CREATE_SHIFT_TABLE_QUERY);
@@ -82,7 +84,7 @@ class DAODatabase extends AbstractDAO<Database> {
       for (int i = oldVersion + 1; i <= newVersion; i++) {
         if (_migrationScripts.containsKey(i)) {
           _logger.i("Migrate statement ${_migrationScripts[i]}");
-          await db.execute(_migrationScripts[i]!);
+          db.batch().execute(_migrationScripts[i]!);
         }
       }
     }, version: 13);
