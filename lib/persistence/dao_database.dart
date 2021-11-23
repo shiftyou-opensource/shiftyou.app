@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:logger/logger.dart';
+import 'package:nurse_time/localization/app_localizzation.dart';
+import 'package:nurse_time/localization/keys.dart';
 import 'package:nurse_time/model/shift_scheduler.dart';
 import 'package:nurse_time/model/user_model.dart';
 import 'package:nurse_time/persistence/abstract_dao.dart';
@@ -34,8 +36,11 @@ class DAODatabase extends AbstractDAO<Database> {
 
   // Used to store the QUERY to migrate the database
   // it is useful to add or remove row in the db table.
-  Map<int, String> _migrationScripts = {
-    13: 'ALTER TABLE Users ADD logged INTEGER; ALTER TABLE Users ADD email TEXT;',
+  Map<int, List<String>> _migrationScripts = {
+    14: [
+      "ALTER TABLE Users ADD COLUMN logged INTEGER;",
+      "ALTER TABLE Users ADD COLUMN email TEXT;",
+    ]
   };
 
   DAODatabase() {
@@ -56,7 +61,7 @@ class DAODatabase extends AbstractDAO<Database> {
       await deleteDatabase(path);
       await AppPreferences.instance.putValue(PreferenceKey.DIALOG_SHOWS, true);
       await AppPreferences.instance.putValue(PreferenceKey.DIALOG_MESSAGE,
-          "The app is update to the new version, and your data for the moment are over. We are working hard to provide a solution for the next updates");
+          AppLocalization.getWithKey(Keys.Alert_Erase_Db));
     }
 
     this._database = await openDatabase(
@@ -65,6 +70,8 @@ class DAODatabase extends AbstractDAO<Database> {
         // constructed for each platform.
         path, onConfigure: (db) async {
       await db.execute('PRAGMA foreign_keys = ON');
+      var result = await db.rawQuery('PRAGMA table_info(Users);');
+      _logger.d("PRAGMA table_info() -> $result");
     }, onCreate: (db, version) async {
       await db.execute(CREATE_USERS_TABLE_QUERY);
       await db.execute(CREATE_SHIFT_TABLE_QUERY);
@@ -76,11 +83,17 @@ class DAODatabase extends AbstractDAO<Database> {
           "Migrate DB from a old version $oldVersion to new version $newVersion");
       for (int i = oldVersion + 1; i <= newVersion; i++) {
         if (_migrationScripts.containsKey(i)) {
-          _logger.i("Migrate statement ${_migrationScripts[i]}");
-          await db.execute(_migrationScripts[i]!);
+          var batch = db.batch();
+          for (var query in _migrationScripts[i]!) {
+            _logger.i(
+                "Migrate statement $i of ${_migrationScripts[i]!.length}: $query");
+            batch.execute(query);
+          }
+          var listChanges = await batch.commit(noResult: false);
+          _logger.d("List of change returned -> $listChanges");
         }
       }
-    }, version: 13);
+    }, version: 14);
 
     this._daoUser = DAOUser();
     this._daoShift = DAOShift();

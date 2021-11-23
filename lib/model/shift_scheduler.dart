@@ -120,7 +120,7 @@ class ShiftScheduler {
 
   @override
   String toString() {
-    return 'ShiftScheduler{_id: $_id, _userId: $_userId, _start: $_start, _end: $_end, _logger: $_logger, _timeOrders: $_timeOrders, _manual: $_manual, _rules: $_rules}';
+    return 'ShiftScheduler{_id: $_id, _userId: $_userId, _start: $_start, _end: $_end}';
   }
 
   void setExceptions(List<Shift> exceptions) {

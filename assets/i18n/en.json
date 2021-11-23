@@ -68,5 +68,8 @@
     "db_errors": "Error with the Database",
     "login": "Error with the login",
     "no_logout": "Error during the logout"
+  },
+  "alert": {
+    "erase_db": "The app is update to the new version, and your data for the moment are over. We are working hard to provide a solution for the next updates"
   }
 }

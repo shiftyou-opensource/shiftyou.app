@@ -110,4 +110,6 @@ class Keys {
   static const String Errors_Login = 'errors.login';
 
   static const String Errors_No_Logout = 'errors.no_logout';
+
+  static const String Alert_Erase_Db = 'alert.erase_db';
 }
