@@ -34,13 +34,11 @@ class DAODatabase extends AbstractDAO<Database> {
 
   // Used to store the QUERY to migrate the database
   // it is useful to add or remove row in the db table.
-  Map<int, String> _migrationScripts = {
-    13: """
-        BEGIN TRANSACTION;
-        ALTER TABLE Users ADD logged INTEGER;
-        ALTER TABLE Users ADD email TEXT;
-        COMMIT
-        """.trim(),
+  Map<int, List<String>> _migrationScripts = {
+    14: [
+      "ALTER TABLE Users ADD COLUMN logged INTEGER;",
+      "ALTER TABLE Users ADD COLUMN email TEXT;",
+    ]
   };
 
   DAODatabase() {
@@ -83,11 +81,16 @@ class DAODatabase extends AbstractDAO<Database> {
           "Migrate DB from a old version $oldVersion to new version $newVersion");
       for (int i = oldVersion + 1; i <= newVersion; i++) {
         if (_migrationScripts.containsKey(i)) {
-          _logger.i("Migrate statement ${_migrationScripts[i]}");
-          db.batch().execute(_migrationScripts[i]!);
+          var batch = db.batch();
+          for (var query in _migrationScripts[i]!) {
+            _logger.i("Migrate statement $i of ${_migrationScripts[i]!.length}: $query");
+            batch.execute(query);
+          }
+          var listChanges = await batch.commit(noResult: false);
+          _logger.d("List of change returned -> $listChanges");
         }
       }
-    }, version: 13);
+    }, version: 14);
 
     this._daoUser = DAOUser();
     this._daoShift = DAOShift();
