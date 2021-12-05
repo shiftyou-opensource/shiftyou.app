@@ -9,7 +9,6 @@ import 'package:nurse_time/model/user_model.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:nurse_time/view/home/cards/simple_card.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:in_app_review/in_app_review.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContentView extends StatelessWidget {
@@ -103,17 +102,11 @@ class ContentView extends StatelessWidget {
                 icon: Icon(FontAwesomeIcons.star),
                 text: "Rating and Share App",
                 onPress: () {
-                  InAppReview.instance.isAvailable().then((value) {
-                    if (value) {
-                      InAppReview.instance.requestReview();
-                    } else {
-                      if (Platform.isIOS) {
-                        _launchURL(context, "http://shorturl.at/otCQ5");
-                      } else {
-                        _launchURL(context, "http://shorturl.at/jnBHL");
-                      }
-                    }
-                  });
+                  if (Platform.isIOS) {
+                    _launchURL(context, "http://shorturl.at/otCQ5");
+                  } else {
+                    _launchURL(context, "http://shorturl.at/jnBHL");
+                  }
                 },
               )
             ],

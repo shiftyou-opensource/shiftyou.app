@@ -1,7 +1,7 @@
 CC=flutter
 FMT=format
 
-default: get generate check fmt
+default: get fmt generate check fmt
 
 get:
 	$(CC) pub get
@@ -18,3 +18,6 @@ check:
 
 clean:
 	$(CC) clean
+
+dep_upgrade:
+	$(CC) pub upgrade --major-versions
