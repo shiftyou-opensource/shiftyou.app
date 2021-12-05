@@ -111,5 +111,7 @@ class Keys {
 
   static const String Errors_No_Logout = 'errors.no_logout';
 
+  static const String Errors_Open_Url = 'errors.open_url';
+
   static const String Alert_Erase_Db = 'alert.erase_db';
 }

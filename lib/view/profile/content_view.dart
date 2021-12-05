@@ -1,6 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
+import 'package:nurse_time/localization/app_localizzation.dart';
+import 'package:nurse_time/localization/keys.dart';
 import 'package:nurse_time/model/user_model.dart';
 import 'package:nurse_time/utils/generic_components.dart';
 import 'package:nurse_time/view/home/cards/simple_card.dart';
@@ -18,12 +22,30 @@ class ContentView extends StatelessWidget {
     return _makeContent(context: context);
   }
 
+  FutureOr<bool> _handleError(
+      BuildContext context, dynamic error, dynamic stacktrace,
+      {String? userMessage}) async {
+    var _logger = Logger(); // TODO: move this as propriety of the class
+    _logger.e(error);
+    _logger.e(stacktrace);
+    if (userMessage != null) {
+      showSnackBar(context, userMessage);
+    }
+    return true;
+  }
+
   void _launchURL(BuildContext context, String url) async =>
       await canLaunch(url)
           ? await launch(url,
-              forceSafariVC: false,
-              forceWebView: false,
-              universalLinksOnly: true)
+                  forceSafariVC: false,
+                  forceWebView: false,
+                  //When set to true, the launcher will only launch the content if the url is a
+                  // universal link and the respective app for the universal link is installed on
+                  // the user's device; otherwise throw a PlatformException.
+                  universalLinksOnly: false)
+              .catchError((error, stacktrace) => _handleError(
+                  context, error, stacktrace,
+                  userMessage: AppLocalization.getWithKey(Keys.Errors_Open_Url)))
           : showSnackBar(context, "We can't perform the action");
 
   Widget _makeContent({required BuildContext context}) {
