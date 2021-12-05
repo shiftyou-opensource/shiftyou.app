@@ -67,7 +67,8 @@
   "errors": {
     "db_errors": "Errore con il Database",
     "login": "Errore con il login",
-    "no_logout": "Errore durante il logout!"
+    "no_logout": "Errore durante il logout!",
+    "open_url": "Impossibile esegure l'azione richiesta"
   },
   "alert": {
     "erase_db": "The app is update to the new version, and your data for the moment are over. We are working hard to provide a solution for the next updates"

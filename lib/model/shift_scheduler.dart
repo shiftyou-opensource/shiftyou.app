@@ -251,7 +251,10 @@ class ShiftScheduler {
     }
 
     cloneException.values.forEach((element) {
-      generation.add(element);
+      if (iterate.difference(now).inDays < 0) element.done = true;
+      if (complete || (!complete && !element.done)) {
+        generation.add(element);
+      }
     });
 
     return generation;
