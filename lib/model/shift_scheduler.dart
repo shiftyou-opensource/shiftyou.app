@@ -141,11 +141,13 @@ class ShiftScheduler {
     this.timeOrders = rules.timeOrders;
   }
 
-  void addException(Shift shift, {bool ignoreUpdate = false}) {
+  ShiftScheduler addException(Shift shift,
+      {bool ignoreUpdate = false, bool complete = false}) {
     this._exceptions[toDateKey(shift.date)] = shift;
     if (!ignoreUpdate) {
-      this._generateScheduler();
+      this._generateScheduler(complete: complete);
     }
+    return this;
   }
 
   void updateShiftAt(int index, Shift shift, {bool isException = false}) {
@@ -214,7 +216,18 @@ class ShiftScheduler {
   List<Shift> generateScheduler({bool complete = true}) {
     List<Shift> generation = List.empty(growable: true);
     if (_timeOrders.isEmpty) {
-      if (_exceptions.isNotEmpty) generation.addAll(_exceptions.values);
+      var now = DateTime.now();
+      if (_exceptions.isNotEmpty) {
+        // Filter the exception in this place,
+        // we need to remove from the exception the past exception
+        if (complete) {
+          generation.addAll(_exceptions.values);
+        } else {
+          generation.addAll(_exceptions.values
+              .where((element) => element.date.difference(now).inDays >= 0));
+        }
+      }
+      generation.sort((a, b) => a.date.compareTo(b.date));
       return generation;
     }
     Map<String, Shift> cloneException = Map();
@@ -257,6 +270,7 @@ class ShiftScheduler {
       }
     });
 
+    generation.sort((a, b) => a.date.compareTo(b.date));
     return generation;
   }
 

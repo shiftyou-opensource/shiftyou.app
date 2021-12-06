@@ -202,11 +202,11 @@ class _HomeView extends State<HomeView> {
                 shift: index != null ? _shifts[index] : null,
                 onSave: (Shift shift) => {
                   _logger.d("On save called in the bottom dialog"),
-                  setState(() => {
-                        _shiftScheduler!.addException(shift),
-                        _dao.updateShift(_shiftScheduler!),
-                        _logger.d("Update shift inside the db"),
-                      })
+                  setState(() {
+                    _shiftScheduler!.addException(shift);
+                    _dao.updateShift(_shiftScheduler!);
+                    _logger.d("Update shift inside the db");
+                  })
                 },
                 onClose: () => Navigator.of(context).pop(),
                 modify: modify,
