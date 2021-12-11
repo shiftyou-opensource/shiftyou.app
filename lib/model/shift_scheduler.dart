@@ -247,9 +247,6 @@ class ShiftScheduler {
 
       if (iterate.difference(now).inDays < 0) shift.done = true;
       iterate = iterate.add(Duration(days: 1));
-      // Jump the shift already done.
-      if (!complete && shift.done) continue;
-      generation.add(shift);
       if (afterNight) {
         afterNight = false;
         continue;
@@ -261,6 +258,12 @@ class ShiftScheduler {
         indexStart = 0;
         next = _timeOrders[indexStart];
       }
+      // Jump the shift already done, but keep the
+      // scheduler logic safe.
+      // This give the possibility to fix the following issue
+      // https://github.com/shiftyou-opensource/shiftyou.app/issues/73
+      if (!complete && shift.done) continue;
+      generation.add(shift);
     }
 
     cloneException.values.forEach((element) {
