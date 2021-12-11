@@ -93,7 +93,8 @@ class _LoginView extends State<LoginView> {
                             "After login the user is logged -> ${_userModel.logged}");
                         _dao
                             .updateUser(_userModel)
-                            .then((_) => Navigator.pushNamed(context, "/home"))
+                            .then((_) => Navigator.pushReplacementNamed(
+                                context, "/home"))
                             .catchError((error, stacktrace) => _handleError(
                                 error, stacktrace,
                                 userMessage: AppLocalization.getWithKey(
@@ -103,7 +104,7 @@ class _LoginView extends State<LoginView> {
                       _dao.insertUser(userModel).then((id) {
                         // bind the address to the user model.
                         _userModel.id = id;
-                        Navigator.pushNamed(context, "/setting");
+                        Navigator.pushReplacementNamed(context, "/setting");
                       }).catchError((error, stacktrace) => _handleError(
                           error, stacktrace,
                           userMessage:
@@ -133,7 +134,7 @@ class _LoginView extends State<LoginView> {
                         _authProvider?.login().then((userModel) {
                           this._userModel.bind(userModel);
                           _dao.insertUser(userModel).then((_) {
-                            Navigator.pushNamed(context, "/setting");
+                            Navigator.pushReplacementNamed(context, "/setting");
                           }).catchError((error, stacktrace) => _handleError(
                               error, stacktrace,
                               userMessage: AppLocalization.getWithKey(

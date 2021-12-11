@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/widgets.dart';
 
 class SpinnerChooser<T> extends StatefulWidget {
   final TextStyle? selectTextStyle;

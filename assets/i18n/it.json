@@ -47,12 +47,12 @@
     "weekly_cadence": "Cadenza settimanale"
   },
   "titles": {
-    "setting_scheduler": "Imposta lo Scheduler"
+    "setting_scheduler": "Imposta il turno"
   },
   "help_message": {
-    "period": "Select Your Period. An Example can be ",
-    "gen_method": "WEEKLY PATTERN: Provide a pattern for your shift, and the app will generate it for you for the period provided\n\nUP TO YOU: Manual mode. From the period chosen, you will start from a empty schedule, and use the add button in the home screen.",
-    "pattern": "Specify the part of the day for all the patter in the correct order. An example can be \"afternoon\", \"morning\" and the period. The app will generate for you all the correct schedule."
+    "period": "Seleziona il periodo. \nAd esempio dal 1 Novembre 2021 al 1 Dicembre 2021  ",
+    "gen_method": "TURNO SETTIMANALE: Imposta la cadenza del turno e l'app la genererà\n\nA TUA SCELTA: Modalità manuale. Dopo aver selezionato il periodo, si inizia dalla schermata vuota, aggiungendo i turni usando il bottone Aggiungi dalla schermata home.",
+    "pattern": "Imposta il turno settimanale. Ad esempio \"pomeriggio\", \"mattina\", \"notte\", \"smonto\", \"riposo\". L'app poi genera il turno in automatico per il periodo selezionato."
   },
   "words": {
     "word_select": "Seleziona",
@@ -71,6 +71,6 @@
     "open_url": "Impossibile esegure l'azione richiesta"
   },
   "alert": {
-    "erase_db": "The app is update to the new version, and your data for the moment are over. We are working hard to provide a solution for the next updates"
+    "erase_db": "L'app è aggiornata ad una nuova versione, i tuoi dati per il momento sono stati cancellati. Stiamo lavorando per evitare che questo accada nei prossimi aggiornamenti."
   }
 }
