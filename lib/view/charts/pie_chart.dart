@@ -1,7 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:nurse_time/model/shift.dart';
 import 'package:nurse_time/utils/converter.dart';
 import 'package:nurse_time/utils/map_reduce_shifts.dart';
