@@ -33,7 +33,7 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 apply plugin: 'com.google.gms.google-services'
 
 android {
-  compileSdkVersion 29
+  compileSdkVersion 31
 
   sourceSets {
     main.java.srcDirs += 'src/main/kotlin'
@@ -50,6 +50,7 @@ android {
     targetSdkVersion 30
     versionCode flutterVersionCode.toInteger()
     versionName flutterVersionName
+    multiDexEnabled true
   }
 
   signingConfigs {
@@ -79,4 +80,5 @@ dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
   implementation platform('com.google.firebase:firebase-bom:26.5.0')
   implementation 'com.google.firebase:firebase-analytics-ktx'
+  implementation 'com.android.support:multidex:1.0.3'
 }
