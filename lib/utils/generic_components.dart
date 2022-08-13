@@ -5,7 +5,7 @@ import 'package:nurse_time/localization/keys.dart';
 
 Widget buildUserIcon(BuildContext context, String imageUrl) {
   return CircleAvatar(
-    backgroundColor: Theme.of(context).colorScheme.primaryVariant,
+    backgroundColor: Theme.of(context).colorScheme.secondary,
     radius: 60.0,
     child: CircleAvatar(
       radius: 50.0,

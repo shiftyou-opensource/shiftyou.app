@@ -54,9 +54,9 @@ class OptionViewStep extends AbstractIndicatorStep {
         Center(
             child: Container(
                 decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primaryVariant,
+                    color: Theme.of(context).colorScheme.onSecondary,
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.primaryVariant,
+                      color: Theme.of(context).colorScheme.onSecondary,
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(20))),
                 padding: EdgeInsets.all(4),
