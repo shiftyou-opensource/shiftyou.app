@@ -1,0 +1,16 @@
+{
+  "package_name": "shiftyou.app",
+  "version": "v1.0.4",
+  "api": {
+    "name": "github",
+    "repository": "shiftyou-opensource",
+    "branch": "main"
+  },
+  "generation_method": {
+    "name": "semver-v2",
+    "header_filter": true
+  },
+  "serialization_method": {
+    "name": "md"
+  }
+}
