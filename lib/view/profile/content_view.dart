@@ -33,15 +33,9 @@ class ContentView extends StatelessWidget {
     return true;
   }
 
-  void _launchURL(BuildContext context, String url) async => await canLaunch(
-          url)
-      ? await launch(url,
-              forceSafariVC: false,
-              forceWebView: false,
-              //When set to true, the launcher will only launch the content if the url is a
-              // universal link and the respective app for the universal link is installed on
-              // the user's device; otherwise throw a PlatformException.
-              universalLinksOnly: false)
+  void _launchURL(BuildContext context, String url) async => await canLaunchUrl(
+          Uri.parse(url))
+      ? await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)
           .catchError((error, stacktrace) => _handleError(
               context, error, stacktrace,
               userMessage: AppLocalization.getWithKey(Keys.Errors_Open_Url)))
@@ -86,7 +80,7 @@ class ContentView extends StatelessWidget {
                 icon: Icon(FontAwesomeIcons.telegram),
                 text: "Telegram Support",
                 onPress: () {
-                  _launchURL(context, "https://t.me/joinchat/Km4uiE4e78NlODc8");
+                  _launchURL(context, "https://t.me/+Km4uiE4e78NlODc8");
                 },
               ),
               SimpleCard(
@@ -103,9 +97,11 @@ class ContentView extends StatelessWidget {
                 text: "Rating and Share App",
                 onPress: () {
                   if (Platform.isIOS) {
-                    _launchURL(context, "http://shorturl.at/otCQ5");
+                    _launchURL(context,
+                        "https://apps.apple.com/us/app/shift-you/id1572693141");
                   } else {
-                    _launchURL(context, "http://shorturl.at/jnBHL");
+                    _launchURL(context,
+                        "https://play.google.com/store/apps/details?id=io.github.vincenzopalazzo.nurse_time");
                   }
                 },
               )
