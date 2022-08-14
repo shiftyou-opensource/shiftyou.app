@@ -33,13 +33,13 @@ class ContentView extends StatelessWidget {
     return true;
   }
 
-  void _launchURL(BuildContext context, String url) async =>
-      await canLaunchUrl(Uri.parse(url))
-          ? await canLaunchUrl(Uri.parse(url)).catchError((error, stacktrace) =>
-              _handleError(context, error, stacktrace,
-                  userMessage:
-                      AppLocalization.getWithKey(Keys.Errors_Open_Url)))
-          : showSnackBar(context, "We can't perform the action");
+  void _launchURL(BuildContext context, String url) async => await canLaunchUrl(
+          Uri.parse(url))
+      ? await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)
+          .catchError((error, stacktrace) => _handleError(
+              context, error, stacktrace,
+              userMessage: AppLocalization.getWithKey(Keys.Errors_Open_Url)))
+      : showSnackBar(context, "We can't perform the action");
 
   Widget _makeContent({required BuildContext context}) {
     return ListView(
@@ -80,7 +80,7 @@ class ContentView extends StatelessWidget {
                 icon: Icon(FontAwesomeIcons.telegram),
                 text: "Telegram Support",
                 onPress: () {
-                  _launchURL(context, "https://t.me/joinchat/Km4uiE4e78NlODc8");
+                  _launchURL(context, "https://t.me/+Km4uiE4e78NlODc8");
                 },
               ),
               SimpleCard(
@@ -97,9 +97,11 @@ class ContentView extends StatelessWidget {
                 text: "Rating and Share App",
                 onPress: () {
                   if (Platform.isIOS) {
-                    _launchURL(context, "http://shorturl.at/otCQ5");
+                    _launchURL(context,
+                        "https://apps.apple.com/us/app/shift-you/id1572693141");
                   } else {
-                    _launchURL(context, "http://shorturl.at/jnBHL");
+                    _launchURL(context,
+                        "https://play.google.com/store/apps/details?id=io.github.vincenzopalazzo.nurse_time");
                   }
                 },
               )
